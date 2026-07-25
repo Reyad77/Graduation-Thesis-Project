@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
+import NotificationsPage from "./pages/Notifications";
 
 // Student pages
 import StudentDashboard from "./pages/student/Dashboard";
@@ -47,6 +48,7 @@ export default function App() {
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="forgot-password" element={<ForgotPassword />} />
+        <Route path="notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
 
         {/* Jobs — public viewing, auth required for applying */}
         <Route path="jobs" element={<JobList />} />

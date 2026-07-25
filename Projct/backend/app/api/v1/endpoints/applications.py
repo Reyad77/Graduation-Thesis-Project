@@ -50,6 +50,13 @@ def update_application_status(
     updated = _app_svc.update_status(application_id, payload)
     if not updated:
         raise HTTPException(404, "Application not found.")
+    # Notify student
+    from app.services.notification_service import NotificationService as NS
+    ns = NS()
+    student_uid = str(getattr(updated, "studentUid", ""))
+    job_id = str(getattr(updated, "jobId", ""))
+    if student_uid:
+        ns.on_application_status_changed(student_uid, job_id, payload.status.value)
     return _serialize(updated)
 
 
@@ -64,6 +71,13 @@ def schedule_interview(
     updated = _app_svc.schedule_interview(application_id, payload)
     if not updated:
         raise HTTPException(404, "Application not found.")
+    # Notify student
+    from app.services.notification_service import NotificationService as NS
+    ns = NS()
+    student_uid = str(getattr(updated, "studentUid", ""))
+    job_id = str(getattr(updated, "jobId", ""))
+    if student_uid:
+        ns.on_interview_scheduled(student_uid, job_id, str(payload.date))
     return _serialize(updated)
 
 

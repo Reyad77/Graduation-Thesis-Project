@@ -1,10 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Menu, X, Briefcase, Bell } from "lucide-react";
+import { Menu, X, Briefcase } from "lucide-react";
 import { useState } from "react";
 import LanguageSwitcher from "./LanguageSwitcher";
+import NotificationBell from "@/components/notifications/NotificationBell";
 import { useAuth } from "@/hooks/useAuth";
-import { useNotifications } from "@/hooks/useNotifications";
 
 /**
  * Main navigation bar displayed at the top of every page.
@@ -15,7 +15,6 @@ import { useNotifications } from "@/hooks/useNotifications";
 export default function Navbar() {
   const { t } = useTranslation();
   const { isAuthenticated, user, logout } = useAuth();
-  const { unreadCount } = useNotifications();
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -79,19 +78,7 @@ export default function Navbar() {
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
 
-            {isAuthenticated && (
-              <Link
-                to="/notifications"
-                className="relative p-2 rounded-lg hover:bg-gray-100 text-gray-600"
-              >
-                <Bell size={18} />
-                {unreadCount > 0 && (
-                  <span className="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-500 rounded-full">
-                    {unreadCount > 9 ? "9+" : unreadCount}
-                  </span>
-                )}
-              </Link>
-            )}
+            {isAuthenticated && <NotificationBell />}
 
             {isAuthenticated ? (
               <div className="hidden md:flex items-center gap-3">
