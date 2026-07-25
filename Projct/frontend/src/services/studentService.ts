@@ -31,6 +31,11 @@ const studentService = {
     return data;
   },
 
+  getResume: async (id: string): Promise<Resume> => {
+    const { data } = await api.get(`/resumes/${id}`);
+    return data;
+  },
+
   createResume: async (payload: Partial<Resume>): Promise<Resume> => {
     const { data } = await api.post("/resumes", payload);
     return data;

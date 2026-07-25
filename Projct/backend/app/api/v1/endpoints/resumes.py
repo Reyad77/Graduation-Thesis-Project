@@ -1,58 +1,116 @@
 """
-Resume management endpoints for students.
-
-Students can create, read, update, and delete their resumes, upload
-certificates, and set a default resume.
+Resume management endpoints (student-only).
 """
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException, status
+
+from app.core.dependencies import get_current_student
+from app.models.resume import ResumeCreateRequest, ResumeUpdateRequest
+from app.services.student_service import ResumeService
 
 router = APIRouter()
+_resume_svc = ResumeService()
 
+
+def _uid(user: dict) -> str:
+    return user.get("sub", "")
+
+
+def _serialize(obj):
+    if hasattr(obj, "model_dump"):
+        return obj.model_dump(mode="json")
+    return obj
+
+
+# ── List & Get ─────────────────────────────────────────────────────────
 
 @router.get("/")
-async def list_resumes():
+def list_resumes(user: dict = Depends(get_current_student)):
     """Get all resumes of the current student."""
-    return {"message": "Not implemented yet"}
+    resumes = _resume_svc.get_student_resumes(_uid(user))
+    return [_serialize(r) for r in resumes]
 
 
 @router.get("/{resume_id}")
-async def get_resume(resume_id: str):
-    """Get a specific resume by ID."""
-    return {"message": "Not implemented yet"}
+def get_resume(resume_id: str, user: dict = Depends(get_current_student)):
+    """Get a specific resume."""
+    r = _resume_svc.get_by_id(resume_id)
+    if not r or str(getattr(r, "studentUid", "")) != _uid(user):
+        raise HTTPException(status_code=404, detail="Resume not found.")
+    return _serialize(r)
 
 
-@router.post("/")
-async def create_resume():
+# ── Create & Update ────────────────────────────────────────────────────
+
+@router.post("/", status_code=status.HTTP_201_CREATED)
+def create_resume(
+    payload: ResumeCreateRequest,
+    user: dict = Depends(get_current_student),
+):
     """Create a new resume."""
-    return {"message": "Not implemented yet"}
+    resume = _resume_svc.create_resume(_uid(user), payload)
+    return _serialize(resume)
 
 
 @router.put("/{resume_id}")
-async def update_resume(resume_id: str):
+def update_resume(
+    resume_id: str,
+    payload: ResumeUpdateRequest,
+    user: dict = Depends(get_current_student),
+):
     """Update an existing resume."""
-    return {"message": "Not implemented yet"}
+    updated = _resume_svc.update_resume(resume_id, _uid(user), payload)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Resume not found.")
+    return _serialize(updated)
 
 
 @router.delete("/{resume_id}")
-async def delete_resume(resume_id: str):
+def delete_resume(resume_id: str, user: dict = Depends(get_current_student)):
     """Delete a resume."""
-    return {"message": "Not implemented yet"}
+    ok = _resume_svc.delete_resume(resume_id, _uid(user))
+    if not ok:
+        raise HTTPException(status_code=404, detail="Resume not found.")
+    return {"message": "Resume deleted."}
 
+
+# ── Certificates ──────────────────────────────────────────────────────
 
 @router.post("/{resume_id}/certificate")
-async def upload_certificate(resume_id: str):
-    """Upload a certificate to a resume."""
-    return {"message": "Not implemented yet"}
+def upload_certificate(
+    resume_id: str,
+    cert_url: str,
+    user: dict = Depends(get_current_student),
+):
+    """Add a certificate URL to a resume."""
+    ok = _resume_svc.add_certificate(resume_id, cert_url)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Resume not found.")
+    return {"message": "Certificate added.", "url": cert_url}
 
 
-@router.delete("/{resume_id}/certificate/{cert_id}")
-async def delete_certificate(resume_id: str, cert_id: str):
+@router.delete("/{resume_id}/certificate/{cert_url:path}")
+def delete_certificate(
+    resume_id: str,
+    cert_url: str,
+    user: dict = Depends(get_current_student),
+):
     """Remove a certificate from a resume."""
-    return {"message": "Not implemented yet"}
+    ok = _resume_svc.remove_certificate(resume_id, cert_url)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Resume not found.")
+    return {"message": "Certificate removed."}
 
+
+# ── Default ────────────────────────────────────────────────────────────
 
 @router.put("/{resume_id}/set-default")
-async def set_default_resume(resume_id: str):
-    """Set a resume as the default for job applications."""
-    return {"message": "Not implemented yet"}
+def set_default_resume(
+    resume_id: str,
+    user: dict = Depends(get_current_student),
+):
+    """Set this resume as the default."""
+    ok = _resume_svc.set_default(resume_id, _uid(user))
+    if not ok:
+        raise HTTPException(status_code=404, detail="Resume not found.")
+    return {"message": "Default resume set."}
