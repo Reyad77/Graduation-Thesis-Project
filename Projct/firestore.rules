@@ -1,0 +1,119 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Users collection ────────────────────────────────────────────
+    // Users can read their own profile; admins can read/write all
+    match /users/{uid} {
+      allow read: if request.auth != null
+        && (request.auth.uid == uid || getRole(request.auth.uid) == 'admin');
+      allow create: if request.auth != null
+        && request.auth.uid == uid;
+      allow update: if request.auth != null
+        && (request.auth.uid == uid || getRole(request.auth.uid) == 'admin');
+      allow delete: if request.auth != null
+        && getRole(request.auth.uid) == 'admin';
+    }
+
+    // ── Students collection ─────────────────────────────────────────
+    match /students/{uid} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.auth.uid == uid;
+      allow update: if request.auth != null
+        && (request.auth.uid == uid || getRole(request.auth.uid) == 'admin');
+      allow delete: if request.auth != null
+        && getRole(request.auth.uid) == 'admin';
+    }
+
+    // ── Enterprises collection ──────────────────────────────────────
+    match /enterprises/{uid} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.auth.uid == uid;
+      allow update: if request.auth != null
+        && (request.auth.uid == uid || getRole(request.auth.uid) == 'admin');
+      allow delete: if request.auth != null
+        && getRole(request.auth.uid) == 'admin';
+    }
+
+    // ── Jobs collection ─────────────────────────────────────────────
+    match /jobs/{jobId} {
+      allow read: if true;  // Public: anyone can browse jobs
+      allow create: if request.auth != null
+        && getRole(request.auth.uid) == 'enterprise';
+      allow update: if request.auth != null
+        && (isJobOwner(request.auth.uid, resource)
+            || getRole(request.auth.uid) == 'admin');
+      allow delete: if request.auth != null
+        && (isJobOwner(request.auth.uid, resource)
+            || getRole(request.auth.uid) == 'admin');
+    }
+
+    // ── Applications collection ─────────────────────────────────────
+    match /applications/{appId} {
+      allow read: if request.auth != null
+        && (resource.data.studentUid == request.auth.uid
+            || isJobOwner(request.auth.uid, resource)
+            || getRole(request.auth.uid) == 'admin');
+      allow create: if request.auth != null
+        && getRole(request.auth.uid) == 'student';
+      allow update: if request.auth != null
+        && (isJobOwner(request.auth.uid, resource)
+            || getRole(request.auth.uid) == 'admin');
+      allow delete: if request.auth != null
+        && getRole(request.auth.uid) == 'admin';
+    }
+
+    // ── Resumes collection ──────────────────────────────────────────
+    match /resumes/{resumeId} {
+      allow read: if request.auth != null
+        && (resource.data.studentUid == request.auth.uid
+            || getRole(request.auth.uid) == 'admin'
+            || isEnterpriseViewingResume(request.auth.uid, resource));
+      allow create: if request.auth != null
+        && getRole(request.auth.uid) == 'student';
+      allow update, delete: if request.auth != null
+        && resource.data.studentUid == request.auth.uid;
+    }
+
+    // ── Notifications collection ────────────────────────────────────
+    match /notifications/{notifId} {
+      allow read: if request.auth != null
+        && resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null
+        && resource.data.userId == request.auth.uid;
+    }
+
+    // ── Announcements & Banners ─────────────────────────────────────
+    match /announcements/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && getRole(request.auth.uid) == 'admin';
+    }
+
+    match /banners/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && getRole(request.auth.uid) == 'admin';
+    }
+
+    // ── Helper functions ────────────────────────────────────────────
+
+    /// Returns the role stored in the user's Firestore profile.
+    function getRole(uid) {
+      return get(/databases/$(database)/documents/users/$(uid)).data.role;
+    }
+
+    /// True if the given uid owns the job referenced by the application.
+    function isJobOwner(uid, app) {
+      let job = get(/databases/$(database)/documents/jobs/$(app.data.jobId));
+      return job != null && job.data.enterpriseUid == uid;
+    }
+
+    /// True if enterprise is viewing a resume from one of their job applications.
+    function isEnterpriseViewingResume(uid, resume) {
+      return getRole(uid) == 'enterprise';
+    }
+  }
+}

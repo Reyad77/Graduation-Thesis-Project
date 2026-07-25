@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import NotificationsPage from "./pages/Notifications";
+import NotFound from "./pages/NotFound";
 
 // Student pages
 import StudentDashboard from "./pages/student/Dashboard";
@@ -85,6 +86,9 @@ export default function App() {
           <Route path="admin/banners" element={<AdminBannerManagement />} />
           <Route path="admin/announcements" element={<AdminAnnouncements />} />
         </Route>
+
+        {/* ── 404 catch-all ──────────────────────────── */}
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );
