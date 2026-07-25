@@ -7,6 +7,7 @@ import { Toaster } from "react-hot-toast";
 import App from "./App";
 import { AuthProvider } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import ErrorBoundary from "./components/common/ErrorBoundary";
 
 import "./i18n";
 import "./index.css";
@@ -26,7 +27,9 @@ createRoot(document.getElementById("root")!).render(
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <LanguageProvider>
-            <App />
+            <ErrorBoundary>
+              <App />
+            </ErrorBoundary>
             <Toaster
               position="top-right"
               toastOptions={{
