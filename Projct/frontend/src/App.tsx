@@ -58,6 +58,7 @@ export default function App() {
         {/* ── Student-only routes ────────────────────────── */}
         <Route element={<ProtectedRoute allowedRole="student" />}>
           <Route path="student" element={<StudentDashboard />} />
+          <Route path="student/dashboard" element={<StudentDashboard />} />
           <Route path="student/profile" element={<StudentProfile />} />
           <Route path="student/resume/new" element={<StudentResumeForm />} />
           <Route path="student/resume/:id/edit" element={<StudentResumeForm />} />
@@ -68,6 +69,7 @@ export default function App() {
         {/* ── Enterprise-only routes ─────────────────────── */}
         <Route element={<ProtectedRoute allowedRole="enterprise" />}>
           <Route path="enterprise" element={<EnterpriseDashboard />} />
+          <Route path="enterprise/dashboard" element={<EnterpriseDashboard />} />
           <Route path="enterprise/register" element={<EnterpriseRegistration />} />
           <Route path="enterprise/profile" element={<EnterpriseProfile />} />
           <Route path="enterprise/post-job" element={<PostJob />} />

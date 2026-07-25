@@ -11,11 +11,31 @@ export default function EnterpriseDashboard() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [error, setError] = useState("");
+
   useEffect(() => {
-    enterpriseService.getJobs().then(j => setJobs(Array.isArray(j)?j:[])).finally(()=>setIsLoading(false));
+    enterpriseService.getJobs()
+      .then(j => setJobs(Array.isArray(j)?j:[]))
+      .catch(() => setError("Failed to load dashboard data."))
+      .finally(() => setIsLoading(false));
   }, []);
 
-  if(isLoading) return <LoadingSpinner fullPage />;
+  if (isLoading) return <LoadingSpinner fullPage />;
+
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold">{t("navigation.dashboard")}</h1>
+        <div className="card mt-6 text-center">
+          <p className="text-red-500 mb-4">{error}</p>
+          <p className="text-sm text-gray-500 mb-4">
+            Make sure your enterprise profile is set up. If you just registered, complete your company profile first.
+          </p>
+          <Link to="/enterprise/register" className="btn-primary">Complete Profile</Link>
+        </div>
+      </div>
+    );
+  }
 
   const active = jobs.filter(j=>j.status==="active").length;
   const totalViews = jobs.reduce((s,j)=>s+(j.views||0), 0);
