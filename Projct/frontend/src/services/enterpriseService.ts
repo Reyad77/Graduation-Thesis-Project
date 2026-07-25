@@ -49,7 +49,9 @@ const enterpriseService = {
     id: string,
     status: string,
   ): Promise<Job> => {
-    const { data } = await api.patch(`/enterprise/jobs/${id}/status`, { status });
+    const { data } = await api.patch(`/enterprise/jobs/${id}/status`, null, {
+      params: { status },
+    });
     return data;
   },
 
