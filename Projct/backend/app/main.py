@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.router import api_router
 from app.core.config import settings
+from app.middleware.validation import RequestLoggingMiddleware, SanitizationMiddleware
 
 # ── Application factory ────────────────────────────────────────────────
 app = FastAPI(
@@ -29,6 +30,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ── Request logging (all environments) ─────────────────────────────────
+app.add_middleware(RequestLoggingMiddleware)
+
+# ── XSS sanitization (production recommended) ─────────────────────────
+if not settings.DEBUG:
+    app.add_middleware(SanitizationMiddleware)
 
 # ── Include routers ────────────────────────────────────────────────────
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)
