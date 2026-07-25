@@ -1,0 +1,1257 @@
+PROJECT OVERVIEW
+You are Claude Code, an expert full-stack developer. You will help me build a Part-Time Job Information Platform for College Students as my final year thesis project. The system has three user types: Students, Enterprise Users, and Platform Administrators.
+
+IMPORTANT: This project is for WEB APPLICATION ONLY (both desktop and mobile-responsive). Android app will be developed later as a separate phase.
+
+CRITICAL WORKFLOW INSTRUCTION
+PAUSE BEFORE EACH COMMIT: After completing each phase's tasks, you MUST:
+
+STOP and display a clear summary of what was completed
+
+Provide the exact git commands I should run to commit the changes
+
+Give a detailed commit message (with proper conventional commit format)
+
+List the files changed and what was added/modified
+
+Explain what will happen in the next phase
+
+Wait for my confirmation before proceeding to the next phase
+
+Format for each phase completion:
+
+text
+=== PHASE [X] COMPLETED ===
+
+✅ WHAT WAS COMPLETED:
+- [List all completed tasks with bullet points]
+
+📁 FILES MODIFIED/CREATED:
+- [List all files with brief description]
+
+🔧 COMMANDS TO RUN:
+git add .
+git commit -m "[type]: [detailed commit message]"
+
+📝 COMMIT MESSAGE:
+[type](scope): [description]
+[Detailed body explaining what was implemented]
+
+⏭️ NEXT PHASE:
+[Brief description of what will be implemented next]
+
+❓ PLEASE CONFIRM: Should I proceed to Phase [X+1]?
+TECHNICAL STACK
+Backend
+Framework: FastAPI (Python 3.10+)
+
+Database: Firebase Firestore (NoSQL, free tier)
+
+Authentication: Firebase Authentication (with Firebase Admin SDK)
+
+Storage: Firebase Storage
+
+Validation: Pydantic models
+
+API Documentation: Auto-generated Swagger UI (FastAPI built-in)
+
+CORS: Configured for web app
+
+Environment: python-dotenv
+
+Frontend
+Framework: React with TypeScript
+
+Build Tool: Vite
+
+Styling: TailwindCSS
+
+UI Components: Shadcn/UI
+
+State Management: React Context API + React Query
+
+Routing: React Router v6
+
+HTTP Client: Axios
+
+Internationalization: i18next with react-i18next
+
+MULTI-LANGUAGE SUPPORT
+Required Languages: English, Chinese, Bengali, Hindi, Arabic, Dutch, French
+
+Implementation:
+
+Use i18next for both frontend and backend
+
+All UI text must be translatable
+
+Language switcher in header
+
+Default language: English
+
+RTL support for Arabic
+
+Backend error messages also localized
+
+Language preference stored in user profile
+
+DATABASE SCHEMA (Firestore Collections)
+1. Users Collection
+javascript
+{
+  uid: string,                  // Firebase Auth UID
+  email: string,
+  role: 'student' | 'enterprise' | 'admin',
+  displayName: string,
+  phone: string,
+  preferredLanguage: string,    // For UI localization
+  createdAt: timestamp,
+  updatedAt: timestamp,
+  isActive: boolean
+}
+2. Students Collection
+javascript
+{
+  uid: string,                  // References Users.uid
+  studentId: string,
+  major: string,
+  grade: string,               // e.g., "Freshman", "Sophomore", etc.
+  year: number,                // 1, 2, 3, 4
+  idCardPhoto: string,         // Firebase Storage URL
+  isVerified: boolean,
+  verifiedAt: timestamp,
+  verifiedBy: string,          // Admin uid
+  skills: string[],            // Extracted from resume
+  availability: string,        // e.g., "Weekends", "Weekdays evening"
+  createdAt: timestamp,
+  updatedAt: timestamp
+}
+3. Enterprises Collection
+javascript
+{
+  uid: string,                  // References Users.uid
+  companyName: string,
+  businessLicense: string,     // Storage URL
+  storePhotos: string[],       // Storage URLs
+  description: string,
+  contactPerson: string,
+  contactPhone: string,
+  address: string,
+  website: string,
+  isApproved: boolean,
+  approvedAt: timestamp,
+  approvedBy: string,          // Admin uid
+  isBanned: boolean,
+  banReason: string,
+  createdAt: timestamp,
+  updatedAt: timestamp
+}
+4. Resumes Collection
+javascript
+{
+  id: string,                   // Auto-generated
+  studentUid: string,          // References Students.uid
+  major: string,
+  grade: string,
+  skills: string[],
+  availableHours: string,      // e.g., "20 hours/week", "Weekends only"
+  experience: string,          // Text description of previous experience
+  certificates: string[],      // Storage URLs
+  isDefault: boolean,
+  createdAt: timestamp,
+  updatedAt: timestamp
+}
+5. Jobs Collection
+javascript
+{
+  id: string,                   // Auto-generated
+  enterpriseUid: string,       // References Enterprises.uid
+  title: string,
+  responsibilities: string,
+  salary: string,              // e.g., "$15/hour" or "Monthly salary"
+  workingHours: string,        // e.g., "9 AM - 5 PM"
+  quota: number,               // Number of positions
+  location: string,
+  skillRequirements: string[],
+  duration: string,            // e.g., "3 months", "Summer internship"
+  status: 'pending' | 'active' | 'paused' | 'expired' | 'rejected',
+  views: number,
+  applicationsCount: number,
+  postedAt: timestamp,
+  expiresAt: timestamp,        // Auto-expiry after 30 days
+  updatedAt: timestamp,
+  auditNotes: string,          // Admin notes
+  auditedBy: string,          // Admin uid
+  auditAt: timestamp
+}
+6. Applications Collection
+javascript
+{
+  id: string,                   // Auto-generated
+  jobId: string,               // References Jobs.id
+  studentUid: string,          // References Students.uid
+  resumeId: string,            // References Resumes.id
+  status: 'pending' | 'reviewing' | 'interview' | 'hired' | 'rejected' | 'completed',
+  interviewSchedule: {
+    date: timestamp,
+    location: string,
+    notes: string,
+    sentAt: timestamp
+  },
+  appliedAt: timestamp,
+  updatedAt: timestamp,
+  notes: string,              // Additional notes from enterprise
+  hiredAt: timestamp,
+  completedAt: timestamp
+}
+7. Announcements Collection
+javascript
+{
+  id: string,                   // Auto-generated
+  title: string,
+  content: string,
+  type: 'announcement' | 'article',
+  bannerImage: string,         // Storage URL (optional)
+  isActive: boolean,
+  priority: number,            // For ordering
+  createdAt: timestamp,
+  createdBy: string,           // Admin uid
+  updatedAt: timestamp
+}
+8. Banners Collection
+javascript
+{
+  id: string,                   // Auto-generated
+  imageUrl: string,            // Storage URL
+  link: string,                // Where the banner redirects
+  title: string,
+  order: number,               // Display order
+  isActive: boolean,
+  createdAt: timestamp,
+  updatedAt: timestamp
+}
+9. Notifications Collection
+javascript
+{
+  id: string,                   // Auto-generated
+  userId: string,              // Recipient uid
+  type: 'application_status' | 'interview_scheduled' | 'job_approved' | 'system',
+  title: string,
+  message: string,
+  isRead: boolean,
+  data: object,                // Additional data (e.g., applicationId)
+  createdAt: timestamp
+}
+BACKEND API STRUCTURE (FastAPI)
+API Endpoints Design
+Authentication Endpoints
+text
+POST   /api/v1/auth/register          # Register new user
+POST   /api/v1/auth/login             # Login user
+POST   /api/v1/auth/logout            # Logout user
+POST   /api/v1/auth/refresh-token     # Refresh access token
+POST   /api/v1/auth/forgot-password   # Send password reset email
+POST   /api/v1/auth/reset-password    # Reset password with token
+GET    /api/v1/auth/verify-email      # Verify email with token
+GET    /api/v1/auth/me                # Get current user info
+Student Endpoints
+text
+GET    /api/v1/students/profile               # Get student profile
+PUT    /api/v1/students/profile               # Update student profile
+POST   /api/v1/students/verify-id             # Upload student ID for verification
+GET    /api/v1/students/verification-status   # Get verification status
+GET    /api/v1/students/applications          # Get all applications of student
+GET    /api/v1/students/applications/:id      # Get specific application
+Resume Endpoints
+text
+GET    /api/v1/resumes                 # Get all resumes of current student
+GET    /api/v1/resumes/:id             # Get specific resume
+POST   /api/v1/resumes                 # Create new resume
+PUT    /api/v1/resumes/:id             # Update resume
+DELETE /api/v1/resumes/:id             # Delete resume
+POST   /api/v1/resumes/:id/certificate # Upload certificate
+DELETE /api/v1/resumes/:id/certificate/:certId # Remove certificate
+PUT    /api/v1/resumes/:id/set-default # Set resume as default
+Job Endpoints (Student view)
+text
+GET    /api/v1/jobs                    # List jobs with filters
+GET    /api/v1/jobs/:id                # Get job details
+GET    /api/v1/jobs/:id/check-application # Check if student applied
+POST   /api/v1/jobs/:id/apply         # Apply to job
+GET    /api/v1/jobs/recommended       # Get recommended jobs
+GET    /api/v1/jobs/saved             # Get saved jobs
+POST   /api/v1/jobs/:id/save          # Save job
+DELETE /api/v1/jobs/:id/save          # Unsave job
+Enterprise Job Endpoints
+text
+GET    /api/v1/enterprise/jobs              # Get enterprise's jobs
+POST   /api/v1/enterprise/jobs              # Create new job posting
+PUT    /api/v1/enterprise/jobs/:id          # Update job
+DELETE /api/v1/enterprise/jobs/:id          # Delete job
+PATCH  /api/v1/enterprise/jobs/:id/status   # Update job status
+GET    /api/v1/enterprise/jobs/:id/applications # Get applications for job
+Application Endpoints (Enterprise)
+text
+GET    /api/v1/enterprise/applications              # Get all applications
+GET    /api/v1/enterprise/applications/:id          # Get specific application
+PUT    /api/v1/enterprise/applications/:id/status   # Update application status
+POST   /api/v1/enterprise/applications/:id/interview # Schedule interview
+GET    /api/v1/enterprise/applications/:id/resume   # View student resume
+Admin Endpoints
+text
+# User Management
+GET    /api/v1/admin/users                   # List all users
+GET    /api/v1/admin/users/:uid              # Get user details
+PUT    /api/v1/admin/users/:uid/role         # Update user role
+POST   /api/v1/admin/users/:uid/verify-student # Verify student
+POST   /api/v1/admin/users/:uid/approve-enterprise # Approve enterprise
+POST   /api/v1/admin/users/:uid/ban          # Ban user
+POST   /api/v1/admin/users/:uid/unban        # Unban user
+
+# Job Management
+GET    /api/v1/admin/jobs/pending            # Get pending jobs
+GET    /api/v1/admin/jobs                    # Get all jobs
+POST   /api/v1/admin/jobs/:id/approve        # Approve job
+POST   /api/v1/admin/jobs/:id/reject         # Reject job
+POST   /api/v1/admin/jobs/:id/remove         # Remove job from platform
+
+# Platform Configuration
+GET    /api/v1/admin/banners                 # Get all banners
+POST   /api/v1/admin/banners                 # Create banner
+PUT    /api/v1/admin/banners/:id             # Update banner
+DELETE /api/v1/admin/banners/:id             # Delete banner
+
+GET    /api/v1/admin/announcements           # Get all announcements
+POST   /api/v1/admin/announcements           # Create announcement
+PUT    /api/v1/admin/announcements/:id       # Update announcement
+DELETE /api/v1/admin/announcements/:id       # Delete announcement
+Notification Endpoints
+text
+GET    /api/v1/notifications                 # Get user notifications
+PATCH  /api/v1/notifications/:id/read       # Mark notification as read
+POST   /api/v1/notifications/mark-all-read  # Mark all as read
+DELETE /api/v1/notifications/:id            # Delete notification
+DEVELOPMENT PHASES & COMMIT STRUCTURE
+PHASE 1: PROJECT SETUP & INFRASTRUCTURE
+Goal: Initialize both backend and frontend projects.
+
+Backend Tasks:
+
+Create project structure with Poetry/pipenv
+
+Install FastAPI, Firebase Admin SDK, python-dotenv
+
+Set up Firebase project and get credentials
+
+Create .env file for environment variables
+
+Setup main.py with FastAPI app
+
+Configure CORS middleware
+
+Create Pydantic models for all schemas
+
+Set up Firebase Admin SDK connection
+
+Create base API router structure
+
+Add health check endpoint
+
+Frontend Tasks:
+
+Initialize Vite + React + TypeScript project
+
+Install TailwindCSS and configure
+
+Install Shadcn/UI components
+
+Install React Router, Axios, React Query
+
+Setup i18next with language files
+
+Create environment file (.env)
+
+Setup project folder structure (components, pages, services, hooks, utils, types, contexts)
+
+Configure Axios instance with base URL
+
+Setup React Query client provider
+
+Folder Structure:
+
+text
+backend/
+├── app/
+│   ├── api/
+│   │   ├── v1/
+│   │   │   ├── endpoints/
+│   │   │   │   ├── auth.py
+│   │   │   │   ├── students.py
+│   │   │   │   ├── enterprises.py
+│   │   │   │   ├── jobs.py
+│   │   │   │   ├── applications.py
+│   │   │   │   ├── resumes.py
+│   │   │   │   ├── admin.py
+│   │   │   │   └── notifications.py
+│   │   │   └── router.py
+│   ├── core/
+│   │   ├── config.py
+│   │   ├── firebase.py
+│   │   ├── security.py
+│   │   └── dependencies.py
+│   ├── models/
+│   │   ├── user.py
+│   │   ├── student.py
+│   │   ├── enterprise.py
+│   │   ├── job.py
+│   │   ├── application.py
+│   │   ├── resume.py
+│   │   └── notification.py
+│   ├── services/
+│   │   ├── auth_service.py
+│   │   ├── student_service.py
+│   │   ├── enterprise_service.py
+│   │   ├── job_service.py
+│   │   ├── application_service.py
+│   │   └── notification_service.py
+│   ├── utils/
+│   │   ├── firebase_utils.py
+│   │   └── validators.py
+│   └── main.py
+├── .env
+├── requirements.txt
+└── README.md
+
+frontend/
+├── src/
+│   ├── components/
+│   │   ├── common/
+│   │   │   ├── Layout.tsx
+│   │   │   ├── Navbar.tsx
+│   │   │   ├── Footer.tsx
+│   │   │   ├── LanguageSwitcher.tsx
+│   │   │   └── LoadingSpinner.tsx
+│   │   ├── auth/
+│   │   │   ├── LoginForm.tsx
+│   │   │   └── RegisterForm.tsx
+│   │   ├── student/
+│   │   ├── enterprise/
+│   │   └── admin/
+│   ├── pages/
+│   │   ├── Home.tsx
+│   │   ├── Login.tsx
+│   │   ├── Register.tsx
+│   │   ├── student/
+│   │   ├── enterprise/
+│   │   └── admin/
+│   ├── services/
+│   │   ├── api.ts
+│   │   ├── authService.ts
+│   │   ├── studentService.ts
+│   │   ├── enterpriseService.ts
+│   │   └── adminService.ts
+│   ├── hooks/
+│   │   ├── useAuth.ts
+│   │   └── useNotifications.ts
+│   ├── contexts/
+│   │   ├── AuthContext.tsx
+│   │   └── LanguageContext.tsx
+│   ├── types/
+│   │   └── index.ts
+│   ├── utils/
+│   │   └── constants.ts
+│   └── i18n/
+│       ├── index.ts
+│       └── locales/
+│           ├── en/
+│           ├── zh/
+│           ├── bn/
+│           ├── hi/
+│           ├── ar/
+│           ├── nl/
+│           └── fr/
+├── .env
+├── tailwind.config.js
+├── vite.config.ts
+└── package.json
+PHASE 2: DATABASE INTEGRATION & MODELS
+Goal: Implement Firestore database operations and Pydantic models.
+
+Tasks:
+
+Create Pydantic models for all schemas with validation
+
+Implement Firestore CRUD operations in service layer
+
+Create database utility functions
+
+Setup Firestore indexes for complex queries
+
+Implement data seeding script for testing
+
+Add data validation middleware
+
+Create base repository pattern
+
+Key Files:
+
+backend/app/models/*.py - All Pydantic models
+
+backend/app/services/base_service.py - Base CRUD service
+
+backend/app/core/firebase.py - Firebase initialization
+
+backend/app/utils/firebase_utils.py - Helper functions
+
+PHASE 3: AUTHENTICATION & SECURITY
+Goal: Implement complete authentication system.
+
+Backend Tasks:
+
+Setup Firebase Authentication integration
+
+Implement JWT token verification
+
+Create dependency for current user
+
+Implement role-based authorization
+
+Create password reset flow
+
+Add email verification handling
+
+Setup CORS properly
+
+Add rate limiting
+
+Implement request logging
+
+Frontend Tasks:
+
+Create AuthContext with Firebase Auth
+
+Implement Login and Register pages
+
+Create ProtectedRoute component
+
+Add role-based routing (Student/Enterprise/Admin)
+
+Implement session persistence
+
+Add logout functionality
+
+Create password reset page
+
+Implement email verification page
+
+Key Files:
+
+backend/app/core/security.py - JWT and auth functions
+
+backend/app/core/dependencies.py - Dependency injection
+
+backend/app/api/v1/endpoints/auth.py - Auth endpoints
+
+frontend/src/contexts/AuthContext.tsx - Auth state management
+
+frontend/src/components/ProtectedRoute.tsx - Route protection
+
+frontend/src/pages/Login.tsx, Register.tsx - Auth pages
+
+PHASE 4: STUDENT MODULES
+Goal: Build all features for student users.
+
+Backend Tasks:
+
+Implement student profile CRUD operations
+
+Create student ID verification endpoint
+
+Implement resume CRUD operations
+
+Add certificate upload functionality
+
+Create job browsing with filters endpoint
+
+Implement job application endpoint
+
+Create application status tracking endpoint
+
+Add job saving/favoriting functionality
+
+Frontend Tasks:
+
+Create Student Dashboard
+
+Implement profile management page
+
+Create student ID verification upload
+
+Build Resume creation/editing forms
+
+Create Resume preview component
+
+Implement job listing with filters
+
+Create job detail page
+
+Implement job application flow
+
+Create application history with status badges
+
+Add interview schedule view
+
+Implement saved jobs feature
+
+Components to Build:
+
+frontend/src/pages/student/Dashboard.tsx
+
+frontend/src/pages/student/Profile.tsx
+
+frontend/src/pages/student/ResumeForm.tsx
+
+frontend/src/pages/student/ResumeView.tsx
+
+frontend/src/pages/student/JobList.tsx
+
+frontend/src/pages/student/JobDetail.tsx
+
+frontend/src/pages/student/Applications.tsx
+
+frontend/src/components/student/JobFilter.tsx
+
+frontend/src/components/student/ApplicationStatusBadge.tsx
+
+PHASE 5: ENTERPRISE MODULES
+Goal: Build all features for enterprise users.
+
+Backend Tasks:
+
+Implement enterprise registration with document upload
+
+Create enterprise profile management
+
+Implement job posting CRUD operations
+
+Create job status management (active/paused/expired)
+
+Implement applicant management endpoints
+
+Create application status update functionality
+
+Implement interview scheduling
+
+Add resume viewing permission
+
+Create analytics for job performance
+
+Frontend Tasks:
+
+Create Enterprise Dashboard
+
+Implement enterprise registration with business license upload
+
+Build profile management page
+
+Create job posting form with all required fields
+
+Implement job management list with status filters
+
+Create job edit and repost functionality
+
+Build applicant management list
+
+Create applicant detail view with resume
+
+Implement application status update modals
+
+Create interview scheduling form
+
+Build job analytics dashboard
+
+Components to Build:
+
+frontend/src/pages/enterprise/Dashboard.tsx
+
+frontend/src/pages/enterprise/Registration.tsx
+
+frontend/src/pages/enterprise/Profile.tsx
+
+frontend/src/pages/enterprise/PostJob.tsx
+
+frontend/src/pages/enterprise/ManageJobs.tsx
+
+frontend/src/pages/enterprise/Applicants.tsx
+
+frontend/src/components/enterprise/JobForm.tsx
+
+frontend/src/components/enterprise/ApplicantCard.tsx
+
+frontend/src/components/enterprise/StatusUpdateModal.tsx
+
+frontend/src/components/enterprise/InterviewScheduleModal.tsx
+
+PHASE 6: ADMIN MODULE
+Goal: Build all features for platform administrators.
+
+Backend Tasks:
+
+Implement user management endpoints
+
+Create student verification endpoint
+
+Implement enterprise approval endpoint
+
+Create ban/unban functionality
+
+Implement job audit endpoints
+
+Create banner management endpoints
+
+Implement announcement management endpoints
+
+Add platform statistics endpoints
+
+Frontend Tasks:
+
+Create Admin Dashboard with statistics
+
+Implement user management with filters
+
+Build student verification queue
+
+Create enterprise approval queue
+
+Implement user ban functionality
+
+Build job audit management
+
+Create banner management (add/remove/reorder)
+
+Implement announcement creation/editing
+
+Build article management
+
+Components to Build:
+
+frontend/src/pages/admin/Dashboard.tsx
+
+frontend/src/pages/admin/UserManagement.tsx
+
+frontend/src/pages/admin/StudentVerification.tsx
+
+frontend/src/pages/admin/EnterpriseApproval.tsx
+
+frontend/src/pages/admin/JobAudit.tsx
+
+frontend/src/pages/admin/BannerManagement.tsx
+
+frontend/src/pages/admin/Announcements.tsx
+
+frontend/src/components/admin/VerificationModal.tsx
+
+frontend/src/components/admin/ApprovalModal.tsx
+
+PHASE 7: FRONTEND-BACKEND INTEGRATION
+Goal: Connect all frontend components to backend APIs.
+
+Tasks:
+
+Create service layer for all API calls
+
+Implement React Query hooks for data fetching
+
+Add error handling for all requests
+
+Implement loading states
+
+Create toast notifications for user feedback
+
+Add form validation
+
+Implement file upload for resumes and documents
+
+Create pagination for lists
+
+Add search functionality
+
+Implement data caching strategy
+
+Key Files:
+
+frontend/src/services/*.ts - All API services
+
+frontend/src/hooks/*.ts - Custom hooks for data fetching
+
+frontend/src/components/common/Toast.tsx - Notification component
+
+frontend/src/components/common/FileUpload.tsx - File upload component
+
+PHASE 8: INTERNATIONALIZATION (i18n) COMPLETE IMPLEMENTATION
+Goal: Complete multi-language support across all modules.
+
+Backend Tasks:
+
+Add language support in user profile
+
+Localize API error messages
+
+Create language middleware
+
+Store user language preference
+
+Frontend Tasks:
+
+Complete translation JSON files for all 7 languages
+
+Implement Language Switcher component
+
+Translate all UI text across all pages
+
+Implement RTL support for Arabic
+
+Save user language preference to backend
+
+Add language detection from browser
+
+Localize dates and numbers
+
+Translate form validations
+
+Add language-specific routing if needed
+
+Test all languages
+
+Language Files Structure:
+
+json
+// frontend/src/i18n/locales/en/common.json
+{
+  "navigation": {
+    "home": "Home",
+    "jobs": "Jobs",
+    "applications": "Applications",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot Password?"
+  },
+  "jobs": {
+    "title": "Job Title",
+    "salary": "Salary",
+    "location": "Location",
+    "apply": "Apply Now"
+  },
+  "status": {
+    "pending": "Pending",
+    "reviewing": "Reviewing",
+    "interview": "Interview",
+    "hired": "Hired",
+    "rejected": "Rejected",
+    "completed": "Completed"
+  }
+}
+PHASE 9: NOTIFICATIONS & REALTIME FEATURES
+Goal: Implement notification system.
+
+Backend Tasks:
+
+Create notification service
+
+Implement notification triggers for:
+
+Application status changes
+
+Interview scheduling
+
+Job approval/rejection
+
+Student verification
+
+Enterprise approval
+
+Create notification endpoints
+
+Implement Firestore listeners for real-time updates
+
+Add email notification using Firebase Functions
+
+Frontend Tasks:
+
+Create Notification component
+
+Implement notification bell icon
+
+Create notification list with filtering
+
+Add notification counter
+
+Implement mark as read functionality
+
+Create real-time updates using Firestore listeners
+
+Add toast notifications for real-time events
+
+Components to Build:
+
+frontend/src/components/notifications/NotificationBell.tsx
+
+frontend/src/components/notifications/NotificationList.tsx
+
+frontend/src/components/notifications/NotificationItem.tsx
+
+frontend/src/hooks/useNotifications.ts
+
+PHASE 10: TESTING & QUALITY ASSURANCE
+Goal: Ensure quality and performance.
+
+Backend Tasks:
+
+Write unit tests for all services (pytest)
+
+Write API integration tests
+
+Add validation tests
+
+Implement error handling tests
+
+Test security rules
+
+Performance testing
+
+Load testing
+
+Frontend Tasks:
+
+Write component tests (React Testing Library)
+
+Write integration tests
+
+Implement error boundaries
+
+Add loading skeletons
+
+Performance optimization
+
+Responsive testing
+
+Cross-browser testing
+
+Lighthouse optimization
+
+Key Files:
+
+backend/tests/ - All test files
+
+frontend/src/components/common/ErrorBoundary.tsx
+
+frontend/src/components/common/Skeleton.tsx
+
+PHASE 11: DEPLOYMENT & DOCUMENTATION
+Goal: Deploy the application and create documentation.
+
+Backend Tasks:
+
+Deploy FastAPI to Railway/Heroku/Firebase
+
+Configure environment variables
+
+Set up Firebase Security Rules
+
+Create deployment scripts
+
+Setup monitoring and logging
+
+Frontend Tasks:
+
+Build for production
+
+Deploy to Vercel/Netlify
+
+Configure custom domain
+
+Setup analytics
+
+Create 404 page
+
+Documentation:
+
+Write README.md with:
+
+Project overview
+
+Tech stack
+
+Setup instructions
+
+Environment variables
+
+Deployment guide
+
+Write API documentation (Swagger)
+
+Create user manual
+
+Write system architecture document
+
+Create database schema diagram
+
+Write deployment guide
+
+PHASE 12: THESIS DOCUMENTATION PREPARATION
+Goal: Prepare materials for final year thesis.
+
+Tasks:
+
+Create system architecture diagrams
+
+Draw database ER diagrams
+
+Create use case diagrams
+
+Generate sequence diagrams for key flows
+
+Write technical documentation
+
+Create user manual with screenshots
+
+Prepare test cases and results
+
+Document deployment process
+
+Create API documentation
+
+ADDITIONAL REQUIREMENTS
+UI/UX Guidelines
+Color Scheme: Professional, using blue (#2563EB) and white
+
+Typography: Inter font family
+
+Components: Use Shadcn/UI for consistency
+
+Responsive: Fully mobile-responsive design
+
+Loading States: Skeleton loading for all data
+
+Error Handling: User-friendly error messages with actions
+
+Animations: Smooth transitions and micro-interactions
+
+Code Quality Standards
+✅ TypeScript strict mode enabled
+
+✅ ESLint with recommended rules
+
+✅ Prettier for code formatting
+
+✅ Proper component structure (atomic design)
+
+✅ Meaningful variable and function names
+
+✅ Comments for complex logic
+
+✅ Error boundaries for React components
+
+✅ Proper prop typing
+
+Security Best Practices
+✅ Firebase Security Rules for data access control
+
+✅ Input validation and sanitization
+
+✅ File upload validation (type, size, dimensions)
+
+✅ CORS properly configured
+
+✅ Rate limiting on sensitive endpoints
+
+✅ Environment variables for sensitive data
+
+✅ HTTPS enforced
+
+✅ JWT token validation
+
+✅ Role-based access control (RBAC)
+
+Performance Optimization
+✅ Code splitting with lazy loading
+
+✅ Image optimization
+
+✅ Debouncing for search inputs
+
+✅ Pagination for large datasets
+
+✅ React.memo for expensive components
+
+✅ Proper caching with React Query
+
+✅ Bundle size optimization
+
+✅ CDN for static assets
+
+Firebase Configuration
+Firebase Security Rules for all collections
+
+Firestore indexes for complex queries
+
+Firebase Storage rules for file uploads
+
+Firebase Authentication settings (email/password)
+
+Firebase Functions for serverless operations
+
+EXPECTED DELIVERABLES PER PHASE
+For each phase, I expect:
+
+✅ Working code that can be pushed to GitHub
+
+✅ Brief explanation of what was implemented
+
+✅ Screenshots or demo recordings (for frontend phases)
+
+✅ Testing evidence
+
+✅ Updated documentation
+
+DEVELOPMENT PROCESS
+IMPORTANT:
+
+Complete each phase fully before moving to the next
+
+I will manually test each phase before committing
+
+Each phase should be a separate commit with the specified message
+
+Create pull requests for each phase
+
+Write detailed commit messages explaining changes
+
+GITHUB WORKFLOW
+text
+main
+  └── phase-1-project-setup
+  └── phase-2-database-models
+  └── phase-3-authentication
+  └── phase-4-student-modules
+  └── phase-5-enterprise-modules
+  └── phase-6-admin-modules
+  └── phase-7-integration
+  └── phase-8-internationalization
+  └── phase-9-notifications
+  └── phase-10-testing
+  └── phase-11-deployment
+  └── phase-12-thesis-docs
+ENVIRONMENT VARIABLES
+Backend (.env)
+env
+# Firebase
+FIREBASE_TYPE=service_account
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_PRIVATE_KEY_ID=your-private-key-id
+FIREBASE_PRIVATE_KEY=your-private-key
+FIREBASE_CLIENT_EMAIL=your-client-email
+FIREBASE_CLIENT_ID=your-client-id
+FIREBASE_AUTH_URI=https://accounts.google.com/o/oauth2/auth
+FIREBASE_TOKEN_URI=https://oauth2.googleapis.com/token
+FIREBASE_AUTH_PROVIDER_CERT_URL=https://www.googleapis.com/oauth2/v1/certs
+FIREBASE_CLIENT_CERT_URL=your-client-cert-url
+
+# Security
+SECRET_KEY=your-secret-key
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+# CORS
+CORS_ORIGINS=http://localhost:5173,https://your-domain.com
+
+# Environment
+ENVIRONMENT=development
+DEBUG=True
+Frontend (.env)
+env
+VITE_API_BASE_URL=http://localhost:8000/api/v1
+VITE_FIREBASE_API_KEY=your-firebase-api-key
+VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your-project-id
+VITE_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
+VITE_FIREBASE_APP_ID=your-app-id
+VITE_FIREBASE_MEASUREMENT_ID=your-measurement-id
+DEPENDENCIES
+Backend (requirements.txt)
+text
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+python-dotenv==1.0.0
+firebase-admin==6.4.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-email-validator==2.1.0
+httpx==0.25.1
+pytest==7.4.3
+pytest-asyncio==0.21.1
+Frontend (package.json)
+json
+{
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.20.0",
+    "react-query": "^3.39.3",
+    "axios": "^1.6.2",
+    "i18next": "^23.7.6",
+    "react-i18next": "^13.5.0",
+    "@tanstack/react-query": "^5.12.2",
+    "@shadcn/ui": "^0.0.4",
+    "tailwindcss": "^3.3.6",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
+    "lucide-react": "^0.294.0",
+    "react-hook-form": "^7.48.2",
+    "zod": "^3.22.4",
+    "@hookform/resolvers": "^3.3.2",
+    "react-hot-toast": "^2.4.1",
+    "date-fns": "^2.30.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.55.0",
+    "postcss": "^8.4.32",
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.8"
+  }
+}
+FINAL NOTES
+This is a comprehensive master prompt for building a production-ready web application. Each phase is designed to be completed sequentially with clear deliverables. The project uses modern technologies (FastAPI, React, TypeScript, Firebase) and follows best practices for scalability and maintainability.
+
+Remember:
+
+This is for a final year thesis, so code quality and documentation are crucial
+
+Each phase should be thoroughly tested before committing
+
+Keep the code clean, well-commented, and organized
+
+Follow all security best practices
+
+Maintain consistent coding style
+
+YOU MUST PAUSE AFTER EACH PHASE and wait for me to commit before proceeding
+
+Start with PHASE 1 and confirm you understand all requirements before beginning.

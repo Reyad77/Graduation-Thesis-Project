@@ -1,0 +1,132 @@
+{
+  "app": {
+    "name": "StudentJob Hub",
+    "tagline": "Find Your Perfect Part-Time Job"
+  },
+  "navigation": {
+    "home": "Home",
+    "jobs": "Jobs",
+    "applications": "Applications",
+    "profile": "Profile",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "displayName": "Full Name",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?",
+    "resetPassword": "Reset Password",
+    "sendResetLink": "Send Reset Link",
+    "chooseRole": "I am a...",
+    "student": "Student",
+    "enterprise": "Employer",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?"
+  },
+  "jobs": {
+    "title": "Job Title",
+    "salary": "Salary",
+    "location": "Location",
+    "workingHours": "Working Hours",
+    "duration": "Duration",
+    "quota": "Positions",
+    "skillRequirements": "Required Skills",
+    "responsibilities": "Responsibilities",
+    "apply": "Apply Now",
+    "save": "Save",
+    "unsave": "Remove Saved",
+    "savedJobs": "Saved Jobs",
+    "recommended": "Recommended for You",
+    "noJobs": "No jobs found",
+    "postedAt": "Posted",
+    "expiresAt": "Expires",
+    "views": "Views",
+    "applications": "Applications"
+  },
+  "status": {
+    "pending": "Pending",
+    "reviewing": "Reviewing",
+    "interview": "Interview",
+    "hired": "Hired",
+    "rejected": "Rejected",
+    "completed": "Completed",
+    "active": "Active",
+    "paused": "Paused",
+    "expired": "Expired"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "upload": "Upload",
+    "search": "Search",
+    "filter": "Filter",
+    "clear": "Clear",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "success": "Success",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "noData": "No data available",
+    "viewAll": "View All",
+    "showMore": "Show More",
+    "required": "Required"
+  },
+  "profile": {
+    "editProfile": "Edit Profile",
+    "phone": "Phone",
+    "major": "Major",
+    "grade": "Grade",
+    "year": "Year",
+    "skills": "Skills",
+    "availability": "Availability",
+    "verification": "ID Verification",
+    "verified": "Verified",
+    "notVerified": "Not Verified",
+    "uploadId": "Upload Student ID"
+  },
+  "enterprise": {
+    "companyName": "Company Name",
+    "description": "Description",
+    "contactPerson": "Contact Person",
+    "contactPhone": "Contact Phone",
+    "address": "Address",
+    "website": "Website",
+    "businessLicense": "Business License",
+    "postJob": "Post a Job",
+    "manageJobs": "Manage Jobs",
+    "applicants": "Applicants"
+  },
+  "admin": {
+    "users": "User Management",
+    "verifyStudents": "Verify Students",
+    "approveEnterprises": "Approve Enterprises",
+    "auditJobs": "Audit Jobs",
+    "banners": "Banners",
+    "announcements": "Announcements"
+  },
+  "resume": {
+    "create": "Create Resume",
+    "edit": "Edit Resume",
+    "experience": "Experience",
+    "certificates": "Certificates",
+    "availableHours": "Available Hours",
+    "setDefault": "Set as Default",
+    "noResume": "No resume created yet"
+  },
+  "notification": {
+    "title": "Notifications",
+    "noNotifications": "No notifications",
+    "markAllRead": "Mark all as read",
+    "markRead": "Mark as read"
+  }
+}

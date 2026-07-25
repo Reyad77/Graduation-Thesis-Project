@@ -1,0 +1,132 @@
+{
+  "app": {
+    "name": "StudentJob Hub",
+    "tagline": "Trouvez Votre Emploi à Temps Partiel Idéal"
+  },
+  "navigation": {
+    "home": "Accueil",
+    "jobs": "Emplois",
+    "applications": "Candidatures",
+    "profile": "Profil",
+    "dashboard": "Tableau de bord",
+    "login": "Connexion",
+    "register": "Inscription",
+    "logout": "Déconnexion"
+  },
+  "auth": {
+    "login": "Connexion",
+    "register": "Inscription",
+    "email": "Email",
+    "password": "Mot de passe",
+    "displayName": "Nom complet",
+    "confirmPassword": "Confirmer le mot de passe",
+    "forgotPassword": "Mot de passe oublié ?",
+    "resetPassword": "Réinitialiser le mot de passe",
+    "sendResetLink": "Envoyer le lien",
+    "chooseRole": "Je suis un...",
+    "student": "Étudiant",
+    "enterprise": "Employeur",
+    "noAccount": "Pas encore de compte ?",
+    "haveAccount": "Vous avez déjà un compte ?"
+  },
+  "jobs": {
+    "title": "Intitulé du poste",
+    "salary": "Salaire",
+    "location": "Lieu",
+    "workingHours": "Horaires",
+    "duration": "Durée",
+    "quota": "Nombre de postes",
+    "skillRequirements": "Compétences requises",
+    "responsibilities": "Responsabilités",
+    "apply": "Postuler",
+    "save": "Sauvegarder",
+    "unsave": "Retirer",
+    "savedJobs": "Emplois sauvegardés",
+    "recommended": "Recommandé pour vous",
+    "noJobs": "Aucun emploi trouvé",
+    "postedAt": "Publié",
+    "expiresAt": "Expire",
+    "views": "Vues",
+    "applications": "Candidatures"
+  },
+  "status": {
+    "pending": "En attente",
+    "reviewing": "En cours d'examen",
+    "interview": "Entretien",
+    "hired": "Embauché",
+    "rejected": "Refusé",
+    "completed": "Terminé",
+    "active": "Actif",
+    "paused": "En pause",
+    "expired": "Expiré"
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "upload": "Télécharger",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "clear": "Effacer",
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "success": "Succès",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "next": "Suivant",
+    "submit": "Soumettre",
+    "noData": "Aucune donnée disponible",
+    "viewAll": "Voir tout",
+    "showMore": "Afficher plus",
+    "required": "Requis"
+  },
+  "profile": {
+    "editProfile": "Modifier le profil",
+    "phone": "Téléphone",
+    "major": "Filière",
+    "grade": "Niveau",
+    "year": "Année",
+    "skills": "Compétences",
+    "availability": "Disponibilité",
+    "verification": "Vérification d'identité",
+    "verified": "Vérifié",
+    "notVerified": "Non vérifié",
+    "uploadId": "Télécharger la carte d'étudiant"
+  },
+  "enterprise": {
+    "companyName": "Nom de l'entreprise",
+    "description": "Description",
+    "contactPerson": "Personne à contacter",
+    "contactPhone": "Téléphone",
+    "address": "Adresse",
+    "website": "Site web",
+    "businessLicense": "Licence commerciale",
+    "postJob": "Publier une offre",
+    "manageJobs": "Gérer les offres",
+    "applicants": "Candidats"
+  },
+  "admin": {
+    "users": "Gestion des utilisateurs",
+    "verifyStudents": "Vérifier les étudiants",
+    "approveEnterprises": "Approuver les entreprises",
+    "auditJobs": "Auditer les offres",
+    "banners": "Bannières",
+    "announcements": "Annonces"
+  },
+  "resume": {
+    "create": "Créer un CV",
+    "edit": "Modifier le CV",
+    "experience": "Expérience",
+    "certificates": "Certificats",
+    "availableHours": "Heures disponibles",
+    "setDefault": "Définir par défaut",
+    "noResume": "Aucun CV créé"
+  },
+  "notification": {
+    "title": "Notifications",
+    "noNotifications": "Aucune notification",
+    "markAllRead": "Tout marquer comme lu",
+    "markRead": "Marquer comme lu"
+  }
+}

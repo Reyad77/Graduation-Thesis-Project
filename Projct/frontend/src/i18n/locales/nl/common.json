@@ -1,0 +1,132 @@
+{
+  "app": {
+    "name": "StudentJob Hub",
+    "tagline": "Vind Jouw Perfecte Parttime Baan"
+  },
+  "navigation": {
+    "home": "Home",
+    "jobs": "Vacatures",
+    "applications": "Sollicitaties",
+    "profile": "Profiel",
+    "dashboard": "Dashboard",
+    "login": "Inloggen",
+    "register": "Registreren",
+    "logout": "Uitloggen"
+  },
+  "auth": {
+    "login": "Inloggen",
+    "register": "Registreren",
+    "email": "E-mail",
+    "password": "Wachtwoord",
+    "displayName": "Volledige Naam",
+    "confirmPassword": "Bevestig Wachtwoord",
+    "forgotPassword": "Wachtwoord vergeten?",
+    "resetPassword": "Wachtwoord resetten",
+    "sendResetLink": "Stuur reset link",
+    "chooseRole": "Ik ben een...",
+    "student": "Student",
+    "enterprise": "Werkgever",
+    "noAccount": "Nog geen account?",
+    "haveAccount": "Heb je al een account?"
+  },
+  "jobs": {
+    "title": "Functietitel",
+    "salary": "Salaris",
+    "location": "Locatie",
+    "workingHours": "Werkuren",
+    "duration": "Duur",
+    "quota": "Aantal posities",
+    "skillRequirements": "Vereiste vaardigheden",
+    "responsibilities": "Verantwoordelijkheden",
+    "apply": "Solliciteer nu",
+    "save": "Opslaan",
+    "unsave": "Verwijder opgeslagen",
+    "savedJobs": "Opgeslagen vacatures",
+    "recommended": "Aanbevolen voor jou",
+    "noJobs": "Geen vacatures gevonden",
+    "postedAt": "Geplaatst",
+    "expiresAt": "Verloopt",
+    "views": "Weergaven",
+    "applications": "Sollicitaties"
+  },
+  "status": {
+    "pending": "In behandeling",
+    "reviewing": "In beoordeling",
+    "interview": "Sollicitatiegesprek",
+    "hired": "Aangenomen",
+    "rejected": "Afgewezen",
+    "completed": "Voltooid",
+    "active": "Actief",
+    "paused": "Gepauzeerd",
+    "expired": "Verlopen"
+  },
+  "common": {
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "edit": "Bewerken",
+    "delete": "Verwijderen",
+    "upload": "Uploaden",
+    "search": "Zoeken",
+    "filter": "Filteren",
+    "clear": "Wissen",
+    "loading": "Laden...",
+    "error": "Er is iets misgegaan",
+    "success": "Succes",
+    "confirm": "Bevestigen",
+    "back": "Terug",
+    "next": "Volgende",
+    "submit": "Verzenden",
+    "noData": "Geen gegevens beschikbaar",
+    "viewAll": "Alles bekijken",
+    "showMore": "Meer tonen",
+    "required": "Verplicht"
+  },
+  "profile": {
+    "editProfile": "Profiel bewerken",
+    "phone": "Telefoon",
+    "major": "Studierichting",
+    "grade": "Niveau",
+    "year": "Jaar",
+    "skills": "Vaardigheden",
+    "availability": "Beschikbaarheid",
+    "verification": "ID-verificatie",
+    "verified": "Geverifieerd",
+    "notVerified": "Niet geverifieerd",
+    "uploadId": "Upload studentenkaart"
+  },
+  "enterprise": {
+    "companyName": "Bedrijfsnaam",
+    "description": "Beschrijving",
+    "contactPerson": "Contactpersoon",
+    "contactPhone": "Telefoonnummer",
+    "address": "Adres",
+    "website": "Website",
+    "businessLicense": "Zakelijke licentie",
+    "postJob": "Vacature plaatsen",
+    "manageJobs": "Vacatures beheren",
+    "applicants": "Sollicitanten"
+  },
+  "admin": {
+    "users": "Gebruikersbeheer",
+    "verifyStudents": "Studenten verifiëren",
+    "approveEnterprises": "Bedrijven goedkeuren",
+    "auditJobs": "Vacatures controleren",
+    "banners": "Banners",
+    "announcements": "Aankondigingen"
+  },
+  "resume": {
+    "create": "CV aanmaken",
+    "edit": "CV bewerken",
+    "experience": "Ervaring",
+    "certificates": "Certificaten",
+    "availableHours": "Beschikbare uren",
+    "setDefault": "Als standaard instellen",
+    "noResume": "Nog geen CV aangemaakt"
+  },
+  "notification": {
+    "title": "Meldingen",
+    "noNotifications": "Geen meldingen",
+    "markAllRead": "Alles als gelezen markeren",
+    "markRead": "Als gelezen markeren"
+  }
+}

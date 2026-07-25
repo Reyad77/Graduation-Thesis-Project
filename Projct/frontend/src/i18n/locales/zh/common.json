@@ -1,0 +1,132 @@
+{
+  "app": {
+    "name": "学生兼职平台",
+    "tagline": "找到你的理想兼职工作"
+  },
+  "navigation": {
+    "home": "首页",
+    "jobs": "工作",
+    "applications": "申请",
+    "profile": "个人资料",
+    "dashboard": "仪表板",
+    "login": "登录",
+    "register": "注册",
+    "logout": "退出"
+  },
+  "auth": {
+    "login": "登录",
+    "register": "注册",
+    "email": "邮箱",
+    "password": "密码",
+    "displayName": "姓名",
+    "confirmPassword": "确认密码",
+    "forgotPassword": "忘记密码？",
+    "resetPassword": "重置密码",
+    "sendResetLink": "发送重置链接",
+    "chooseRole": "我是...",
+    "student": "学生",
+    "enterprise": "雇主",
+    "noAccount": "还没有账户？",
+    "haveAccount": "已有账户？"
+  },
+  "jobs": {
+    "title": "职位名称",
+    "salary": "薪资",
+    "location": "地点",
+    "workingHours": "工作时间",
+    "duration": "时长",
+    "quota": "招聘人数",
+    "skillRequirements": "技能要求",
+    "responsibilities": "工作职责",
+    "apply": "立即申请",
+    "save": "收藏",
+    "unsave": "取消收藏",
+    "savedJobs": "已收藏工作",
+    "recommended": "推荐给你",
+    "noJobs": "暂无工作",
+    "postedAt": "发布时间",
+    "expiresAt": "截止日期",
+    "views": "浏览",
+    "applications": "申请"
+  },
+  "status": {
+    "pending": "待审核",
+    "reviewing": "审核中",
+    "interview": "面试",
+    "hired": "已录用",
+    "rejected": "已拒绝",
+    "completed": "已完成",
+    "active": "进行中",
+    "paused": "已暂停",
+    "expired": "已过期"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "edit": "编辑",
+    "delete": "删除",
+    "upload": "上传",
+    "search": "搜索",
+    "filter": "筛选",
+    "clear": "清除",
+    "loading": "加载中...",
+    "error": "出了点问题",
+    "success": "成功",
+    "confirm": "确认",
+    "back": "返回",
+    "next": "下一步",
+    "submit": "提交",
+    "noData": "暂无数据",
+    "viewAll": "查看全部",
+    "showMore": "显示更多",
+    "required": "必填"
+  },
+  "profile": {
+    "editProfile": "编辑资料",
+    "phone": "电话",
+    "major": "专业",
+    "grade": "年级",
+    "year": "学年",
+    "skills": "技能",
+    "availability": "可用时间",
+    "verification": "身份验证",
+    "verified": "已验证",
+    "notVerified": "未验证",
+    "uploadId": "上传学生证"
+  },
+  "enterprise": {
+    "companyName": "公司名称",
+    "description": "公司简介",
+    "contactPerson": "联系人",
+    "contactPhone": "联系电话",
+    "address": "地址",
+    "website": "网站",
+    "businessLicense": "营业执照",
+    "postJob": "发布工作",
+    "manageJobs": "管理工作",
+    "applicants": "申请人"
+  },
+  "admin": {
+    "users": "用户管理",
+    "verifyStudents": "学生验证",
+    "approveEnterprises": "企业审批",
+    "auditJobs": "工作审核",
+    "banners": "横幅管理",
+    "announcements": "公告管理"
+  },
+  "resume": {
+    "create": "创建简历",
+    "edit": "编辑简历",
+    "experience": "工作经验",
+    "certificates": "证书",
+    "availableHours": "可用时间",
+    "setDefault": "设为默认",
+    "noResume": "尚未创建简历"
+  },
+  "notification": {
+    "title": "通知",
+    "noNotifications": "暂无通知",
+    "markAllRead": "全部标记为已读",
+    "markRead": "标记为已读"
+  }
+}

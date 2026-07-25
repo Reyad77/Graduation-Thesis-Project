@@ -1,0 +1,132 @@
+{
+  "app": {
+    "name": "منصة الطالب للوظائف",
+    "tagline": "اعثر على وظيفتك المثالية بدوام جزئي"
+  },
+  "navigation": {
+    "home": "الرئيسية",
+    "jobs": "الوظائف",
+    "applications": "الطلبات",
+    "profile": "الملف الشخصي",
+    "dashboard": "لوحة التحكم",
+    "login": "تسجيل الدخول",
+    "register": "إنشاء حساب",
+    "logout": "تسجيل الخروج"
+  },
+  "auth": {
+    "login": "تسجيل الدخول",
+    "register": "إنشاء حساب",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "displayName": "الاسم الكامل",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "resetPassword": "إعادة تعيين كلمة المرور",
+    "sendResetLink": "إرسال رابط التعيين",
+    "chooseRole": "أنا...",
+    "student": "طالب",
+    "enterprise": "صاحب عمل",
+    "noAccount": "ليس لديك حساب؟",
+    "haveAccount": "لديك حساب بالفعل؟"
+  },
+  "jobs": {
+    "title": "المسمى الوظيفي",
+    "salary": "الراتب",
+    "location": "الموقع",
+    "workingHours": "ساعات العمل",
+    "duration": "المدة",
+    "quota": "عدد الشواغر",
+    "skillRequirements": "المهارات المطلوبة",
+    "responsibilities": "المسؤوليات",
+    "apply": "قدم الآن",
+    "save": "حفظ",
+    "unsave": "إلغاء الحفظ",
+    "savedJobs": "الوظائف المحفوظة",
+    "recommended": "موصى بها لك",
+    "noJobs": "لا توجد وظائف",
+    "postedAt": "نُشرت",
+    "expiresAt": "تنتهي",
+    "views": "مشاهدة",
+    "applications": "طلب"
+  },
+  "status": {
+    "pending": "قيد الانتظار",
+    "reviewing": "قيد المراجعة",
+    "interview": "مقابلة",
+    "hired": "تم التوظيف",
+    "rejected": "مرفوض",
+    "completed": "مكتمل",
+    "active": "نشط",
+    "paused": "متوقف",
+    "expired": "منتهي"
+  },
+  "common": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "upload": "رفع",
+    "search": "بحث",
+    "filter": "تصفية",
+    "clear": "مسح",
+    "loading": "جاري التحميل...",
+    "error": "حدث خطأ ما",
+    "success": "تم بنجاح",
+    "confirm": "تأكيد",
+    "back": "رجوع",
+    "next": "التالي",
+    "submit": "إرسال",
+    "noData": "لا توجد بيانات",
+    "viewAll": "عرض الكل",
+    "showMore": "عرض المزيد",
+    "required": "مطلوب"
+  },
+  "profile": {
+    "editProfile": "تعديل الملف الشخصي",
+    "phone": "الهاتف",
+    "major": "التخصص",
+    "grade": "المستوى",
+    "year": "السنة",
+    "skills": "المهارات",
+    "availability": "أوقات التفرغ",
+    "verification": "التحقق من الهوية",
+    "verified": "تم التحقق",
+    "notVerified": "لم يتم التحقق",
+    "uploadId": "رفع البطاقة الجامعية"
+  },
+  "enterprise": {
+    "companyName": "اسم الشركة",
+    "description": "الوصف",
+    "contactPerson": "الشخص المسؤول",
+    "contactPhone": "هاتف الاتصال",
+    "address": "العنوان",
+    "website": "الموقع الإلكتروني",
+    "businessLicense": "الرخصة التجارية",
+    "postJob": "نشر وظيفة",
+    "manageJobs": "إدارة الوظائف",
+    "applicants": "المتقدمون"
+  },
+  "admin": {
+    "users": "إدارة المستخدمين",
+    "verifyStudents": "التحقق من الطلاب",
+    "approveEnterprises": "الموافقة على الشركات",
+    "auditJobs": "مراجعة الوظائف",
+    "banners": "اللافتات",
+    "announcements": "الإعلانات"
+  },
+  "resume": {
+    "create": "إنشاء سيرة ذاتية",
+    "edit": "تعديل السيرة الذاتية",
+    "experience": "الخبرة",
+    "certificates": "الشهادات",
+    "availableHours": "الساعات المتاحة",
+    "setDefault": "تعيين كافتراضي",
+    "noResume": "لم يتم إنشاء سيرة ذاتية بعد"
+  },
+  "notification": {
+    "title": "الإشعارات",
+    "noNotifications": "لا توجد إشعارات",
+    "markAllRead": "تحديد الكل كمقروء",
+    "markRead": "تحديد كمقروء"
+  }
+}

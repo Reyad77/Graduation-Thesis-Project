@@ -1,0 +1,132 @@
+{
+  "app": {
+    "name": "स्टूडेंटजॉब हब",
+    "tagline": "अपनी आदर्श पार्ट-टाइम नौकरी खोजें"
+  },
+  "navigation": {
+    "home": "होम",
+    "jobs": "नौकरियाँ",
+    "applications": "आवेदन",
+    "profile": "प्रोफ़ाइल",
+    "dashboard": "डैशबोर्ड",
+    "login": "लॉगिन",
+    "register": "रजिस्टर",
+    "logout": "लॉगआउट"
+  },
+  "auth": {
+    "login": "लॉगिन",
+    "register": "रजिस्टर",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "displayName": "पूरा नाम",
+    "confirmPassword": "पासवर्ड की पुष्टि करें",
+    "forgotPassword": "पासवर्ड भूल गए?",
+    "resetPassword": "पासवर्ड रीसेट",
+    "sendResetLink": "रीसेट लिंक भेजें",
+    "chooseRole": "मैं एक...",
+    "student": "छात्र",
+    "enterprise": "नियोक्ता",
+    "noAccount": "खाता नहीं है?",
+    "haveAccount": "पहले से खाता है?"
+  },
+  "jobs": {
+    "title": "पद का नाम",
+    "salary": "वेतन",
+    "location": "स्थान",
+    "workingHours": "काम के घंटे",
+    "duration": "अवधि",
+    "quota": "पदों की संख्या",
+    "skillRequirements": "आवश्यक कौशल",
+    "responsibilities": "जिम्मेदारियाँ",
+    "apply": "अभी आवेदन करें",
+    "save": "सहेजें",
+    "unsave": "सहेजें हटाएं",
+    "savedJobs": "सहेजी गई नौकरियाँ",
+    "recommended": "आपके लिए अनुशंसित",
+    "noJobs": "कोई नौकरी नहीं मिली",
+    "postedAt": "प्रकाशित",
+    "expiresAt": "समाप्त",
+    "views": "दृश्य",
+    "applications": "आवेदन"
+  },
+  "status": {
+    "pending": "लंबित",
+    "reviewing": "समीक्षाधीन",
+    "interview": "साक्षात्कार",
+    "hired": "नियुक्त",
+    "rejected": "अस्वीकृत",
+    "completed": "पूर्ण",
+    "active": "सक्रिय",
+    "paused": "रोका गया",
+    "expired": "समाप्त"
+  },
+  "common": {
+    "save": "सहेजें",
+    "cancel": "रद्द करें",
+    "edit": "संपादित करें",
+    "delete": "हटाएं",
+    "upload": "अपलोड",
+    "search": "खोजें",
+    "filter": "फ़िल्टर",
+    "clear": "साफ़ करें",
+    "loading": "लोड हो रहा है...",
+    "error": "कुछ गलत हुआ",
+    "success": "सफल",
+    "confirm": "पुष्टि करें",
+    "back": "वापस",
+    "next": "अगला",
+    "submit": "जमा करें",
+    "noData": "कोई डेटा नहीं",
+    "viewAll": "सभी देखें",
+    "showMore": "और दिखाएं",
+    "required": "आवश्यक"
+  },
+  "profile": {
+    "editProfile": "प्रोफ़ाइल संपादित करें",
+    "phone": "फ़ोन",
+    "major": "विषय",
+    "grade": "ग्रेड",
+    "year": "वर्ष",
+    "skills": "कौशल",
+    "availability": "उपलब्धता",
+    "verification": "आईडी सत्यापन",
+    "verified": "सत्यापित",
+    "notVerified": "सत्यापित नहीं",
+    "uploadId": "छात्र आईडी अपलोड करें"
+  },
+  "enterprise": {
+    "companyName": "कंपनी का नाम",
+    "description": "विवरण",
+    "contactPerson": "संपर्क व्यक्ति",
+    "contactPhone": "संपर्क फ़ोन",
+    "address": "पता",
+    "website": "वेबसाइट",
+    "businessLicense": "व्यवसाय लाइसेंस",
+    "postJob": "नौकरी पोस्ट करें",
+    "manageJobs": "नौकरियाँ प्रबंधित करें",
+    "applicants": "आवेदक"
+  },
+  "admin": {
+    "users": "उपयोगकर्ता प्रबंधन",
+    "verifyStudents": "छात्र सत्यापन",
+    "approveEnterprises": "उद्यम अनुमोदन",
+    "auditJobs": "नौकरी ऑडिट",
+    "banners": "बैनर",
+    "announcements": "घोषणाएँ"
+  },
+  "resume": {
+    "create": "रेज़्यूमे बनाएं",
+    "edit": "रेज़्यूमे संपादित करें",
+    "experience": "अनुभव",
+    "certificates": "प्रमाण पत्र",
+    "availableHours": "उपलब्ध समय",
+    "setDefault": "डिफ़ॉल्ट के रूप में सेट करें",
+    "noResume": "अभी तक कोई रेज़्यूमे नहीं बनाया गया"
+  },
+  "notification": {
+    "title": "सूचनाएँ",
+    "noNotifications": "कोई सूचना नहीं",
+    "markAllRead": "सभी को पढ़ा हुआ चिह्नित करें",
+    "markRead": "पढ़ा हुआ चिह्नित करें"
+  }
+}
