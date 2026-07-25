@@ -1,32 +1,38 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { Briefcase, FileText, Clock, CheckCircle, ChevronRight, Plus } from "lucide-react";
+import { Briefcase, FileText, Clock, CheckCircle, ChevronRight, Plus, AlertTriangle } from "lucide-react";
 import studentService from "@/services/studentService";
-import type { Job, Application } from "@/types";
+import type { Job, Application, Student } from "@/types";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 export default function StudentDashboard() {
   const { t } = useTranslation();
   const [recentJobs, setRecentJobs] = useState<Job[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
+  const [profile, setProfile] = useState<Student | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function fetch() {
       try {
-        const [jobsRes, appsRes] = await Promise.all([
+        const [jobsRes, appsRes, prof] = await Promise.all([
           studentService.getJobs({ page_size: 4 }),
           studentService.getApplications(),
+          studentService.getProfile().catch(() => null),
         ]);
         setRecentJobs(Array.isArray(jobsRes) ? jobsRes.slice(0,4) : []);
         setApplications(Array.isArray(appsRes) ? appsRes : []);
+        setProfile(prof);
       } catch { /* best-effort */ } finally { setIsLoading(false); }
     }
     fetch();
   }, []);
 
   if (isLoading) return <LoadingSpinner fullPage />;
+
+  const needsVerification = profile && !profile.isVerified;
+  const needsProfileCompletion = !profile || !profile.major;
 
   const statusCounts = applications.reduce((acc: Record<string,number>, a) => {
     acc[a.status] = (acc[a.status] || 0) + 1; return acc;
@@ -35,6 +41,38 @@ export default function StudentDashboard() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold text-gray-900">{t("navigation.dashboard")}</h1>
+
+      {/* Verification / Profile completion banners */}
+      {needsVerification && (
+        <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-3">
+          <AlertTriangle size={20} className="text-yellow-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-medium text-yellow-800">Identity Verification Pending</p>
+            <p className="text-sm text-yellow-700 mt-0.5">
+              Your student ID is awaiting admin verification. You can browse jobs but some features may be limited.
+            </p>
+            <Link to="/student/profile" className="text-sm text-primary-600 hover:underline mt-1 inline-block">
+              Complete your profile →
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {needsProfileCompletion && !needsVerification && (
+        <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-start gap-3">
+          <FileText size={20} className="text-blue-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-medium text-blue-800">Complete Your Profile</p>
+            <p className="text-sm text-blue-700 mt-0.5">
+              Add your major, skills, and availability to get better job recommendations.
+            </p>
+            <Link to="/student/profile" className="text-sm text-primary-600 hover:underline mt-1 inline-block">
+              Set up profile →
+            </Link>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
         <StatCard icon={<Briefcase size={20} />} label="Applications" value={applications.length} color="bg-blue-100 text-blue-700" />
         <StatCard icon={<CheckCircle size={20} />} label="Hired" value={statusCounts.hired || 0} color="bg-green-100 text-green-700" />

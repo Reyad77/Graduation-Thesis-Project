@@ -34,7 +34,10 @@ export default function RegisterForm() {
     setIsSubmitting(true);
     try {
       await register(email, password, displayName, role);
-      navigate("/");
+      // Redirect to profile completion based on role
+      if (role === "student") navigate("/student/profile");
+      else if (role === "enterprise") navigate("/enterprise/register");
+      else navigate("/");
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { detail?: string } } })?.response?.data
