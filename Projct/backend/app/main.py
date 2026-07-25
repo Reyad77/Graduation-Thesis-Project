@@ -14,6 +14,7 @@ from app.api.v1.router import api_router
 from app.core.config import settings
 from app.core.rate_limit import limiter
 from app.middleware.validation import RequestLoggingMiddleware, SanitizationMiddleware
+from app.i18n.middleware import LanguageMiddleware
 
 # ── Application factory ────────────────────────────────────────────────
 app = FastAPI(
@@ -38,6 +39,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ── Language detection ────────────────────────────────────────────────
+app.add_middleware(LanguageMiddleware)
 
 # ── Request logging (all environments) ─────────────────────────────────
 app.add_middleware(RequestLoggingMiddleware)
