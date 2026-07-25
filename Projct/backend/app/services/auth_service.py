@@ -34,22 +34,44 @@ class AuthService(BaseService):
     def register_sync(self, payload: UserRegisterRequest) -> Dict[str, Any]:
         """Create a Firebase Auth user *and* a Firestore user document.
 
-        Synchronous — Firebase Admin SDK is not async-compatible.
-        Returns a JWT access token and the user profile.
+        Tries the Firebase Admin SDK first; falls back to the REST API
+        when gRPC is blocked (common in certain regions/networks).
         """
-        # 1. Create Firebase Auth user
+        uid = None
+
+        # ── Try Admin SDK (gRPC) first ──────────────────────────────
         try:
             auth_user = firebase_auth.create_user(
                 email=payload.email,
                 password=payload.password,
                 display_name=payload.displayName,
             )
+            uid = auth_user.uid
         except FirebaseError as exc:
-            raise ValueError(self._auth_error_message(exc))
+            # If it's a configuration error (email/password not enabled), bubble it
+            err_str = str(exc).lower()
+            if "configuration_not_found" in err_str or "no auth provider" in err_str:
+                raise ValueError(
+                    "Email/Password sign-in is not enabled. "
+                    "Enable it in Firebase Console > Authentication > Sign-in method."
+                )
+            # If it's a duplicate email, bubble it
+            if "email-already-exists" in err_str or "already exists" in err_str:
+                raise ValueError("An account with this email already exists.")
+            # For other errors (likely gRPC timeout), fall through to REST
+        except Exception:
+            # gRPC likely blocked — fall through to REST
+            pass
 
-        uid = auth_user.uid
+        # ── Fallback: Firebase Auth REST API ───────────────────────
+        if uid is None:
+            uid = self._create_user_via_rest(
+                email=payload.email,
+                password=payload.password,
+                display_name=payload.displayName,
+            )
 
-        # 2. Persist user profile in Firestore
+        # ── Persist user profile in Firestore ──────────────────────
         now = datetime.now(timezone.utc)
         user_data = {
             "uid": uid,
@@ -64,7 +86,7 @@ class AuthService(BaseService):
         }
         self.create(user_data, doc_id=uid)
 
-        # 3. Issue JWT
+        # ── Issue JWT ──────────────────────────────────────────────
         access_token = create_access_token(uid, payload.role.value)
 
         return {
@@ -73,6 +95,57 @@ class AuthService(BaseService):
             "expires_in": settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
             "user": User(**user_data),
         }
+
+    # ── REST-based user creation (fallback when gRPC is blocked) ───────
+
+    def _create_user_via_rest(
+        self, email: str, password: str, display_name: str
+    ) -> str:
+        """Create a Firebase Auth user via the REST API (no gRPC).
+
+        Returns the Firebase UID (localId).
+        """
+        api_key = settings.FIREBASE_API_KEY
+        if not api_key:
+            raise ValueError(
+                "FIREBASE_API_KEY is not set. "
+                "Get it from Firebase Console > Project Settings > General."
+            )
+
+        url = (
+            "https://identitytoolkit.googleapis.com/v1/"
+            f"accounts:signUp?key={api_key}"
+        )
+        resp = requests.post(
+            url,
+            json={
+                "email": email,
+                "password": password,
+                "displayName": display_name,
+                "returnSecureToken": True,
+            },
+            timeout=15,
+        )
+
+        if resp.status_code != 200:
+            error = resp.json().get("error", {})
+            msg = error.get("message", "Registration failed.")
+            friendly = {
+                "EMAIL_EXISTS": "An account with this email already exists.",
+                "WEAK_PASSWORD": "Password must be at least 8 characters.",
+                "INVALID_EMAIL": "The email address is not valid.",
+            }
+            for code, text in friendly.items():
+                if code in msg:
+                    raise ValueError(text)
+            raise ValueError(f"Registration failed: {msg}")
+
+        data = resp.json()
+        uid = data.get("localId", "")
+        if not uid:
+            raise ValueError("Registration failed — no user ID received.")
+
+        return uid
 
     # ── Login with email + password (Firebase REST API) ───────────────
 
@@ -123,13 +196,11 @@ class AuthService(BaseService):
                     raise ValueError(msg)
             raise ValueError("Login failed. Please check your credentials.")
 
-        id_token = resp.json().get("idToken", "")
-        if not id_token:
-            raise ValueError("Login failed — no token received.")
-
-        # 2. Verify the ID token and get the UID
-        decoded = firebase_auth.verify_id_token(id_token)
-        uid = decoded.get("uid", "")
+        data = resp.json()
+        # The REST API returns localId (which IS the Firebase uid)
+        uid = data.get("localId", "")
+        if not uid:
+            raise ValueError("Login failed — no user ID received.")
 
         # 3. Fetch the Firestore user profile
         user = self.get_by_id(uid)
