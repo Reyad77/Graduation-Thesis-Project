@@ -6,10 +6,12 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.core.dependencies import get_current_enterprise
 from app.models.job import JobCreateRequest, JobUpdateRequest, JobStatus
+from app.services.auth_service import AuthService
 from app.services.job_service import JobService
 from app.services.enterprise_service import EnterpriseService
 
 router = APIRouter()
+_auth_svc = AuthService()
 _job_svc = JobService()
 _ent_svc = EnterpriseService()
 
@@ -36,8 +38,29 @@ def get_profile(user: dict = Depends(get_current_enterprise)):
 
 @router.put("/profile")
 def update_profile(payload: dict, user: dict = Depends(get_current_enterprise)):
-    from app.models.enterprise import EnterpriseUpdateRequest
-    updated = _ent_svc.update_profile(_uid(user), EnterpriseUpdateRequest(**payload))
+    uid = _uid(user)
+    from app.models.enterprise import EnterpriseUpdateRequest, EnterpriseRegistrationRequest
+    # Auto-create profile if it doesn't exist yet (first-time save)
+    if not _ent_svc.exists(uid):
+        # Fetch email from the users collection
+        user_email = ""
+        try:
+            user_doc = _auth_svc.get_dict_by_id(uid)
+            if user_doc:
+                user_email = user_doc.get("email", "")
+        except Exception:
+            pass
+        reg = EnterpriseRegistrationRequest(
+            companyName=payload.get("companyName", ""),
+            contactPerson=payload.get("contactPerson", ""),
+            contactPhone=payload.get("contactPhone", ""),
+            address=payload.get("address", ""),
+            description=payload.get("description", ""),
+            website=payload.get("website", ""),
+        )
+        created = _ent_svc.create_profile(uid, user_email, reg)
+        return _serialize(created)
+    updated = _ent_svc.update_profile(uid, EnterpriseUpdateRequest(**payload))
     if not updated: raise HTTPException(404, "Profile not found.")
     return _serialize(updated)
 

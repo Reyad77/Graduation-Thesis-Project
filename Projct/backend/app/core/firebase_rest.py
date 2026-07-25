@@ -91,9 +91,9 @@ class _RestDocRef:
         """Merge-update. Only the fields in ``data`` are written."""
         url = f"{REST_BASE}/{self._path}"
         body: Dict[str, Any] = {"fields": _python_to_fields(data)}
-        # Use updateMask to only touch the specified fields
-        mask = ",".join(data.keys())
-        self._client._request("PATCH", url, body=body, params={"updateMask.fieldPaths": mask})
+        # Firestore REST API: updateMask.fieldPaths must be repeated per field
+        params = [("updateMask.fieldPaths", f) for f in data.keys()]
+        self._client._request("PATCH", url, body=body, params=params)
 
     def delete(self) -> None:
         url = f"{REST_BASE}/{self._path}"
