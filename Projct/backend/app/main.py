@@ -1,14 +1,18 @@
 """
 FastAPI application entry point.
 
-Creates the FastAPI app, configures CORS middleware, and includes all API routers.
+Creates the FastAPI app, configures CORS middleware, rate limiting,
+and includes all API routers.
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 from app.api.v1.router import api_router
 from app.core.config import settings
+from app.core.rate_limit import limiter
 from app.middleware.validation import RequestLoggingMiddleware, SanitizationMiddleware
 
 # ── Application factory ────────────────────────────────────────────────
@@ -19,6 +23,10 @@ app = FastAPI(
     redoc_url="/redoc",
     openapi_url="/openapi.json",
 )
+
+# Attach rate limiter to the app
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # ── CORS middleware ────────────────────────────────────────────────────
 origins = [origin.strip() for origin in settings.CORS_ORIGINS.split(",")]
@@ -34,7 +42,7 @@ app.add_middleware(
 # ── Request logging (all environments) ─────────────────────────────────
 app.add_middleware(RequestLoggingMiddleware)
 
-# ── XSS sanitization (production recommended) ─────────────────────────
+# ── XSS sanitization (production only) ─────────────────────────────────
 if not settings.DEBUG:
     app.add_middleware(SanitizationMiddleware)
 

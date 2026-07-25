@@ -17,7 +17,7 @@ from app.models.application import (
 from app.services.base_service import BaseService
 
 
-class ApplicationService(BaseService[Application]):
+class ApplicationService(BaseService):
     """Business-logic operations for job applications."""
 
     def __init__(self) -> None:

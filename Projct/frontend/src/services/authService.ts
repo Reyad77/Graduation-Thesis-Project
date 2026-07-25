@@ -1,11 +1,18 @@
 import api from "./api";
-import type { TokenResponse, User } from "@/types";
+import type { User } from "@/types";
+
+export interface AuthResult {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  user: User;
+}
 
 /**
  * Authentication service — wraps all auth-related API calls.
  */
 const authService = {
-  /** Register a new user account. */
+  /** Register a new user account. Returns token + user profile. */
   register: async (payload: {
     email: string;
     password: string;
@@ -13,21 +20,21 @@ const authService = {
     role: string;
     phone?: string;
     preferredLanguage?: string;
-  }): Promise<TokenResponse> => {
+  }): Promise<AuthResult> => {
     const { data } = await api.post("/auth/register", payload);
     return data;
   },
 
-  /** Login with email and password. */
+  /** Login with email and password. Returns token + user profile. */
   login: async (payload: {
     email: string;
     password: string;
-  }): Promise<TokenResponse> => {
+  }): Promise<AuthResult> => {
     const { data } = await api.post("/auth/login", payload);
     return data;
   },
 
-  /** Logout the current user. */
+  /** Logout the current user (server-side cleanup). */
   logout: async (): Promise<void> => {
     await api.post("/auth/logout");
   },
@@ -39,13 +46,15 @@ const authService = {
   },
 
   /** Request a password-reset email. */
-  forgotPassword: async (email: string): Promise<void> => {
-    await api.post("/auth/forgot-password", { email });
+  forgotPassword: async (email: string): Promise<{ message: string }> => {
+    const { data } = await api.post("/auth/forgot-password", { email });
+    return data;
   },
 
-  /** Reset password with a token. */
-  resetPassword: async (token: string, newPassword: string): Promise<void> => {
-    await api.post("/auth/reset-password", { token, new_password: newPassword });
+  /** Refresh the access token. */
+  refreshToken: async (): Promise<{ access_token: string; token_type: string; expires_in: number }> => {
+    const { data } = await api.post("/auth/refresh-token");
+    return data;
   },
 };
 

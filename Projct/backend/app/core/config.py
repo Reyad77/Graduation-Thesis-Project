@@ -11,9 +11,10 @@ from typing import List
 class Settings(BaseSettings):
     """Central configuration loaded from .env file and environment variables."""
 
-    # ── Firebase ──────────────────────────────────────────────────────
+    # ── Firebase (service account) ─────────────────────────────────────
     FIREBASE_TYPE: str = "service_account"
     FIREBASE_PROJECT_ID: str = ""
+    FIREBASE_API_KEY: str = ""  # Web API Key (Firebase Console > Project Settings > General)
     FIREBASE_PRIVATE_KEY_ID: str = ""
     FIREBASE_PRIVATE_KEY: str = ""
     FIREBASE_CLIENT_EMAIL: str = ""

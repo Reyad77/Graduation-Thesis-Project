@@ -1,8 +1,10 @@
 import { Routes, Route } from "react-router-dom";
 import Layout from "./components/common/Layout";
+import ProtectedRoute from "./components/common/ProtectedRoute";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
 
 // Student pages
 import StudentDashboard from "./pages/student/Dashboard";
@@ -33,50 +35,53 @@ import AdminAnnouncements from "./pages/admin/Announcements";
 /**
  * Root application component.
  *
- * Defines all routes wrapped in the shared Layout (navbar + footer).
- * Role-specific pages are nested under their respective URL prefixes.
+ * Public routes: Home, Login, Register, ForgotPassword, Job list/detail
+ * Protected routes: Student, Enterprise, and Admin dashboards
  */
 export default function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        {/* Public routes */}
+        {/* ── Public routes ──────────────────────────────── */}
         <Route index element={<Home />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
+        <Route path="forgot-password" element={<ForgotPassword />} />
 
-        {/* Student routes */}
-        <Route path="student">
-          <Route index element={<StudentDashboard />} />
-          <Route path="profile" element={<StudentProfile />} />
-          <Route path="resume/new" element={<StudentResumeForm />} />
-          <Route path="resume/:id/edit" element={<StudentResumeForm />} />
-          <Route path="resume/:id" element={<StudentResumeView />} />
-        </Route>
+        {/* Jobs — public viewing, auth required for applying */}
         <Route path="jobs" element={<JobList />} />
         <Route path="jobs/:id" element={<JobDetail />} />
-        <Route path="applications" element={<StudentApplications />} />
 
-        {/* Enterprise routes */}
-        <Route path="enterprise">
-          <Route index element={<EnterpriseDashboard />} />
-          <Route path="register" element={<EnterpriseRegistration />} />
-          <Route path="profile" element={<EnterpriseProfile />} />
-          <Route path="post-job" element={<PostJob />} />
-          <Route path="jobs" element={<ManageJobs />} />
-          <Route path="applicants" element={<EnterpriseApplicants />} />
+        {/* ── Student-only routes ────────────────────────── */}
+        <Route element={<ProtectedRoute allowedRole="student" />}>
+          <Route path="student" element={<StudentDashboard />} />
+          <Route path="student/profile" element={<StudentProfile />} />
+          <Route path="student/resume/new" element={<StudentResumeForm />} />
+          <Route path="student/resume/:id/edit" element={<StudentResumeForm />} />
+          <Route path="student/resume/:id" element={<StudentResumeView />} />
+          <Route path="applications" element={<StudentApplications />} />
         </Route>
 
-        {/* Admin routes */}
-        <Route path="admin">
-          <Route index element={<AdminDashboard />} />
-          <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="users" element={<AdminUserManagement />} />
-          <Route path="verify-students" element={<AdminStudentVerification />} />
-          <Route path="approve-enterprises" element={<AdminEnterpriseApproval />} />
-          <Route path="jobs" element={<AdminJobAudit />} />
-          <Route path="banners" element={<AdminBannerManagement />} />
-          <Route path="announcements" element={<AdminAnnouncements />} />
+        {/* ── Enterprise-only routes ─────────────────────── */}
+        <Route element={<ProtectedRoute allowedRole="enterprise" />}>
+          <Route path="enterprise" element={<EnterpriseDashboard />} />
+          <Route path="enterprise/register" element={<EnterpriseRegistration />} />
+          <Route path="enterprise/profile" element={<EnterpriseProfile />} />
+          <Route path="enterprise/post-job" element={<PostJob />} />
+          <Route path="enterprise/jobs" element={<ManageJobs />} />
+          <Route path="enterprise/applicants" element={<EnterpriseApplicants />} />
+        </Route>
+
+        {/* ── Admin-only routes ──────────────────────────── */}
+        <Route element={<ProtectedRoute allowedRole="admin" />}>
+          <Route path="admin" element={<AdminDashboard />} />
+          <Route path="admin/dashboard" element={<AdminDashboard />} />
+          <Route path="admin/users" element={<AdminUserManagement />} />
+          <Route path="admin/verify-students" element={<AdminStudentVerification />} />
+          <Route path="admin/approve-enterprises" element={<AdminEnterpriseApproval />} />
+          <Route path="admin/jobs" element={<AdminJobAudit />} />
+          <Route path="admin/banners" element={<AdminBannerManagement />} />
+          <Route path="admin/announcements" element={<AdminAnnouncements />} />
         </Route>
       </Route>
     </Routes>

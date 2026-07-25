@@ -19,7 +19,7 @@ from app.models.notification import (
 from app.services.base_service import BaseService
 
 
-class NotificationService(BaseService[Notification]):
+class NotificationService(BaseService):
     """Handles notification creation, retrieval, and delivery."""
 
     def __init__(self) -> None:

@@ -14,7 +14,7 @@ from app.models.job import (
 from app.services.base_service import BaseService
 
 
-class JobService(BaseService[Job]):
+class JobService(BaseService):
     """CRUD and business-logic operations for job postings."""
 
     def __init__(self) -> None:

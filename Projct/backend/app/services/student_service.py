@@ -17,7 +17,7 @@ from app.services.base_service import BaseService
 
 # ── Student profile ──────────────────────────────────────────────────────
 
-class StudentService(BaseService[Student]):
+class StudentService(BaseService):
     """Handles the student profile document in the ``students`` collection."""
 
     def __init__(self) -> None:
@@ -76,7 +76,7 @@ class StudentService(BaseService[Student]):
 
 # ── Resume management ────────────────────────────────────────────────────
 
-class ResumeService(BaseService[Resume]):
+class ResumeService(BaseService):
     """CRUD operations for student resumes."""
 
     def __init__(self) -> None:

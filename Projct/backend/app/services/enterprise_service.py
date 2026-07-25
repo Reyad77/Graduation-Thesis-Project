@@ -13,7 +13,7 @@ from app.models.enterprise import (
 from app.services.base_service import BaseService
 
 
-class EnterpriseService(BaseService[Enterprise]):
+class EnterpriseService(BaseService):
     """CRUD and business-logic operations for enterprise profiles."""
 
     def __init__(self) -> None:

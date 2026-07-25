@@ -62,14 +62,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
-    const tokenRes = await authService.login({ email, password });
-    localStorage.setItem("access_token", tokenRes.access_token);
-    const user = await authService.getMe();
+    const result = await authService.login({ email, password });
+    localStorage.setItem("access_token", result.access_token);
     setState({
-      user,
+      user: result.user,
       isLoading: false,
       isAuthenticated: true,
-      role: user.role,
+      role: result.user.role,
     });
   }, []);
 
@@ -80,19 +79,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       displayName: string,
       role: UserRole,
     ) => {
-      const tokenRes = await authService.register({
+      const result = await authService.register({
         email,
         password,
         displayName,
         role,
       });
-      localStorage.setItem("access_token", tokenRes.access_token);
-      const user = await authService.getMe();
+      localStorage.setItem("access_token", result.access_token);
       setState({
-        user,
+        user: result.user,
         isLoading: false,
         isAuthenticated: true,
-        role: user.role,
+        role: result.user.role,
       });
     },
     [],
