@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
-  Users, Briefcase, ShieldCheck, FileText, CheckCircle, Clock, AlertTriangle,
+  Users, Briefcase, CheckCircle, Clock,
   UserCheck, Building2, Search, Megaphone, Image, ArrowRight, RefreshCw, XCircle,
 } from "lucide-react";
 import adminService from "@/services/adminService";
@@ -12,7 +12,6 @@ import { toast } from "react-hot-toast";
 
 export default function AdminDashboard() {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
   const [pendingJobs, setPendingJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(true);

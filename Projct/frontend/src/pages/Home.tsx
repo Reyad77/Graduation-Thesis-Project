@@ -1,15 +1,7 @@
-import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Search, Briefcase, ShieldCheck, Users } from "lucide-react";
 
-/**
- * Landing / home page for the platform.
- *
- * Shows a hero section, feature highlights, and calls-to-action
- * that adapt based on authentication state.
- */
 export default function Home() {
-  const { t } = useTranslation();
 
   return (
     <div>
@@ -17,19 +9,19 @@ export default function Home() {
       <section className="bg-gradient-to-br from-primary-600 to-primary-800 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-            {t("app.name")}
+            Find Your Perfect Part-Time Job
           </h1>
           <p className="text-lg sm:text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-            {t("app.tagline")} — connect with employers offering flexible,
-            part-time positions tailored for college students.
+            The platform connecting students with flexible part-time work — and helping employers find the right people.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/jobs" className="btn-primary bg-white !text-primary-700 hover:!bg-primary-50">
+            <Link to="/register" className="bg-white border border-white text-primary-700 hover:bg-primary-50 hover:border-primary-200 px-4 py-2 rounded-lg transition-colors duration-200 font-medium inline-flex items-center">
               <Search size={18} className="inline mr-1" />
-              {t("navigation.jobs")}
+              I'm looking for a job
             </Link>
-            <Link to="/register" className="btn-secondary border-white !text-white hover:!bg-primary-700">
-              {t("auth.register")}
+            <Link to="/register" className="bg-white/10 border border-white text-white hover:bg-white hover:text-primary-700 px-4 py-2 rounded-lg transition-colors duration-200 font-medium inline-flex items-center">
+              <Users size={18} className="inline mr-1" />
+              I'm looking to hire
             </Link>
           </div>
         </div>
@@ -40,18 +32,18 @@ export default function Home() {
         <div className="grid md:grid-cols-3 gap-8">
           <FeatureCard
             icon={<Briefcase size={32} />}
-            title="Browse Jobs"
-            description="Search hundreds of part-time jobs filtered by skills, location, and schedule."
+            title="Find Jobs"
+            description="Browse part-time jobs filtered by skills, location, and schedule — all designed for students."
           />
           <FeatureCard
             icon={<ShieldCheck size={32} />}
             title="Verified Employers"
-            description="All enterprises are verified by our admin team to ensure safe opportunities."
+            description="Every company is verified by our admin team before posting, so you know opportunities are real."
           />
           <FeatureCard
             icon={<Users size={32} />}
-            title="Built for Students"
-            description="Flexible hours, short-term gigs, and internships designed around your class schedule."
+            title="Hire Students"
+            description="Post job openings, review applications, schedule interviews — all in one place."
           />
         </div>
       </section>
@@ -62,9 +54,10 @@ export default function Home() {
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
             Ready to get started?
           </h2>
-          <Link to="/register" className="btn-primary">
-            {t("auth.register")}
-          </Link>
+          <div className="flex gap-3 justify-center">
+            <Link to="/register" className="btn-primary">I'm looking for a job</Link>
+            <Link to="/register" className="btn-secondary">I'm looking to hire</Link>
+          </div>
         </div>
       </section>
     </div>
