@@ -83,7 +83,7 @@ def create_job(payload: JobCreateRequest, user: dict = Depends(get_current_enter
         title="New Job Posted",
         message=f"'{payload.title}' was posted and needs approval.",
         type_=NotificationType.SYSTEM,
-        data={"jobId": getattr(job, "id", ""), "title": payload.title},
+        data={"jobId": getattr(job, "id", ""), "title": payload.title, "link": "/admin/jobs"},
     )
     return _serialize(job)
 

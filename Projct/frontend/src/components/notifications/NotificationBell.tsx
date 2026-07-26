@@ -1,12 +1,23 @@
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Bell, Check } from "lucide-react";
 import { useNotifications } from "@/hooks/useNotifications";
+
+function getLink(n: { title: string; data: unknown }): string | null {
+  const d = n.data as Record<string, string> | undefined;
+  if (d?.link) return d.link;
+  const t = n.title.toLowerCase();
+  if (t.includes("job seeker") || t.includes("student")) return "/admin/verify-students";
+  if (t.includes("employer") || t.includes("enterprise") || t.includes("hirer")) return "/admin/approve-enterprises";
+  if (t.includes("job posted")) return "/admin/jobs";
+  return null;
+}
 
 export default function NotificationBell() {
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     function handleClick(e: MouseEvent) { if (ref.current && !ref.current.contains(e.target as Node)) setIsOpen(false); }
@@ -39,7 +50,12 @@ export default function NotificationBell() {
             notifications.slice(0, 10).map(n => (
               <button
                 key={n.id}
-                onClick={() => { markAsRead(n.id); setIsOpen(false); }}
+                onClick={() => {
+                  markAsRead(n.id);
+                  setIsOpen(false);
+                  const link = getLink(n);
+                  if (link) navigate(link);
+                }}
                 className={`w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${!n.isRead ? "bg-blue-50/50" : ""}`}
               >
                 <p className="text-sm font-medium text-gray-800">{n.title}</p>

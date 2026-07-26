@@ -73,11 +73,12 @@ def register(request: Request, payload: UserRegisterRequest):
         from app.models.notification import NotificationType
         ns = NotificationService()
         role_label = "Job Seeker" if payload.role.value == "student" else "Employer"
+        link = "/admin/verify-students" if payload.role.value == "student" else "/admin/approve-enterprises"
         ns.notify_admins(
             title=f"New {role_label} Registered",
             message=f"{payload.displayName} ({payload.email}) signed up as a {role_label.lower()}.",
             type_=NotificationType.SYSTEM,
-            data={"uid": str(getattr(user_data, "uid", "")), "role": payload.role.value},
+            data={"uid": str(getattr(user_data, "uid", "")), "role": payload.role.value, "link": link},
         )
 
         return {
