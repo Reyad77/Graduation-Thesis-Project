@@ -1,9 +1,11 @@
 import { Link, Navigate } from "react-router-dom";
 import { Search, Briefcase, ShieldCheck, Users, GraduationCap, Building2, Clock, CheckCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 export default function Home() {
+  const { t } = useTranslation();
   const { isAuthenticated, isLoading, role } = useAuth();
 
   // Show spinner while checking session
@@ -24,27 +26,24 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
           <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm mb-6">
             <GraduationCap size={16} />
-            Part-time jobs for college students
+            {t("home.heroBadge")}
           </div>
           <h1 className="text-4xl sm:text-6xl font-bold mb-4 leading-tight">
-            Find Work That Fits<br />Your Class Schedule
+            {t("home.heroTitle")}
           </h1>
           <p className="text-lg text-primary-100 mb-10 max-w-xl mx-auto leading-relaxed">
-            The platform built for students seeking flexible part-time jobs and employers
-            who need reliable help — verified, safe, and free to use.
+            {t("home.heroSub")}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/register" className="bg-white text-primary-700 hover:bg-primary-50 px-6 py-3 rounded-xl font-semibold transition-all inline-flex items-center justify-center gap-2 shadow-lg shadow-black/10">
-              <Search size={18} />
-              I'm looking for a job
+              <Search size={18} /> {t("home.lookingJob")}
             </Link>
             <Link to="/register" className="bg-white/10 border-2 border-white/30 text-white hover:bg-white hover:text-primary-700 px-6 py-3 rounded-xl font-semibold transition-all inline-flex items-center justify-center gap-2">
-              <Users size={18} />
-              I'm looking to hire
+              <Users size={18} /> {t("home.lookingHire")}
             </Link>
           </div>
           <p className="text-sm text-primary-200 mt-4">
-            Already have an account? <Link to="/login" className="text-white underline font-medium">Log in</Link>
+            {t("home.haveAccount")} <Link to="/login" className="text-white underline font-medium">{t("home.logIn")}</Link>
           </p>
         </div>
       </section>
@@ -52,28 +51,13 @@ export default function Home() {
       {/* How it works */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900">How It Works</h2>
-          <p className="text-gray-500 mt-2">Three simple steps to get started</p>
+          <h2 className="text-3xl font-bold text-gray-900">{t("home.howItWorks")}</h2>
+          <p className="text-gray-500 mt-2">{t("home.howSub")}</p>
         </div>
         <div className="grid md:grid-cols-3 gap-8">
-          <StepCard
-            number="1"
-            icon={<GraduationCap size={28} />}
-            title="Create Your Profile"
-            description="Sign up as a job seeker or employer. Complete your profile with skills, experience, or company details."
-          />
-          <StepCard
-            number="2"
-            icon={<Search size={28} />}
-            title="Find or Post Jobs"
-            description="Browse part-time jobs that match your skills and schedule — or post openings for your business."
-          />
-          <StepCard
-            number="3"
-            icon={<CheckCircle size={28} />}
-            title="Apply & Get Hired"
-            description="Submit applications with your resume. Employers review, interview, and hire directly on the platform."
-          />
+          <StepCard number="1" icon={<GraduationCap size={28} />} title={t("home.step1Title")} description={t("home.step1Desc")} />
+          <StepCard number="2" icon={<Search size={28} />} title={t("home.step2Title")} description={t("home.step2Desc")} />
+          <StepCard number="3" icon={<CheckCircle size={28} />} title={t("home.step3Title")} description={t("home.step3Desc")} />
         </div>
       </section>
 
@@ -81,17 +65,13 @@ export default function Home() {
       <section className="bg-gray-50 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900">Why Use This Platform?</h2>
+            <h2 className="text-3xl font-bold text-gray-900">{t("home.whyTitle")}</h2>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <FeatureCard icon={<Briefcase size={24} />} title="Student-Friendly Jobs"
-              desc="Part-time, flexible hours, short-term — all designed around student life." />
-            <FeatureCard icon={<ShieldCheck size={24} />} title="Verified Employers"
-              desc="Every company is checked by admins before posting. No scams, no fake listings." />
-            <FeatureCard icon={<Building2 size={24} />} title="Easy Hiring"
-              desc="Post jobs, review applicants, schedule interviews — all from one dashboard." />
-            <FeatureCard icon={<Clock size={24} />} title="Quick Setup"
-              desc="Create your account in under a minute and start browsing or posting immediately." />
+            <FeatureCard icon={<Briefcase size={24} />} title={t("home.feat1Title")} desc={t("home.feat1Desc")} />
+            <FeatureCard icon={<ShieldCheck size={24} />} title={t("home.feat2Title")} desc={t("home.feat2Desc")} />
+            <FeatureCard icon={<Building2 size={24} />} title={t("home.feat3Title")} desc={t("home.feat3Desc")} />
+            <FeatureCard icon={<Clock size={24} />} title={t("home.feat4Title")} desc={t("home.feat4Desc")} />
           </div>
         </div>
       </section>
@@ -99,24 +79,23 @@ export default function Home() {
       {/* CTA */}
       <section className="bg-primary-700 text-white py-16">
         <div className="max-w-3xl mx-auto text-center px-4">
-          <h2 className="text-3xl font-bold mb-4">Ready to get started?</h2>
-          <p className="text-primary-200 mb-8">Join thousands of students and employers already using the platform.</p>
+          <h2 className="text-3xl font-bold mb-4">{t("home.ctaTitle")}</h2>
+          <p className="text-primary-200 mb-8">{t("home.ctaSub")}</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/register" className="bg-white text-primary-700 hover:bg-primary-50 px-6 py-3 rounded-xl font-semibold transition-all">
-              Create a free account
+              {t("home.ctaButton")}
             </Link>
             <Link to="/login" className="border-2 border-white/30 text-white hover:bg-white/10 px-6 py-3 rounded-xl font-semibold transition-all">
-              Log in
+              {t("home.logIn")}
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Footer info */}
       <footer className="bg-gray-900 text-gray-400 py-10 text-center text-sm">
         <div className="max-w-7xl mx-auto px-4">
-          <p className="font-bold text-white text-lg mb-2">StudentJob Hub</p>
-          <p>The part-time job platform for college students and employers.</p>
+          <p className="font-bold text-white text-lg mb-2">{t("app.name")}</p>
+          <p>{t("home.footerTagline")}</p>
           <p className="mt-4 text-gray-600">© {new Date().getFullYear()} All rights reserved.</p>
         </div>
       </footer>

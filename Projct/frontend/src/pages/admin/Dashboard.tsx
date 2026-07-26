@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Users, UserCheck, Building2, Briefcase, Clock,
   CheckCircle, ArrowRight, Megaphone, Image, RefreshCw,
@@ -10,6 +11,7 @@ import type { User, Job } from "@/types";
 import { toast } from "react-hot-toast";
 
 export default function AdminDashboard() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [pendingJobs, setPendingJobs] = useState<Job[]>([]);
@@ -25,11 +27,11 @@ export default function AdminDashboard() {
   useEffect(() => { fetch(); }, []);
 
   const approve = async (id: string) => {
-    try { await adminService.approveJob(id); toast.success("Approved"); fetch(); } catch { toast.error("Failed"); }
+    try { await adminService.approveJob(id); toast.success(t("admin.approvedToast")); fetch(); } catch { toast.error(t("admin.failedToast")); }
   };
   const reject = async (id: string) => {
-    const r = prompt("Reason:"); if (!r) return;
-    try { await adminService.rejectJob(id, r); toast.success("Rejected"); fetch(); } catch { toast.error("Failed"); }
+    const r = prompt(t("admin.reasonPrompt")); if (!r) return;
+    try { await adminService.rejectJob(id, r); toast.success(t("admin.rejectedToast")); fetch(); } catch { toast.error(t("admin.failedToast")); }
   };
 
   if (loading) return (
@@ -46,25 +48,25 @@ export default function AdminDashboard() {
       {/* ── Header ─────────────────────────────────────────── */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-bold text-gray-900">Control Panel</h1>
+          <h1 className="text-lg font-bold text-gray-900">{t("admin.controlPanel")}</h1>
           <p className="text-xs text-gray-500 mt-0.5">
-            Welcome, <span className="text-gray-800 font-medium">{user?.displayName || "Admin"}</span>
+            {t("admin.welcome")}, <span className="text-gray-800 font-medium">{user?.displayName || t("admin.adminPanel")}</span>
           </p>
         </div>
         <button onClick={fetch} className="flex items-center gap-1 text-xs text-gray-400 hover:text-primary-600 transition-colors">
-          <RefreshCw size={13} /> Refresh
+          <RefreshCw size={13} /> {t("common.refresh")}
         </button>
       </div>
 
       {/* ── 4 Stat Cards — equal size, equal gap ──────────── */}
       <div className="grid grid-cols-4 gap-4">
-        <StatCard icon={<Users size={18} />} label="Total Users" value={users.length}
+        <StatCard icon={<Users size={18} />} label={t("admin.totalUsers")} value={users.length}
           bg="bg-blue-50" iconColor="text-blue-600" to="/admin/users" />
-        <StatCard icon={<UserCheck size={18} />} label="Students" value={totalStudents}
+        <StatCard icon={<UserCheck size={18} />} label={t("admin.students")} value={totalStudents}
           bg="bg-emerald-50" iconColor="text-emerald-600" to="/admin/verify-students" />
-        <StatCard icon={<Building2 size={18} />} label="Enterprises" value={totalEnterprises}
+        <StatCard icon={<Building2 size={18} />} label={t("admin.enterprises")} value={totalEnterprises}
           bg="bg-violet-50" iconColor="text-violet-600" to="/admin/approve-enterprises" />
-        <StatCard icon={<Clock size={18} />} label="Pending Jobs" value={pendingJobs.length}
+        <StatCard icon={<Clock size={18} />} label={t("admin.pendingJobs")} value={pendingJobs.length}
           bg="bg-amber-50" iconColor="text-amber-600" to="/admin/jobs" pulse={pendingJobs.length > 0} />
       </div>
 
@@ -74,7 +76,7 @@ export default function AdminDashboard() {
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-              Pending Approvals
+              {t("admin.pendingApprovals")}
               {pendingJobs.length > 0 && (
                 <span className="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full font-medium">
                   {pendingJobs.length}
@@ -82,7 +84,7 @@ export default function AdminDashboard() {
               )}
             </h2>
             <Link to="/admin/jobs" className="text-xs text-primary-600 hover:underline flex items-center gap-0.5">
-              All jobs <ArrowRight size={11} />
+              {t("admin.allJobs")} <ArrowRight size={11} />
             </Link>
           </div>
 
@@ -90,7 +92,7 @@ export default function AdminDashboard() {
             {pendingJobs.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <CheckCircle size={28} className="text-emerald-300 mb-2" />
-                <p className="text-xs text-gray-400">Nothing pending</p>
+                <p className="text-xs text-gray-400">{t("admin.allClear")}</p>
               </div>
             ) : (
               pendingJobs.map(job => (
@@ -105,11 +107,11 @@ export default function AdminDashboard() {
                   <div className="flex gap-1.5 shrink-0">
                     <button onClick={() => approve(job.id)}
                       className="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] font-medium hover:bg-emerald-100 border border-emerald-200 transition-all">
-                      Approve
+                      {t("common.approve")}
                     </button>
                     <button onClick={() => reject(job.id)}
                       className="px-3 py-1.5 rounded-lg bg-red-50 text-red-700 text-[11px] font-medium hover:bg-red-100 border border-red-200 transition-all">
-                      Reject
+                      {t("common.reject")}
                     </button>
                   </div>
                 </div>
@@ -120,20 +122,20 @@ export default function AdminDashboard() {
 
         {/* Right: Quick Actions */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col">
-          <h2 className="text-sm font-semibold text-gray-700 mb-4">Quick Actions</h2>
+          <h2 className="text-sm font-semibold text-gray-700 mb-4">{t("admin.quickActions")}</h2>
           <div className="flex-1 grid grid-cols-2 gap-3 content-start">
             <ActionTile to="/admin/verify-students" icon={<UserCheck size={20} />}
-              label="Verify Students" sub={`${totalStudents} total`} color="emerald" />
+              label={t("admin.verifyStudents")} sub={`${totalStudents} total`} color="emerald" />
             <ActionTile to="/admin/approve-enterprises" icon={<Building2 size={20} />}
-              label="Approve HR" sub={`${totalEnterprises} total`} color="violet" />
+              label={t("admin.approveHR")} sub={`${totalEnterprises} total`} color="violet" />
             <ActionTile to="/admin/jobs" icon={<Briefcase size={20} />}
-              label="Audit Jobs" sub={`${pendingJobs.length} pending`} color="amber" />
+              label={t("admin.auditJobs")} sub={`${pendingJobs.length} pending`} color="amber" />
             <ActionTile to="/admin/users" icon={<Users size={20} />}
-              label="Users" sub={`${users.length} total`} color="blue" />
+              label={t("admin.userManagement")} sub={`${users.length} total`} color="blue" />
             <ActionTile to="/admin/announcements" icon={<Megaphone size={20} />}
-              label="News" sub="Announcements" color="pink" />
+              label={t("admin.news")} sub="Announcements" color="pink" />
             <ActionTile to="/admin/banners" icon={<Image size={20} />}
-              label="Media" sub="Banners" color="indigo" />
+              label={t("admin.media")} sub="Banners" color="indigo" />
           </div>
         </div>
       </div>
@@ -141,17 +143,17 @@ export default function AdminDashboard() {
       {/* ── User table — full width ───────────────────────── */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-semibold text-gray-700">Recent Users</h2>
-          <Link to="/admin/users" className="text-xs text-primary-600 hover:underline">View all</Link>
+          <h2 className="text-sm font-semibold text-gray-700">{t("admin.recentUsers")}</h2>
+          <Link to="/admin/users" className="text-xs text-primary-600 hover:underline">{t("common.viewAll")}</Link>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="text-left py-2.5 px-3 text-gray-500 font-medium text-xs">Name</th>
-                <th className="text-left py-2.5 px-3 text-gray-500 font-medium text-xs">Email</th>
-                <th className="text-left py-2.5 px-3 text-gray-500 font-medium text-xs">Role</th>
-                <th className="text-left py-2.5 px-3 text-gray-500 font-medium text-xs">Status</th>
+                <th className="text-left py-2.5 px-3 text-gray-500 font-medium text-xs">{t("auth.fullName")}</th>
+                <th className="text-left py-2.5 px-3 text-gray-500 font-medium text-xs">{t("auth.email")}</th>
+                <th className="text-left py-2.5 px-3 text-gray-500 font-medium text-xs">{t("common.status")}</th>
+                <th className="text-left py-2.5 px-3 text-gray-500 font-medium text-xs">{t("common.status")}</th>
               </tr>
             </thead>
             <tbody>
