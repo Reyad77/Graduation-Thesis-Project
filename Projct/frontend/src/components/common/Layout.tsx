@@ -1,19 +1,22 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import { useAuth } from "@/hooks/useAuth";
 
-/**
- * Root layout component — wraps every page with the navbar and footer.
- * Uses React Router's <Outlet /> to render child routes.
- */
 export default function Layout() {
+  const location = useLocation();
+  const { isAuthenticated } = useAuth();
+
+  // Hide footer on landing page for logged-out users (Home has its own)
+  const hideFooter = location.pathname === "/" && !isAuthenticated;
+
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <main className="flex-1">
         <Outlet />
       </main>
-      <Footer />
+      {!hideFooter && <Footer />}
     </div>
   );
 }
