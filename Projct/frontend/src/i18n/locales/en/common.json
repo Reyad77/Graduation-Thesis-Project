@@ -257,5 +257,11 @@
     "markRead": "Mark as read",
     "viewAll": "View all",
     "clickToView": "Click to view"
+  },
+  "footer": {
+    "rights": "All rights reserved.",
+    "about": "About",
+    "privacy": "Privacy",
+    "contact": "Contact"
   }
 }
