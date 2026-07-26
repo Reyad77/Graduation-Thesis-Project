@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { Ban, CheckCircle as UnbanIcon } from "lucide-react";
 import adminService from "@/services/adminService";
 import type { User } from "@/types";
@@ -7,7 +6,6 @@ import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { toast } from "react-hot-toast";
 
 export default function AdminUserManagement() {
-  const { t } = useTranslation();
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -20,9 +18,10 @@ export default function AdminUserManagement() {
   if(isLoading) return <LoadingSpinner fullPage />;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold">{t("admin.users")}</h1>
-      <div className="mt-6 space-y-2">
+    <div>
+      <h1 className="text-xl font-bold mb-1">User Management</h1>
+      <p className="text-sm text-gray-500 mb-6">Manage all platform users — ban or unban accounts.</p>
+      <div className="space-y-2">
         {users.map(u=>(
           <div key={u.uid} className="card flex items-center justify-between gap-3">
             <div>

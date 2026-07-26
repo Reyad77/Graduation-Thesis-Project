@@ -76,6 +76,15 @@ def list_enterprise_jobs(user: dict = Depends(get_current_enterprise)):
 @router.post("/jobs", status_code=status.HTTP_201_CREATED)
 def create_job(payload: JobCreateRequest, user: dict = Depends(get_current_enterprise)):
     job = _job_svc.create_job(_uid(user), payload)
+    # Notify admins
+    from app.services.notification_service import NotificationService
+    from app.models.notification import NotificationType
+    NotificationService().notify_admins(
+        title="New Job Posted",
+        message=f"'{payload.title}' was posted and needs approval.",
+        type_=NotificationType.SYSTEM,
+        data={"jobId": getattr(job, "id", ""), "title": payload.title},
+    )
     return _serialize(job)
 
 

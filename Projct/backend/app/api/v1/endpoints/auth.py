@@ -67,6 +67,19 @@ def register(request: Request, payload: UserRegisterRequest):
     try:
         result = _auth_svc.register_sync(payload)
         user_data = result["user"]
+
+        # Notify admin(s) about the new registration
+        from app.services.notification_service import NotificationService
+        from app.models.notification import NotificationType
+        ns = NotificationService()
+        role_label = "Job Seeker" if payload.role.value == "student" else "Employer"
+        ns.notify_admins(
+            title=f"New {role_label} Registered",
+            message=f"{payload.displayName} ({payload.email}) signed up as a {role_label.lower()}.",
+            type_=NotificationType.SYSTEM,
+            data={"uid": str(getattr(user_data, "uid", "")), "role": payload.role.value},
+        )
+
         return {
             "access_token": result["access_token"],
             "token_type": result["token_type"],

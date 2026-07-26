@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Layout from "./components/common/Layout";
 import ProtectedRoute from "./components/common/ProtectedRoute";
+import AdminLayout from "./components/admin/AdminLayout";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -77,8 +78,13 @@ export default function App() {
           <Route path="enterprise/applicants" element={<EnterpriseApplicants />} />
         </Route>
 
-        {/* ── Admin-only routes ──────────────────────────── */}
-        <Route element={<ProtectedRoute allowedRole="admin" />}>
+        {/* ── 404 catch-all ──────────────────────────── */}
+        <Route path="*" element={<NotFound />} />
+      </Route>
+
+      {/* ── Admin routes (separate layout — control panel) ──── */}
+      <Route element={<ProtectedRoute allowedRole="admin" />}>
+        <Route element={<AdminLayout />}>
           <Route path="admin" element={<AdminDashboard />} />
           <Route path="admin/dashboard" element={<AdminDashboard />} />
           <Route path="admin/users" element={<AdminUserManagement />} />
@@ -88,9 +94,6 @@ export default function App() {
           <Route path="admin/banners" element={<AdminBannerManagement />} />
           <Route path="admin/announcements" element={<AdminAnnouncements />} />
         </Route>
-
-        {/* ── 404 catch-all ──────────────────────────── */}
-        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );

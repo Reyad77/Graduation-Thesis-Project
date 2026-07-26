@@ -27,6 +27,26 @@ class NotificationService(BaseService):
 
     # ── Create ────────────────────────────────────────────────────────
 
+    def notify_admins(
+        self,
+        title: str,
+        message: str,
+        type_: NotificationType,
+        data: Optional[dict] = None,
+    ) -> None:
+        """Send a notification to ALL admin users on the platform."""
+        from app.services.auth_service import AuthService
+        auth_svc = AuthService()
+        result = auth_svc.get_all(page=1, page_size=50)
+        for user in result.get("items", []):
+            role = getattr(user, "role", "")
+            if hasattr(role, "value"):
+                role = role.value
+            if role == "admin":
+                uid = getattr(user, "uid", "") or getattr(user, "id", "")
+                if uid:
+                    self.notify(uid, type_, title, message, data)
+
     def notify(
         self,
         user_id: str,
@@ -56,22 +76,25 @@ class NotificationService(BaseService):
     def get_user_notifications(
         self, user_id: str
     ) -> List[Notification]:
-        """Get all notifications for a user, newest first."""
-        return self.where(  # type: ignore[return-value]
-            "userId", "==", user_id,
-            order_by="createdAt", descending=True, limit=100,
+        """Get all notifications for a user, newest first.
+
+        Filters by userId then sorts in Python to avoid needing a
+        composite Firestore index.
+        """
+        notifs = self.where(
+            "userId", "==", user_id, limit=100,
         )
+        # Sort by createdAt descending (newest first)
+        notifs.sort(
+            key=lambda n: str(getattr(n, "createdAt", "")),
+            reverse=True,
+        )
+        return notifs  # type: ignore[return-value]
 
     def get_unread_count(self, user_id: str) -> int:
         """Return the number of unread notifications."""
-        unread = self.where_many(
-            [
-                ("userId", "==", user_id),
-                ("isRead", "==", False),
-            ],
-            limit=100,
-        )
-        return len(unread)
+        all_notifs = self.where("userId", "==", user_id, limit=100)
+        return sum(1 for n in all_notifs if not bool(getattr(n, "isRead", True)))
 
     # ── Mark read ─────────────────────────────────────────────────────
 
@@ -81,17 +104,14 @@ class NotificationService(BaseService):
 
     def mark_all_as_read(self, user_id: str) -> int:
         """Mark all of a user's notifications as read. Returns count."""
-        unread = self.where_many(
-            [
-                ("userId", "==", user_id),
-                ("isRead", "==", False),
-            ],
-            limit=100,
-        )
-        for n in unread:
-            nid = str(getattr(n, "id", ""))
-            self.update(nid, {"isRead": True})
-        return len(unread)
+        all_notifs = self.where("userId", "==", user_id, limit=100)
+        count = 0
+        for n in all_notifs:
+            if not bool(getattr(n, "isRead", True)):
+                nid = str(getattr(n, "id", ""))
+                self.update(nid, {"isRead": True})
+                count += 1
+        return count
 
     # ── Delete ────────────────────────────────────────────────────────
 
