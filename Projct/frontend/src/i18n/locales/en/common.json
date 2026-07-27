@@ -299,7 +299,12 @@
     "deletedToast": "Deleted",
     "total": "total",
     "pending": "pending",
-    "platformAdmin": "Platform Admin"
+    "platformAdmin": "Platform Admin",
+    "registered": "registered",
+    "timeout": "Timeout",
+    "actions": "Actions",
+    "timeoutUser": "Timeout User",
+    "timedOut": "Timed out"
   },
   "notification": {
     "title": "Notifications",

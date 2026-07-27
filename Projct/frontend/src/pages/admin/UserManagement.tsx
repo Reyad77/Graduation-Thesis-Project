@@ -53,7 +53,7 @@ export default function AdminUserManagement() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold text-gray-900">{t("admin.userMgmtTitle")}</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{users.length} {t("admin.users").toLowerCase()} registered</p>
+          <p className="text-sm text-gray-500 mt-0.5">{users.length} {t("admin.users").toLowerCase()} {t("admin.registered")}</p>
         </div>
       </div>
 
@@ -94,8 +94,8 @@ export default function AdminUserManagement() {
               <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs w-[30%]">{t("admin.email")}</th>
               <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs w-[12%]">{t("admin.role")}</th>
               <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs w-[12%]">{t("admin.status")}</th>
-              <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs w-[10%]">Timeout</th>
-              <th className="text-right px-4 py-3 font-medium text-gray-500 text-xs w-[11%]">Actions</th>
+              <th className="text-left px-4 py-3 font-medium text-gray-500 text-xs w-[10%]">{t("admin.timeout")}</th>
+              <th className="text-right px-4 py-3 font-medium text-gray-500 text-xs w-[11%]">{t("admin.actions")}</th>
             </tr>
           </thead>
           <tbody>
@@ -121,7 +121,7 @@ export default function AdminUserManagement() {
                   </td>
                   <td className="px-4 py-3">
                     <span className={`text-[11px] font-medium ${u.isActive ? (isTimedOut ? "text-amber-600" : "text-emerald-600") : "text-red-600"}`}>
-                      {isTimedOut ? "Timed out" : u.isActive ? t("admin.active") : t("admin.banned")}
+                      {isTimedOut ? t("admin.timedOut") : u.isActive ? t("admin.active") : t("admin.banned")}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-xs text-gray-400">
@@ -140,7 +140,7 @@ export default function AdminUserManagement() {
                               <Ban size={12} /> {t("admin.ban")}
                             </button>
                             <button onClick={() => { setTimeoutUser(u); setOpenMenu(null); }} className="w-full text-left px-3 py-2 text-xs text-amber-600 hover:bg-amber-50 flex items-center gap-2">
-                              <Clock size={12} /> Timeout
+                              <Clock size={12} /> {t("admin.timeout")}
                             </button>
                           </>
                         ) : (
@@ -166,7 +166,7 @@ export default function AdminUserManagement() {
       {timeoutUser && (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50" onClick={() => setTimeoutUser(null)}>
           <div className="bg-white rounded-2xl p-6 w-full max-w-sm mx-4 shadow-xl" onClick={e => e.stopPropagation()}>
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">Timeout User</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">{t("admin.timeoutUser")}</h3>
             <p className="text-sm text-gray-500 mb-4">{timeoutUser.displayName} ({timeoutUser.email})</p>
             <div className="grid grid-cols-2 gap-2">
               {TIMEOUT_OPTIONS.map(opt => (
@@ -177,7 +177,7 @@ export default function AdminUserManagement() {
               ))}
             </div>
             <button onClick={() => setTimeoutUser(null)} className="mt-4 w-full py-2 text-sm text-gray-500 hover:text-gray-700">
-              Cancel
+              {t("common.cancel")}
             </button>
           </div>
         </div>

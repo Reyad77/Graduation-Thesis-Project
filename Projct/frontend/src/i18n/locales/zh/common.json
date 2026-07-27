@@ -265,7 +265,7 @@
     "reject": "Reject",
     "refresh": "Refresh",
     "pageTitle": "Control Panel",
-    "userMgmtTitle": "User Management",
+    "userMgmtTitle": "用户管理",
     "userMgmtDesc": "Manage all platform users.",
     "verifyTitle": "Verify Students",
     "verifyDesc": "Review student identity documents.",
@@ -300,7 +300,12 @@
     "total": "个",
     "pending": "待审",
     "dashboard": "仪表板",
-    "platformAdmin": "平台管理员"
+    "platformAdmin": "平台管理员",
+    "registered": "已注册",
+    "timeout": "超时",
+    "actions": "操作",
+    "timeoutUser": "超时用户",
+    "timedOut": "已超时"
   },
   "notification": {
     "title": "Notifications",

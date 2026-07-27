@@ -265,7 +265,7 @@
     "reject": "Reject",
     "refresh": "Refresh",
     "pageTitle": "Control Panel",
-    "userMgmtTitle": "User Management",
+    "userMgmtTitle": "Gestion des utilisateurs",
     "userMgmtDesc": "Manage all platform users.",
     "verifyTitle": "Verify Students",
     "verifyDesc": "Review student identity documents.",
@@ -300,7 +300,12 @@
     "total": "total",
     "pending": "en attente",
     "dashboard": "Tableau",
-    "platformAdmin": "Administrateur Plateforme"
+    "platformAdmin": "Administrateur Plateforme",
+    "registered": "inscrit",
+    "timeout": "Expiration",
+    "actions": "Actions",
+    "timeoutUser": "Expiration",
+    "timedOut": "Expiré"
   },
   "notification": {
     "title": "Notifications",

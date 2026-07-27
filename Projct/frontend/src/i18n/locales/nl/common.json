@@ -265,7 +265,7 @@
     "reject": "Reject",
     "refresh": "Refresh",
     "pageTitle": "Control Panel",
-    "userMgmtTitle": "User Management",
+    "userMgmtTitle": "Gebruikersbeheer",
     "userMgmtDesc": "Manage all platform users.",
     "verifyTitle": "Verify Students",
     "verifyDesc": "Review student identity documents.",
@@ -300,7 +300,12 @@
     "total": "totaal",
     "pending": "in afwachting",
     "dashboard": "Dashboard",
-    "platformAdmin": "Platform Beheerder"
+    "platformAdmin": "Platform Beheerder",
+    "registered": "geregistreerd",
+    "timeout": "Time-out",
+    "actions": "Acties",
+    "timeoutUser": "Time-out",
+    "timedOut": "Time-out"
   },
   "notification": {
     "title": "Notifications",

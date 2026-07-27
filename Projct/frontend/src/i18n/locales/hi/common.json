@@ -265,7 +265,7 @@
     "reject": "Reject",
     "refresh": "Refresh",
     "pageTitle": "Control Panel",
-    "userMgmtTitle": "User Management",
+    "userMgmtTitle": "उपयोगकर्ता प्रबंधन",
     "userMgmtDesc": "Manage all platform users.",
     "verifyTitle": "Verify Students",
     "verifyDesc": "Review student identity documents.",
@@ -300,7 +300,12 @@
     "total": "कुल",
     "pending": "लंबित",
     "dashboard": "डैशबोर्ड",
-    "platformAdmin": "प्लेटफॉर्म एडमिन"
+    "platformAdmin": "प्लेटफॉर्म एडमिन",
+    "registered": "पंजीकृत",
+    "timeout": "टाइमआउट",
+    "actions": "कार्रवाई",
+    "timeoutUser": "टाइमआउट",
+    "timedOut": "टाइमआउट"
   },
   "notification": {
     "title": "Notifications",

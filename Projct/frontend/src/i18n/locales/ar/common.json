@@ -265,7 +265,7 @@
     "reject": "Reject",
     "refresh": "Refresh",
     "pageTitle": "Control Panel",
-    "userMgmtTitle": "User Management",
+    "userMgmtTitle": "إدارة المستخدمين",
     "userMgmtDesc": "Manage all platform users.",
     "verifyTitle": "Verify Students",
     "verifyDesc": "Review student identity documents.",
@@ -300,7 +300,12 @@
     "total": "إجمالي",
     "pending": "معلق",
     "dashboard": "لوحة",
-    "platformAdmin": "مدير المنصة"
+    "platformAdmin": "مدير المنصة",
+    "registered": "مسجل",
+    "timeout": "مهلة",
+    "actions": "إجراءات",
+    "timeoutUser": "مهلة",
+    "timedOut": "منتهي"
   },
   "notification": {
     "title": "Notifications",

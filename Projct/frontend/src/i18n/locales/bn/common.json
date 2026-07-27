@@ -265,7 +265,7 @@
     "reject": "Reject",
     "refresh": "Refresh",
     "pageTitle": "Control Panel",
-    "userMgmtTitle": "User Management",
+    "userMgmtTitle": "ব্যবহারকারী ব্যবস্থাপনা",
     "userMgmtDesc": "Manage all platform users.",
     "verifyTitle": "Verify Students",
     "verifyDesc": "Review student identity documents.",
@@ -300,7 +300,12 @@
     "total": "টি",
     "pending": "অপেক্ষমাণ",
     "dashboard": "ড্যাশবোর্ড",
-    "platformAdmin": "প্ল্যাটফর্ম অ্যাডমিন"
+    "platformAdmin": "প্ল্যাটফর্ম অ্যাডমিন",
+    "registered": "নিবন্ধিত",
+    "timeout": "টাইমআউট",
+    "actions": "ক্রিয়া",
+    "timeoutUser": "টাইমআউট",
+    "timedOut": "টাইমআউট"
   },
   "notification": {
     "title": "Notifications",
