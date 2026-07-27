@@ -69,17 +69,23 @@ def approve_enterprise(uid: str, user: dict = Depends(get_current_admin)):
 
 @router.post("/users/{uid}/ban")
 def ban_user(uid: str, reason: str = "", user: dict = Depends(get_current_admin)):
-    ok = _ent_svc.ban(uid, reason)
-    if not ok: raise HTTPException(404, "Enterprise not found.")
+    # Ban the user account
+    ok = _auth_svc.update(uid, {"isActive": False, "banReason": reason})
+    if not ok: raise HTTPException(404, "User not found.")
+    # Also ban enterprise profile if exists
+    try: _ent_svc.ban(uid, reason)
+    except: pass
     return {"message": "User banned."}
 
 
 @router.post("/users/{uid}/unban")
 def unban_user(uid: str, user: dict = Depends(get_current_admin)):
-    ok = _ent_svc.unban(uid)
-    if not ok: raise HTTPException(404, "Enterprise not found.")
-    # Also clear timeout
-    _auth_svc.update(uid, {"timeoutUntil": None, "isActive": True})
+    # Unban the user account
+    ok = _auth_svc.update(uid, {"timeoutUntil": None, "isActive": True, "banReason": ""})
+    if not ok: raise HTTPException(404, "User not found.")
+    # Also unban enterprise profile if exists
+    try: _ent_svc.unban(uid)
+    except: pass
     return {"message": "User unbanned."}
 
 
