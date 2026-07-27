@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
-  LayoutDashboard, Users, UserCheck, Building2, Briefcase,
+  LayoutDashboard, Users, UserCheck, Briefcase,
   Megaphone, Image, ChevronLeft, ChevronRight, LogOut, Menu, X, Zap,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -12,8 +12,7 @@ import LanguageSwitcher from "@/components/common/LanguageSwitcher";
 const navKeys = [
   { to: "/admin", icon: LayoutDashboard, key: "dashboard", exact: true },
   { to: "/admin/users", icon: Users, key: "users" },
-  { to: "/admin/verify-students", icon: UserCheck, key: "verify" },
-  { to: "/admin/approve-enterprises", icon: Building2, key: "approve" },
+  { to: "/admin/verify-users", icon: UserCheck, key: "verifyUsers" },
   { to: "/admin/jobs", icon: Briefcase, key: "jobs" },
   { to: "/admin/announcements", icon: Megaphone, key: "news" },
   { to: "/admin/banners", icon: Image, key: "media" },

@@ -236,7 +236,7 @@
     "auditJobs": "审核工作",
     "userManagement": "用户管理",
     "news": "新闻",
-    "media": "横幅",
+    "media": "媒体",
     "recentUsers": "最近用户",
     "allJobs": "全部",
     "viewAll": "View all",
@@ -305,7 +305,10 @@
     "timeout": "超时",
     "actions": "操作",
     "timeoutUser": "超时用户",
-    "timedOut": "已超时"
+    "timedOut": "已超时",
+    "verifyUsers": "Verify Users",
+    "declineStudent": "Decline",
+    "declineEnterprise": "Decline"
   },
   "notification": {
     "title": "Notifications",

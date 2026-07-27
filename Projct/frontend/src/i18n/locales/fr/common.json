@@ -305,7 +305,10 @@
     "timeout": "Expiration",
     "actions": "Actions",
     "timeoutUser": "Expiration",
-    "timedOut": "Expiré"
+    "timedOut": "Expiré",
+    "verifyUsers": "Verify Users",
+    "declineStudent": "Decline",
+    "declineEnterprise": "Decline"
   },
   "notification": {
     "title": "Notifications",

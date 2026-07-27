@@ -305,7 +305,10 @@
     "timeout": "टाइमआउट",
     "actions": "कार्रवाई",
     "timeoutUser": "टाइमआउट",
-    "timedOut": "टाइमआउट"
+    "timedOut": "टाइमआउट",
+    "verifyUsers": "Verify Users",
+    "declineStudent": "Decline",
+    "declineEnterprise": "Decline"
   },
   "notification": {
     "title": "Notifications",

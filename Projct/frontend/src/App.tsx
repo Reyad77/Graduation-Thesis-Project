@@ -29,8 +29,7 @@ import EnterpriseApplicants from "./pages/enterprise/Applicants";
 // Admin pages
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminUserManagement from "./pages/admin/UserManagement";
-import AdminStudentVerification from "./pages/admin/StudentVerification";
-import AdminEnterpriseApproval from "./pages/admin/EnterpriseApproval";
+import AdminVerifyUsers from "./pages/admin/VerifyUsers";
 import AdminJobAudit from "./pages/admin/JobAudit";
 import AdminBannerManagement from "./pages/admin/BannerManagement";
 import AdminAnnouncements from "./pages/admin/Announcements";
@@ -88,8 +87,9 @@ export default function App() {
           <Route path="admin" element={<AdminDashboard />} />
           <Route path="admin/dashboard" element={<AdminDashboard />} />
           <Route path="admin/users" element={<AdminUserManagement />} />
-          <Route path="admin/verify-students" element={<AdminStudentVerification />} />
-          <Route path="admin/approve-enterprises" element={<AdminEnterpriseApproval />} />
+          <Route path="admin/verify-students" element={<AdminVerifyUsers />} />
+          <Route path="admin/approve-enterprises" element={<AdminVerifyUsers />} />
+          <Route path="admin/verify-users" element={<AdminVerifyUsers />} />
           <Route path="admin/jobs" element={<AdminJobAudit />} />
           <Route path="admin/banners" element={<AdminBannerManagement />} />
           <Route path="admin/announcements" element={<AdminAnnouncements />} />

@@ -20,8 +20,16 @@ const adminService = {
     await api.post(`/admin/users/${uid}/verify-student`);
   },
 
+  declineStudent: async (uid: string, reason?: string): Promise<void> => {
+    await api.post(`/admin/users/${uid}/decline-student`, null, { params: { reason } });
+  },
+
   approveEnterprise: async (uid: string): Promise<void> => {
     await api.post(`/admin/users/${uid}/approve-enterprise`);
+  },
+
+  declineEnterprise: async (uid: string, reason?: string): Promise<void> => {
+    await api.post(`/admin/users/${uid}/decline-enterprise`, null, { params: { reason } });
   },
 
   banUser: async (uid: string, reason?: string): Promise<void> => {

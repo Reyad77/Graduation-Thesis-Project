@@ -305,7 +305,10 @@
     "timeout": "টাইমআউট",
     "actions": "ক্রিয়া",
     "timeoutUser": "টাইমআউট",
-    "timedOut": "টাইমআউট"
+    "timedOut": "টাইমআউট",
+    "verifyUsers": "Verify Users",
+    "declineStudent": "Decline",
+    "declineEnterprise": "Decline"
   },
   "notification": {
     "title": "Notifications",

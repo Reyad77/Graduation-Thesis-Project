@@ -305,7 +305,10 @@
     "timeout": "مهلة",
     "actions": "إجراءات",
     "timeoutUser": "مهلة",
-    "timedOut": "منتهي"
+    "timedOut": "منتهي",
+    "verifyUsers": "Verify Users",
+    "declineStudent": "Decline",
+    "declineEnterprise": "Decline"
   },
   "notification": {
     "title": "Notifications",

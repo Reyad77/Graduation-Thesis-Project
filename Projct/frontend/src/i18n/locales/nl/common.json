@@ -305,7 +305,10 @@
     "timeout": "Time-out",
     "actions": "Acties",
     "timeoutUser": "Time-out",
-    "timedOut": "Time-out"
+    "timedOut": "Time-out",
+    "verifyUsers": "Verify Users",
+    "declineStudent": "Decline",
+    "declineEnterprise": "Decline"
   },
   "notification": {
     "title": "Notifications",

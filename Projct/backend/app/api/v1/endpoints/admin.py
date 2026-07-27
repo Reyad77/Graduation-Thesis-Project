@@ -41,7 +41,21 @@ def _serialize(obj):
 @router.get("/users")
 def list_users(user: dict = Depends(get_current_admin)):
     result = _auth_svc.get_all(page=1, page_size=100, order_by="createdAt")
-    return [_serialize(u) for u in result.get("items", [])]
+    users = []
+    for u in result.get("items", []):
+        data = _serialize(u)
+        uid = data.get("uid", "")
+        # Include verification/approval status from linked profiles
+        if data.get("role") == "student":
+            sp = _student_svc.get_profile(uid)
+            if sp: data["isVerified"] = getattr(sp, "isVerified", False)
+            else: data["isVerified"] = False
+        elif data.get("role") == "enterprise":
+            ep = _ent_svc.get_profile(uid)
+            if ep: data["isApproved"] = getattr(ep, "isApproved", False)
+            else: data["isApproved"] = False
+        users.append(data)
+    return users
 
 
 @router.get("/users/{uid}")
@@ -59,12 +73,26 @@ def verify_student(uid: str, user: dict = Depends(get_current_admin)):
     return {"message": "Student verified."}
 
 
+@router.post("/users/{uid}/decline-student")
+def decline_student(uid: str, reason: str = "", user: dict = Depends(get_current_admin)):
+    ok = _student_svc.update(uid, {"isVerified": False, "verificationNotes": reason})
+    if not ok: raise HTTPException(404, "Student not found.")
+    return {"message": "Student verification declined."}
+
+
 @router.post("/users/{uid}/approve-enterprise")
 def approve_enterprise(uid: str, user: dict = Depends(get_current_admin)):
     ok = _ent_svc.approve(uid, _uid(user))
     if not ok: raise HTTPException(404, "Enterprise not found.")
     _notif_svc.on_enterprise_approved(uid)
     return {"message": "Enterprise approved."}
+
+
+@router.post("/users/{uid}/decline-enterprise")
+def decline_enterprise(uid: str, reason: str = "", user: dict = Depends(get_current_admin)):
+    ok = _ent_svc.update(uid, {"isApproved": False, "declineReason": reason})
+    if not ok: raise HTTPException(404, "Enterprise not found.")
+    return {"message": "Enterprise declined."}
 
 
 @router.post("/users/{uid}/ban")
