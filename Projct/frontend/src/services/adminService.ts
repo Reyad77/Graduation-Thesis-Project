@@ -32,6 +32,14 @@ const adminService = {
     await api.post(`/admin/users/${uid}/unban`);
   },
 
+  timeoutUser: async (uid: string, minutes: number): Promise<void> => {
+    await api.post(`/admin/users/${uid}/timeout`, null, { params: { minutes } });
+  },
+
+  deleteUser: async (uid: string): Promise<void> => {
+    await api.delete(`/admin/users/${uid}`);
+  },
+
   // ── Job auditing ─────────────────────────────────────────────────
   getPendingJobs: async (): Promise<Job[]> => {
     const { data } = await api.get("/admin/jobs/pending");

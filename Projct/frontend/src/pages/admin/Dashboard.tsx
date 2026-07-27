@@ -6,13 +6,11 @@ import {
   CheckCircle, ArrowRight, Megaphone, Image, RefreshCw,
 } from "lucide-react";
 import adminService from "@/services/adminService";
-import { useAuth } from "@/hooks/useAuth";
 import type { User, Job } from "@/types";
 import { toast } from "react-hot-toast";
 
 export default function AdminDashboard() {
   const { t } = useTranslation();
-  const { user } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [pendingJobs, setPendingJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +48,7 @@ export default function AdminDashboard() {
         <div>
           <h1 className="text-lg font-bold text-gray-900">{t("admin.controlPanel")}</h1>
           <p className="text-xs text-gray-500 mt-0.5">
-            {t("admin.welcome")}, <span className="text-gray-800 font-medium">{user?.displayName || t("admin.adminPanel")}</span>
+            {t("admin.welcome")}, <span className="text-gray-800 font-medium">{t("admin.platformAdmin")}</span>
           </p>
         </div>
         <button onClick={fetch} className="flex items-center gap-1 text-xs text-gray-400 hover:text-primary-600 transition-colors">
@@ -125,17 +123,17 @@ export default function AdminDashboard() {
           <h2 className="text-sm font-semibold text-gray-700 mb-4">{t("admin.quickActions")}</h2>
           <div className="flex-1 grid grid-cols-2 gap-3 content-start">
             <ActionTile to="/admin/verify-students" icon={<UserCheck size={20} />}
-              label={t("admin.verifyStudents")} sub={`${totalStudents} total`} color="emerald" />
+              label={t("admin.verifyStudents")} sub={`${totalStudents} ${t("admin.total")}`} color="emerald" />
             <ActionTile to="/admin/approve-enterprises" icon={<Building2 size={20} />}
-              label={t("admin.approveHR")} sub={`${totalEnterprises} total`} color="violet" />
+              label={t("admin.approveHR")} sub={`${totalEnterprises} ${t("admin.total")}`} color="violet" />
             <ActionTile to="/admin/jobs" icon={<Briefcase size={20} />}
-              label={t("admin.auditJobs")} sub={`${pendingJobs.length} pending`} color="amber" />
+              label={t("admin.auditJobs")} sub={`${pendingJobs.length} ${t("admin.pending")}`} color="amber" />
             <ActionTile to="/admin/users" icon={<Users size={20} />}
-              label={t("admin.userManagement")} sub={`${users.length} total`} color="blue" />
+              label={t("admin.userManagement")} sub={`${users.length} ${t("admin.total")}`} color="blue" />
             <ActionTile to="/admin/announcements" icon={<Megaphone size={20} />}
-              label={t("admin.news")} sub="Announcements" color="pink" />
+              label={t("admin.news")} sub={t("admin.announcement")} color="pink" />
             <ActionTile to="/admin/banners" icon={<Image size={20} />}
-              label={t("admin.media")} sub="Banners" color="indigo" />
+              label={t("admin.media")} sub={t("admin.media")} color="indigo" />
           </div>
         </div>
       </div>
@@ -150,10 +148,10 @@ export default function AdminDashboard() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="text-left py-2.5 px-3 text-gray-500 font-medium text-xs">{t("auth.fullName")}</th>
-                <th className="text-left py-2.5 px-3 text-gray-500 font-medium text-xs">{t("auth.email")}</th>
-                <th className="text-left py-2.5 px-3 text-gray-500 font-medium text-xs">{t("common.status")}</th>
-                <th className="text-left py-2.5 px-3 text-gray-500 font-medium text-xs">{t("common.status")}</th>
+                <th className="text-left py-2.5 px-3 text-gray-500 font-medium text-xs">{t("admin.name")}</th>
+                <th className="text-left py-2.5 px-3 text-gray-500 font-medium text-xs">{t("admin.email")}</th>
+                <th className="text-left py-2.5 px-3 text-gray-500 font-medium text-xs">{t("admin.role")}</th>
+                <th className="text-left py-2.5 px-3 text-gray-500 font-medium text-xs">{t("admin.status")}</th>
               </tr>
             </thead>
             <tbody>

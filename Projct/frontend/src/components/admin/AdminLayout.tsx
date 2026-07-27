@@ -5,22 +5,30 @@ import {
   Megaphone, Image, ChevronLeft, ChevronRight, LogOut, Menu, X, Zap,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "react-i18next";
 import NotificationBell from "@/components/notifications/NotificationBell";
+import LanguageSwitcher from "@/components/common/LanguageSwitcher";
 
-const navItems = [
-  { to: "/admin", icon: LayoutDashboard, label: "Dashboard", exact: true },
-  { to: "/admin/users", icon: Users, label: "Users" },
-  { to: "/admin/verify-students", icon: UserCheck, label: "Verify" },
-  { to: "/admin/approve-enterprises", icon: Building2, label: "Approve" },
-  { to: "/admin/jobs", icon: Briefcase, label: "Jobs" },
-  { to: "/admin/announcements", icon: Megaphone, label: "News" },
-  { to: "/admin/banners", icon: Image, label: "Media" },
+const navKeys = [
+  { to: "/admin", icon: LayoutDashboard, key: "dashboard", exact: true },
+  { to: "/admin/users", icon: Users, key: "users" },
+  { to: "/admin/verify-students", icon: UserCheck, key: "verify" },
+  { to: "/admin/approve-enterprises", icon: Building2, key: "approve" },
+  { to: "/admin/jobs", icon: Briefcase, key: "jobs" },
+  { to: "/admin/announcements", icon: Megaphone, key: "news" },
+  { to: "/admin/banners", icon: Image, key: "media" },
 ];
 
 export default function AdminLayout() {
+  const { t } = useTranslation();
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+
+  const navItems = navKeys.map(item => ({
+    ...item,
+    label: t(`admin.${item.key}`),
+  }));
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -38,7 +46,7 @@ export default function AdminLayout() {
             <div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center">
               <Zap size={14} className="text-primary-600" />
             </div>
-            <span className="font-bold text-xs text-white tracking-wider uppercase">Admin</span>
+            <span className="font-bold text-xs text-white tracking-wider uppercase">{t("admin.adminPanel")}</span>
           </div>
         )}
         <button onClick={() => setCollapsed(v => !v)}
@@ -82,14 +90,14 @@ export default function AdminLayout() {
           {!collapsed && (
             <div className="min-w-0">
               <p className="text-[11px] text-white truncate font-medium">{user?.displayName}</p>
-              <p className="text-[9px] text-primary-300">Administrator</p>
+              <p className="text-[9px] text-primary-300">{t("admin.administrator")}</p>
             </div>
           )}
         </div>
         <button onClick={handleLogout}
           className={`flex items-center gap-2 text-[10px] text-primary-300 hover:text-red-300 transition-colors w-full
             ${collapsed ? "justify-center" : ""}`}>
-          <LogOut size={12} className="shrink-0" /> {!collapsed && "Sign out"}
+          <LogOut size={12} className="shrink-0" /> {!collapsed && t("admin.signOut")}
         </button>
       </div>
     </>
@@ -110,9 +118,10 @@ export default function AdminLayout() {
             <Menu size={18} />
           </button>
           <span className="text-xs text-gray-500 font-medium tracking-wide uppercase hidden md:block">
-            {navItems.find(i => isActive(i.to, i.exact))?.label || "Overview"}
+            {navItems.find(i => isActive(i.to, i.exact))?.label || t("admin.overview")}
           </span>
           <div className="flex items-center gap-2 ml-auto">
+            <LanguageSwitcher />
             <NotificationBell />
           </div>
         </header>

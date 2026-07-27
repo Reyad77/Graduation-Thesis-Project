@@ -78,7 +78,31 @@ def ban_user(uid: str, reason: str = "", user: dict = Depends(get_current_admin)
 def unban_user(uid: str, user: dict = Depends(get_current_admin)):
     ok = _ent_svc.unban(uid)
     if not ok: raise HTTPException(404, "Enterprise not found.")
+    # Also clear timeout
+    _auth_svc.update(uid, {"timeoutUntil": None, "isActive": True})
     return {"message": "User unbanned."}
+
+
+@router.post("/users/{uid}/timeout")
+def timeout_user(uid: str, minutes: int, user: dict = Depends(get_current_admin)):
+    """Temporarily ban a user for the given number of minutes."""
+    if minutes < 1 or minutes > 14400:  # max 10 days
+        raise HTTPException(400, "Duration must be between 1 and 14400 minutes.")
+    from datetime import datetime, timedelta, timezone
+    until = datetime.now(timezone.utc) + timedelta(minutes=minutes)
+    _auth_svc.update(uid, {"timeoutUntil": until, "isActive": False})
+    return {"message": f"User timed out for {minutes} minutes.", "timeoutUntil": until.isoformat()}
+
+
+@router.delete("/users/{uid}")
+def delete_user(uid: str, user: dict = Depends(get_current_admin)):
+    """Permanently delete a user and their data."""
+    ok = _auth_svc.delete(uid)
+    if not ok: raise HTTPException(404, "User not found.")
+    # Also try to clean up linked profiles
+    _student_svc.delete(uid)
+    _ent_svc.delete(uid)
+    return {"message": "User deleted permanently."}
 
 
 # ═════════════════════════════════════════════════════════════════════
