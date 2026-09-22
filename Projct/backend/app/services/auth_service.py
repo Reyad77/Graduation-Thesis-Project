@@ -186,6 +186,7 @@ class AuthService(BaseService):
             error_msg = resp.json().get("error", {}).get("message", "Login failed.")
             # Map common Firebase errors to user-friendly messages
             friendly = {
+                "INVALID_LOGIN_CREDENTIALS": "Incorrect email or password.",
                 "EMAIL_NOT_FOUND": "No account found with this email.",
                 "INVALID_PASSWORD": "Incorrect password.",
                 "INVALID_EMAIL": "Invalid email address.",
@@ -205,7 +206,16 @@ class AuthService(BaseService):
         # 3. Fetch the Firestore user profile
         user = self.get_by_id(uid)
         if not user:
-            raise ValueError("User profile not found. Please contact support.")
+            # Auto-heal: the Auth account exists but the Firestore mirror is
+            # missing (e.g. a registration that partially failed in the past).
+            # Rebuild the profile with least-privilege defaults so the user
+            # can log in instead of getting "profile not found".
+            user = self._rebuild_profile(
+                uid=uid,
+                email=data.get("email") or email,
+                display_name=data.get("displayName") or email.split("@")[0],
+                role="student",
+            )
 
         # 4. Extract role from the Firestore profile
         if hasattr(user, "role"):
@@ -235,7 +245,13 @@ class AuthService(BaseService):
 
             user = self.get_by_id(uid)
             if not user:
-                raise ValueError("User not found in database.")
+                # Auto-heal a missing Firestore mirror (see login_with_email_password).
+                user = self._rebuild_profile(
+                    uid=uid,
+                    email=decoded.get("email") or "",
+                    display_name=decoded.get("name") or "User",
+                    role="student",
+                )
 
             role_val = (
                 user.role.value
@@ -253,6 +269,33 @@ class AuthService(BaseService):
             }
         except FirebaseError as exc:
             raise ValueError(str(exc))
+
+    # ── Profile recovery ──────────────────────────────────────────────
+
+    def _rebuild_profile(
+        self, uid: str, email: str, display_name: str, role: str
+    ) -> User:
+        """Create a missing Firestore user document for an existing Auth user.
+
+        Used when Firebase Auth succeeds but the mirrored Firestore profile
+        does not exist (e.g. a registration that partially failed). The role
+        defaults to "student" (least privilege) — admins/enterprises can have
+        their role corrected by a platform administrator.
+        """
+        now = datetime.now(timezone.utc)
+        user_data = {
+            "uid": uid,
+            "email": email,
+            "role": role,
+            "displayName": display_name,
+            "phone": "",
+            "preferredLanguage": "en",
+            "isActive": True,
+            "createdAt": now,
+            "updatedAt": now,
+        }
+        self.create(user_data, doc_id=uid)
+        return User(**user_data)
 
     # ── Current user ──────────────────────────────────────────────────
 

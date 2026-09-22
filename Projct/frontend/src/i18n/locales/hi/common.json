@@ -224,9 +224,9 @@
     "controlPanel": "कंट्रोल पैनल",
     "welcome": "स्वागत",
     "online": "Online",
-    "totalUsers": "Total Users",
-    "students": "Students",
-    "enterprises": "Enterprises",
+    "totalUsers": "कुल उपयोगकर्ता",
+    "students": "छात्र",
+    "enterprises": "उद्यम",
     "pendingJobs": "Pending Jobs",
     "pendingApprovals": "Pending Approvals",
     "allClear": "All clear — nothing pending",
@@ -323,5 +323,8 @@
     "about": "बारे में",
     "privacy": "गोपनीयता",
     "contact": "संपर्क"
+  },
+  "errors": {
+    "serverUnreachable": "सर्वर से संपर्क नहीं हो पा रहा। क्या बैकएंड सर्वर चल रहा है?"
   }
 }

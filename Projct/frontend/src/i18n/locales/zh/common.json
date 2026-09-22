@@ -323,5 +323,8 @@
     "about": "关于",
     "privacy": "隐私",
     "contact": "联系"
+  },
+  "errors": {
+    "serverUnreachable": "无法连接到服务器。后端服务是否已启动？"
   }
 }

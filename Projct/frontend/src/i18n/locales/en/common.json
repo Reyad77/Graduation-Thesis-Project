@@ -323,5 +323,8 @@
     "about": "About",
     "privacy": "Privacy",
     "contact": "Contact"
+  },
+  "errors": {
+    "serverUnreachable": "Cannot reach the server. Is the backend running?"
   }
 }

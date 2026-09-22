@@ -30,7 +30,13 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    // Only force-redirect when an *authenticated* request's session expired.
+    // A failed login/register attempt returns 401/400 too — hijacking it
+    // would reload the page and wipe the error message the form shows.
+    const url: string = error.config?.url ?? "";
+    const isAuthAttempt = /\/auth\/(login|register|forgot-password)/.test(url);
+    const hadToken = Boolean(error.config?.headers?.Authorization);
+    if (error.response?.status === 401 && !isAuthAttempt && hadToken) {
       localStorage.removeItem("access_token");
       window.location.href = "/login";
     }

@@ -224,9 +224,9 @@
     "controlPanel": "لوحة التحكم",
     "welcome": "مرحبا",
     "online": "Online",
-    "totalUsers": "Total Users",
-    "students": "Students",
-    "enterprises": "Enterprises",
+    "totalUsers": "إجمالي المستخدمين",
+    "students": "طلاب",
+    "enterprises": "شركات",
     "pendingJobs": "Pending Jobs",
     "pendingApprovals": "Pending Approvals",
     "allClear": "All clear — nothing pending",
@@ -323,5 +323,8 @@
     "about": "حول",
     "privacy": "خصوصية",
     "contact": "اتصال"
+  },
+  "errors": {
+    "serverUnreachable": "تعذر الوصول إلى الخادم. هل الخادم الخلفي يعمل؟"
   }
 }

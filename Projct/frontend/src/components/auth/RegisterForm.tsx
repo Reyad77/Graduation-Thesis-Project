@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { getApiErrorMessage } from "@/utils/apiError";
 import type { UserRole } from "@/types";
 import { Search, UserPlus } from "lucide-react";
 
@@ -25,7 +26,7 @@ export default function RegisterForm() {
       await register(email, password, displayName, role);
       if (role === "student") navigate("/student/profile");
       else if (role === "enterprise") navigate("/enterprise/register");
-    } catch { setError(t("auth.registerFailed")); }
+    } catch (err) { setError(getApiErrorMessage(err, t("auth.registerFailed"), t("errors.serverUnreachable"))); }
     finally { setIsSubmitting(false); }
   };
 

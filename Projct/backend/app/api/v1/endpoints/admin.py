@@ -67,6 +67,10 @@ def get_user(uid: str, user: dict = Depends(get_current_admin)):
 
 @router.post("/users/{uid}/verify-student")
 def verify_student(uid: str, user: dict = Depends(get_current_admin)):
+    # Auto-create student profile if it doesn't exist
+    if not _student_svc.exists(uid):
+        user_data = _auth_svc.get_dict_by_id(uid) or {}
+        _student_svc.create_profile(uid, user_data.get("email", ""))
     ok = _student_svc.verify_student(uid, _uid(user))
     if not ok: raise HTTPException(404, "Student not found.")
     _notif_svc.on_student_verified(uid)
@@ -75,6 +79,9 @@ def verify_student(uid: str, user: dict = Depends(get_current_admin)):
 
 @router.post("/users/{uid}/decline-student")
 def decline_student(uid: str, reason: str = "", user: dict = Depends(get_current_admin)):
+    if not _student_svc.exists(uid):
+        user_data = _auth_svc.get_dict_by_id(uid) or {}
+        _student_svc.create_profile(uid, user_data.get("email", ""))
     ok = _student_svc.update(uid, {"isVerified": False, "verificationNotes": reason})
     if not ok: raise HTTPException(404, "Student not found.")
     return {"message": "Student verification declined."}
@@ -82,6 +89,17 @@ def decline_student(uid: str, reason: str = "", user: dict = Depends(get_current
 
 @router.post("/users/{uid}/approve-enterprise")
 def approve_enterprise(uid: str, user: dict = Depends(get_current_admin)):
+    # Auto-create profile if it doesn't exist
+    if not _ent_svc.exists(uid):
+        user_data = _auth_svc.get_dict_by_id(uid) or {}
+        from app.models.enterprise import EnterpriseRegistrationRequest
+        _ent_svc.create_profile(uid, user_data.get("email", ""),
+            EnterpriseRegistrationRequest(
+                companyName=user_data.get("displayName", "Company"),
+                contactPerson=user_data.get("displayName", ""),
+                contactPhone=user_data.get("phone", ""),
+                address="",
+            ))
     ok = _ent_svc.approve(uid, _uid(user))
     if not ok: raise HTTPException(404, "Enterprise not found.")
     _notif_svc.on_enterprise_approved(uid)
@@ -90,6 +108,16 @@ def approve_enterprise(uid: str, user: dict = Depends(get_current_admin)):
 
 @router.post("/users/{uid}/decline-enterprise")
 def decline_enterprise(uid: str, reason: str = "", user: dict = Depends(get_current_admin)):
+    if not _ent_svc.exists(uid):
+        user_data = _auth_svc.get_dict_by_id(uid) or {}
+        from app.models.enterprise import EnterpriseRegistrationRequest
+        _ent_svc.create_profile(uid, user_data.get("email", ""),
+            EnterpriseRegistrationRequest(
+                companyName=user_data.get("displayName", "Company"),
+                contactPerson=user_data.get("displayName", ""),
+                contactPhone=user_data.get("phone", ""),
+                address="",
+            ))
     ok = _ent_svc.update(uid, {"isApproved": False, "declineReason": reason})
     if not ok: raise HTTPException(404, "Enterprise not found.")
     return {"message": "Enterprise declined."}

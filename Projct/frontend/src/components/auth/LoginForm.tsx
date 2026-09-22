@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { getApiErrorMessage } from "@/utils/apiError";
 
 export default function LoginForm() {
   const { t } = useTranslation();
@@ -19,8 +20,8 @@ export default function LoginForm() {
       if (user.role === "admin") navigate("/admin");
       else if (user.role === "enterprise") navigate("/enterprise");
       else navigate("/student");
-    } catch {
-      setError(t("auth.loginFailed"));
+    } catch (err) {
+      setError(getApiErrorMessage(err, t("auth.loginFailed"), t("errors.serverUnreachable")));
     } finally { setIsSubmitting(false); }
   };
 

@@ -224,9 +224,9 @@
     "controlPanel": "Panneau de contrôle",
     "welcome": "Bienvenue",
     "online": "Online",
-    "totalUsers": "Total Users",
-    "students": "Students",
-    "enterprises": "Enterprises",
+    "totalUsers": "Total utilisateurs",
+    "students": "Étudiants",
+    "enterprises": "Entreprises",
     "pendingJobs": "Pending Jobs",
     "pendingApprovals": "Pending Approvals",
     "allClear": "All clear — nothing pending",
@@ -323,5 +323,8 @@
     "about": "À propos",
     "privacy": "Confidentialité",
     "contact": "Contact"
+  },
+  "errors": {
+    "serverUnreachable": "Impossible de joindre le serveur. Le backend est-il démarré ?"
   }
 }

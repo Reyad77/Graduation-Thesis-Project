@@ -224,9 +224,9 @@
     "controlPanel": "Controlepaneel",
     "welcome": "Welkom",
     "online": "Online",
-    "totalUsers": "Total Users",
-    "students": "Students",
-    "enterprises": "Enterprises",
+    "totalUsers": "Totaal gebruikers",
+    "students": "Studenten",
+    "enterprises": "Bedrijven",
     "pendingJobs": "Pending Jobs",
     "pendingApprovals": "Pending Approvals",
     "allClear": "All clear — nothing pending",
@@ -323,5 +323,8 @@
     "about": "Over",
     "privacy": "Privacy",
     "contact": "Contact"
+  },
+  "errors": {
+    "serverUnreachable": "Kan de server niet bereiken. Draait de backend?"
   }
 }
