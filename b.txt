@@ -1,3 +1,4 @@
-"Total Users"
-"Students"
-"Enterprises"
+now my supervisor said :
+Add an evaluation module: upon completion of the part-time work, students may submit evaluations for recruiters, and recruiters may submit evaluations for students.
+
+add this to the proposal.
