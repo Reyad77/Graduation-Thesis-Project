@@ -60,14 +60,14 @@ async def get_current_student(
     return current_user
 
 
-async def get_current_enterprise(
+async def get_current_recruiter(
     current_user: dict = Depends(get_current_user),
 ) -> dict:
-    """Require the current user to have the 'enterprise' role."""
-    if current_user.get("role") != "enterprise":
+    """Require the current user to have the 'recruiter' role."""
+    if current_user.get("role") != "recruiter":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Enterprise role required",
+            detail="Recruiter role required",
         )
     return current_user
 

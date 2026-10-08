@@ -2,7 +2,7 @@
 
 ## Overview
 
-The **Part-Time Job Information Platform** is a three-tier web application that connects college students with part-time job opportunities. It features role-based access control for Students, Enterprises, and Administrators.
+The **Part-Time Job Information Platform** is a three-tier web application that connects college students with part-time job opportunities. It features role-based access control for Students, Recruiters, and Administrators.
 
 ## Architecture Diagram
 
@@ -24,7 +24,7 @@ The **Part-Time Job Information Platform** is a three-tier web application that 
 │  │  FastAPI Server (Python 3.13)                      │   │
 │  │  • 74 REST endpoints                               │   │
 │  │  • JWT authentication + Firebase ID token verify   │   │
-│  │  • Role-based guards (student/enterprise/admin)    │   │
+│  │  • Role-based guards (student/recruiter/admin)    │   │
 │  │  • Rate limiting (slowapi)                         │   │
 │  │  • Request logging + XSS sanitization              │   │
 │  │  • Language detection middleware                   │   │
@@ -52,8 +52,8 @@ The **Part-Time Job Information Platform** is a three-tier web application that 
 |---|---|---|
 | **users** | uid (PK), email, role, isActive, preferredLanguage | — |
 | **students** | uid (PK), studentId, major, isVerified, skills[] | isVerified + createdAt |
-| **enterprises** | uid (PK), companyName, isApproved, isBanned | isApproved + createdAt |
-| **jobs** | id (auto), enterpriseUid, title, status, location, skillRequirements[] | status+postedAt, enterpriseUid+postedAt, status+skillRequirements |
+| **recruiters** | uid (PK), companyName, isApproved, isBanned | isApproved + createdAt |
+| **jobs** | id (auto), recruiterUid, title, status, location, skillRequirements[] | status+postedAt, recruiterUid+postedAt, status+skillRequirements |
 | **applications** | id (auto), jobId, studentUid, resumeId, status | jobId+appliedAt, studentUid+appliedAt, jobId+studentUid |
 | **resumes** | id (auto), studentUid, isDefault, skills[] | studentUid+isDefault |
 | **notifications** | id (auto), userId, isRead, type | userId+isRead+createdAt |
@@ -88,8 +88,8 @@ The **Part-Time Job Information Platform** is a three-tier web application that 
 | Role | Permissions |
 |---|---|
 | **student** | Profile CRUD, resume CRUD, browse jobs, apply, view own applications |
-| **enterprise** | Profile CRUD, job CRUD, manage job status, view applicants, update application status, schedule interviews |
-| **admin** | User management, student verification, enterprise approval, job audit, banner CRUD, announcement CRUD |
+| **recruiter** | Profile CRUD, job CRUD, manage job status, view applicants, update application status, schedule interviews |
+| **admin** | User management, student verification, recruiter approval, job audit, banner CRUD, announcement CRUD |
 
 ## Security Measures
 

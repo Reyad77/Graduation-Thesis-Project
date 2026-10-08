@@ -23,7 +23,7 @@ class Job(BaseModel):
     """Represents a job document in Firestore."""
 
     id: str = ""
-    enterpriseUid: str = ""
+    recruiterUid: str = ""
     title: str = ""
     responsibilities: str = ""
     salary: str = ""  # e.g. "$15/hour"
@@ -73,7 +73,7 @@ class JobResponse(BaseModel):
     """Job data returned in API responses."""
 
     id: str
-    enterpriseUid: str
+    recruiterUid: str
     title: str
     responsibilities: str
     salary: str

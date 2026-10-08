@@ -9,13 +9,37 @@ export default function StudentResumeForm() {
   const { t } = useTranslation(); const { id } = useParams(); const navigate = useNavigate();
   const isEdit = !!id; const [isLoading, setIsLoading] = useState(isEdit);
   const [isSaving, setIsSaving] = useState(false);
+  const [certificates, setCertificates] = useState<string[]>([]);
+  const [newCert, setNewCert] = useState("");
   const [form, setForm] = useState({ major:"", grade:"", skills:"", availableHours:"", experience:"" });
 
   useEffect(() => { if(!id) return;
-    studentService.getResume(id).then(r => setForm({
-      major:r.major||"", grade:r.grade||"", skills:(r.skills||[]).join(", "),
-      availableHours:r.availableHours||"", experience:r.experience||"",
-    })).catch(()=>toast.error("Load failed")).finally(()=>setIsLoading(false)); }, [id]);
+    studentService.getResume(id).then(r => {
+      setForm({
+        major:r.major||"", grade:r.grade||"", skills:(r.skills||[]).join(", "),
+        availableHours:r.availableHours||"", experience:r.experience||"",
+      });
+      setCertificates(r.certificates || []);
+    }).catch(()=>toast.error("Load failed")).finally(()=>setIsLoading(false)); }, [id]);
+
+  const handleAddCert = async () => {
+    if (!id || !newCert.trim()) return;
+    try {
+      await studentService.addCertificate(id, newCert.trim());
+      setCertificates(prev => [...prev, newCert.trim()]);
+      setNewCert("");
+      toast.success(t("resume.certAdded"));
+    } catch { toast.error(t("resume.saveFailed")); }
+  };
+
+  const handleRemoveCert = async (certUrl: string) => {
+    if (!id) return;
+    try {
+      await studentService.removeCertificate(id, certUrl);
+      setCertificates(prev => prev.filter(c => c !== certUrl));
+      toast.success(t("resume.certRemoved"));
+    } catch { toast.error(t("resume.saveFailed")); }
+  };
 
   const handleSubmit = async (e:React.FormEvent) => { e.preventDefault(); setIsSaving(true);
     const payload = { major:form.major, grade:form.grade, skills:form.skills.split(",").map(s=>s.trim()).filter(Boolean), availableHours:form.availableHours, experience:form.experience };
@@ -39,6 +63,25 @@ export default function StudentResumeForm() {
           <div><label className="block text-sm font-medium mb-1">{t("profile.skills")}</label><input className="input-field" value={form.skills} onChange={e=>setForm({...form,skills:e.target.value})} /></div>
         </div>
         <div><label className="block text-sm font-medium mb-1">{t("resume.experience")}</label><textarea className="input-field" rows={5} value={form.experience} onChange={e=>setForm({...form,experience:e.target.value})} /></div>
+        {isEdit && (
+          <div>
+            <label className="block text-sm font-medium mb-1">{t("resume.certificates")}</label>
+            {certificates.length > 0 && (
+              <ul className="space-y-1 mb-2">
+                {certificates.map(c => (
+                  <li key={c} className="flex items-center justify-between text-xs text-gray-600 bg-gray-50 rounded px-2 py-1">
+                    <span className="truncate">{c}</span>
+                    <button type="button" onClick={() => handleRemoveCert(c)} className="text-red-500 hover:underline ml-2 shrink-0">{t("common.delete")}</button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div className="flex gap-2">
+              <input className="input-field flex-1" placeholder={t("resume.certUrl")} value={newCert} onChange={e=>setNewCert(e.target.value)} />
+              <button type="button" onClick={handleAddCert} className="btn-secondary text-sm whitespace-nowrap">{t("resume.addCert")}</button>
+            </div>
+          </div>
+        )}
         <div className="flex gap-3">
           <button type="submit" disabled={isSaving} className="btn-primary">{isSaving?t("common.loading"):t("common.save")}</button>
           <button type="button" onClick={()=>navigate(-1)} className="btn-secondary">{t("common.cancel")}</button>

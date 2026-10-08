@@ -27,7 +27,7 @@ export default function JobList() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold">{t("navigation.jobs")}</h1>
+      <h1 className="text-2xl font-bold">{t("nav.findJobs")}</h1>
 
       {/* Filter bar */}
       <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 mt-4 mb-6">

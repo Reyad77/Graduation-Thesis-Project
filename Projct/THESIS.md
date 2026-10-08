@@ -10,12 +10,12 @@
 College students struggle to find reliable, flexible part-time jobs that fit their class schedules. Existing job platforms (LinkedIn, Indeed) are geared toward full-time professionals and lack student-specific features like schedule flexibility, short-term durations, and skill-based matching.
 
 ### 1.2 Proposed Solution
-A dedicated web platform connecting students with local employers offering part-time, flexible positions. Three user roles — Students, Enterprises, and Administrators — each with tailored dashboards and workflows.
+A dedicated web platform connecting students with local employers offering part-time, flexible positions. Three user roles — Students, Recruiters, and Administrators — each with tailored dashboards and workflows.
 
 ### 1.3 Objectives
 - Provide a centralized job board for part-time/student-friendly positions
 - Enable students to create professional resumes and track applications
-- Allow enterprises to post jobs, manage applicants, and schedule interviews
+- Allow recruiters to post jobs, manage applicants, and schedule interviews
 - Give administrators tools to moderate content and verify users
 - Support multiple languages for diverse student populations
 
@@ -36,10 +36,10 @@ A dedicated web platform connecting students with local employers offering part-
 | UC-S6 | Track Applications | View application status and interview dates |
 | UC-S7 | Save Jobs | Bookmark jobs for later review |
 
-#### Enterprise Use Cases
+#### Recruiter Use Cases
 | ID | Use Case | Description |
 |---|---|---|
-| UC-E1 | Register Enterprise | Submit company details for admin approval |
+| UC-E1 | Register Recruiter | Submit company details for admin approval |
 | UC-E2 | Post Job | Create job listing with requirements |
 | UC-E3 | Manage Jobs | Activate, pause, edit, or delete postings |
 | UC-E4 | Review Applicants | View applications and attached resumes |
@@ -50,19 +50,19 @@ A dedicated web platform connecting students with local employers offering part-
 | ID | Use Case | Description |
 |---|---|---|
 | UC-A1 | Verify Students | Approve student ID verification |
-| UC-A2 | Approve Enterprises | Review and approve enterprise registrations |
+| UC-A2 | Approve Recruiters | Review and approve recruiter registrations |
 | UC-A3 | Audit Jobs | Review, approve, or reject job postings |
 | UC-A4 | Manage Users | Ban/unban users, view all accounts |
 | UC-A5 | Manage Content | Create banners and announcements |
 
 ### 2.2 Functional Requirements
 - FR1: User registration and authentication (Email/Password)
-- FR2: Role-based dashboards (Student, Enterprise, Admin)
+- FR2: Role-based dashboards (Student, Recruiter, Admin)
 - FR3: Resume creation with skills and certificates
 - FR4: Job posting with salary, location, skill requirements
 - FR5: Application tracking with status pipeline
 - FR6: Interview scheduling
-- FR7: Admin moderation (student verification, enterprise approval, job audit)
+- FR7: Admin moderation (student verification, recruiter approval, job audit)
 - FR8: Multi-language support (7 languages)
 - FR9: Notifications for status changes
 - FR10: Search and filter jobs
@@ -98,11 +98,11 @@ Three-tier web application:
 users
 ├── uid: string (PK)
 ├── email: string
-├── role: 'student' | 'enterprise' | 'admin'
+├── role: 'student' | 'recruiter' | 'admin'
 ├── displayName: string
 ├── isActive: boolean
 
-students                    enterprises
+students                    recruiters
 ├── uid → users.uid         ├── uid → users.uid
 ├── major: string           ├── companyName: string
 ├── grade: string           ├── isApproved: boolean
@@ -111,7 +111,7 @@ students                    enterprises
 
 jobs                        applications
 ├── id: auto                ├── id: auto
-├── enterpriseUid → ent     ├── jobId → jobs.id
+├── recruiterUid → ent     ├── jobId → jobs.id
 ├── title: string           ├── studentUid → students
 ├── status: enum            ├── resumeId → resumes
 ├── skillRequirements[]     ├── status: enum
@@ -187,7 +187,7 @@ PENDING → REVIEWING → INTERVIEW → HIRED → COMPLETED
 | Students | 6 | profile CRUD, ID verification, application history |
 | Resumes | 8 | CRUD, certificates, set default |
 | Jobs (Student) | 8 | list, search, detail, apply, check, save, recommended |
-| Enterprise | 7 | profile, job CRUD, status, applicants |
+| Recruiter | 7 | profile, job CRUD, status, applicants |
 | Applications | 5 | list, detail, status update, interview, resume view |
 | Admin | 22 | user mgmt, verification, approval, job audit, banners, announcements |
 | Notifications | 4 | list, mark read, mark all read, delete |
@@ -214,10 +214,10 @@ PENDING → REVIEWING → INTERVIEW → HIRED → COMPLETED
 
 ### 5.3 User Acceptance Testing Checklist
 - [x] Student registration and login
-- [x] Enterprise registration and login
+- [x] Recruiter registration and login
 - [x] Admin access
 - [x] Resume creation and editing
-- [x] Job posting by enterprise
+- [x] Job posting by recruiter
 - [x] Job browsing by student
 - [x] Job application submission
 - [x] Application status updates

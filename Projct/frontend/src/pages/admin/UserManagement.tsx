@@ -40,11 +40,12 @@ export default function AdminUserManagement() {
   const handleUnban = async (uid: string) => { try { await adminService.unbanUser(uid); toast.success(t("admin.unbannedToast")); fetch(); setOpenMenu(null); } catch { toast.error(t("admin.failedToast")); } };
   const handleTimeout = async (uid: string, minutes: number) => { try { await adminService.timeoutUser(uid, minutes); toast.success(`Timed out for ${minutes}min`); fetch(); setTimeoutUser(null); setOpenMenu(null); } catch { toast.error(t("admin.failedToast")); } };
   const handleDelete = async (uid: string) => { if (!confirm("Permanently delete this user?")) return; try { await adminService.deleteUser(uid); toast.success(t("admin.deletedToast")); fetch(); setOpenMenu(null); } catch { toast.error(t("admin.failedToast")); } };
+  const handleRoleChange = async (uid: string, role: string) => { try { await adminService.setUserRole(uid, role); toast.success(t("admin.roleChanged")); fetch(); setOpenMenu(null); } catch { toast.error(t("admin.failedToast")); } };
 
   if (isLoading) return <LoadingSpinner fullPage />;
 
   const students = users.filter(u => u.role === "student").length;
-  const enterprises = users.filter(u => u.role === "enterprise").length;
+  const recruiters = users.filter(u => u.role === "recruiter").length;
   const admins = users.filter(u => u.role === "admin").length;
   const filtered = filter === "all" ? users : users.filter(u => u.role === filter);
 
@@ -68,7 +69,7 @@ export default function AdminUserManagement() {
         </div>
         <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3">
           <div className="p-2 rounded-lg bg-violet-50 text-violet-600"><Building2 size={18} /></div>
-          <div><p className="text-lg font-bold text-gray-900">{enterprises}</p><p className="text-[11px] text-gray-500">{t("admin.enterprises")}</p></div>
+          <div><p className="text-lg font-bold text-gray-900">{recruiters}</p><p className="text-[11px] text-gray-500">{t("admin.recruiters")}</p></div>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3">
           <div className="p-2 rounded-lg bg-red-50 text-red-600"><Shield size={18} /></div>
@@ -77,11 +78,11 @@ export default function AdminUserManagement() {
       </div>
 
       <div className="flex gap-2 mb-4">
-        {["all", "student", "enterprise", "admin"].map(f => (
+        {["all", "student", "recruiter", "admin"].map(f => (
           <button key={f} onClick={() => setFilter(f)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
               ${filter === f ? "bg-primary-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
-            {f === "all" ? t("admin.totalUsers") : f === "student" ? t("admin.students") : f === "enterprise" ? t("admin.enterprises") : t("admin.adminPanel")}
+            {f === "all" ? t("admin.totalUsers") : f === "student" ? t("admin.students") : f === "recruiter" ? t("admin.recruiters") : t("admin.adminPanel")}
           </button>
         ))}
       </div>
@@ -115,7 +116,7 @@ export default function AdminUserManagement() {
                   <td className="px-4 py-3">
                     <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
                       u.role === "admin" ? "bg-red-100 text-red-700" :
-                      u.role === "enterprise" ? "bg-violet-100 text-violet-700" :
+                      u.role === "recruiter" ? "bg-violet-100 text-violet-700" :
                       "bg-emerald-100 text-emerald-700"
                     }`}>{u.role}</span>
                   </td>
@@ -134,6 +135,14 @@ export default function AdminUserManagement() {
                     </button>
                     {openMenu === u.uid && (
                       <div ref={menuRef} className="absolute right-2 top-full mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-20">
+                        <p className="px-3 pt-1.5 pb-0.5 text-[10px] uppercase tracking-wide text-gray-400">{t("admin.changeRole")}</p>
+                        {["student", "recruiter", "admin"].filter(r => r !== u.role).map(r => (
+                          <button key={r} onClick={() => handleRoleChange(u.uid, r)}
+                            className="w-full text-left px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-50">
+                            {t("admin.role")}: {r}
+                          </button>
+                        ))}
+                        <hr className="my-0.5" />
                         {u.isActive ? (
                           <>
                             <button onClick={() => handleBan(u.uid)} className="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-red-50 flex items-center gap-2">

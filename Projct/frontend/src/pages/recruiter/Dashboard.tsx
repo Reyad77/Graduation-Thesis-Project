@@ -2,20 +2,20 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Briefcase, Users, Eye, Plus, AlertTriangle, ShieldCheck } from "lucide-react";
-import enterpriseService from "@/services/enterpriseService";
-import type { Job, Enterprise } from "@/types";
+import recruiterService from "@/services/recruiterService";
+import type { Job, Recruiter } from "@/types";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 
-export default function EnterpriseDashboard() {
+export default function RecruiterDashboard() {
   const { t } = useTranslation();
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [profile, setProfile] = useState<Enterprise | null>(null);
+  const [profile, setProfile] = useState<Recruiter | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
-      enterpriseService.getJobs().then(j => setJobs(Array.isArray(j)?j:[])),
-      enterpriseService.getProfile().then(p => setProfile(p)).catch(() => null),
+      recruiterService.getJobs().then(j => setJobs(Array.isArray(j)?j:[])),
+      recruiterService.getProfile().then(p => setProfile(p)).catch(() => null),
     ]).finally(() => setIsLoading(false));
   }, []);
 
@@ -28,14 +28,14 @@ export default function EnterpriseDashboard() {
   if (needsProfile) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold">{t("navigation.dashboard")}</h1>
+        <h1 className="text-2xl font-bold">{t("nav.dashboard")}</h1>
         <div className="card mt-6 text-center">
           <AlertTriangle size={40} className="text-yellow-500 mx-auto mb-3" />
           <p className="text-lg font-semibold text-gray-800 mb-2">Complete Your Company Profile</p>
           <p className="text-sm text-gray-500 mb-4">
             Before posting jobs, you need to set up your company details for admin approval.
           </p>
-          <Link to="/enterprise/register" className="btn-primary">Complete Profile</Link>
+          <Link to="/recruiter/register" className="btn-primary">Complete Profile</Link>
         </div>
       </div>
     );
@@ -47,7 +47,7 @@ export default function EnterpriseDashboard() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold">{t("navigation.dashboard")}</h1>
+      <h1 className="text-2xl font-bold">{t("nav.dashboard")}</h1>
 
       {/* ── Pending Approval Banner ──────────────────────────── */}
       {isPendingApproval && (
@@ -79,17 +79,17 @@ export default function EnterpriseDashboard() {
 
       <div className="flex gap-3 mt-8">
         {profile.isApproved ? (
-          <Link to="/enterprise/post-job" className="btn-primary flex items-center gap-2">
-            <Plus size={16} /> {t("enterprise.postJob")}
+          <Link to="/recruiter/post-job" className="btn-primary flex items-center gap-2">
+            <Plus size={16} /> {t("recruiter.postJob")}
           </Link>
         ) : (
           <button disabled className="btn-primary flex items-center gap-2 opacity-50 cursor-not-allowed" title="Awaiting admin approval">
-            <Plus size={16} /> {t("enterprise.postJob")} (Pending Approval)
+            <Plus size={16} /> {t("recruiter.postJob")} (Pending Approval)
           </button>
         )}
-        <Link to="/enterprise/jobs" className="btn-secondary">{t("enterprise.manageJobs")}</Link>
-        <Link to="/enterprise/applicants" className="btn-secondary flex items-center gap-2">
-          <Users size={16} /> {t("enterprise.applicants")}
+        <Link to="/recruiter/jobs" className="btn-secondary">{t("recruiter.manageJobs")}</Link>
+        <Link to="/recruiter/applicants" className="btn-secondary flex items-center gap-2">
+          <Users size={16} /> {t("recruiter.applicants")}
         </Link>
       </div>
 

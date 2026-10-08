@@ -1,11 +1,11 @@
 """
-Application management (enterprise view): status updates, interview
+Application management (recruiter view): status updates, interview
 scheduling, and resume viewing.
 """
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.core.dependencies import get_current_enterprise
+from app.core.dependencies import get_current_recruiter
 from app.models.application import ApplicationStatusUpdateRequest, InterviewScheduleRequest
 from app.services.application_service import ApplicationService
 
@@ -26,13 +26,13 @@ def _serialize(obj):
 # ── List ──────────────────────────────────────────────────────────────
 
 @router.get("/applications")
-def list_applications(user: dict = Depends(get_current_enterprise)):
-    apps = _app_svc.get_all_enterprise_applications(_uid(user))
+def list_applications(user: dict = Depends(get_current_recruiter)):
+    apps = _app_svc.get_all_recruiter_applications(_uid(user))
     return [_serialize(a) for a in apps]
 
 
 @router.get("/applications/{application_id}")
-def get_application(application_id: str, user: dict = Depends(get_current_enterprise)):
+def get_application(application_id: str, user: dict = Depends(get_current_recruiter)):
     app = _app_svc.get_by_id(application_id)
     if not app:
         raise HTTPException(404, "Application not found.")
@@ -45,7 +45,7 @@ def get_application(application_id: str, user: dict = Depends(get_current_enterp
 def update_application_status(
     application_id: str,
     payload: ApplicationStatusUpdateRequest,
-    user: dict = Depends(get_current_enterprise),
+    user: dict = Depends(get_current_recruiter),
 ):
     updated = _app_svc.update_status(application_id, payload)
     if not updated:
@@ -66,7 +66,7 @@ def update_application_status(
 def schedule_interview(
     application_id: str,
     payload: InterviewScheduleRequest,
-    user: dict = Depends(get_current_enterprise),
+    user: dict = Depends(get_current_recruiter),
 ):
     updated = _app_svc.schedule_interview(application_id, payload)
     if not updated:
@@ -86,7 +86,7 @@ def schedule_interview(
 @router.get("/applications/{application_id}/resume")
 def view_applicant_resume(
     application_id: str,
-    user: dict = Depends(get_current_enterprise),
+    user: dict = Depends(get_current_recruiter),
 ):
     result = _app_svc.get_application_with_resume(application_id, _uid(user))
     if not result:

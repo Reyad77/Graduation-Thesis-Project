@@ -1,5 +1,7 @@
 // ── User types ─────────────────────────────────────────────────────────
-export type UserRole = "student" | "enterprise" | "admin";
+export type UserRole = "student" | "recruiter" | "admin";
+
+export type RecruiterType = "individual" | "enterprise";
 
 export interface User {
   uid: string;
@@ -8,6 +10,7 @@ export interface User {
   displayName: string;
   phone: string;
   preferredLanguage: string;
+  recruiterType?: RecruiterType;
   isActive: boolean;
   createdAt?: string;
 }
@@ -28,9 +31,10 @@ export interface Student {
   createdAt?: string;
 }
 
-// ── Enterprise types ───────────────────────────────────────────────────
-export interface Enterprise {
+// ── Recruiter types ────────────────────────────────────────────────────
+export interface Recruiter {
   uid: string;
+  recruiterType: RecruiterType;
   companyName: string;
   businessLicense?: string;
   storePhotos: string[];
@@ -72,7 +76,7 @@ export type JobStatus =
 
 export interface Job {
   id: string;
-  enterpriseUid: string;
+  recruiterUid: string;
   title: string;
   responsibilities: string;
   salary: string;
@@ -148,6 +152,20 @@ export interface Banner {
   isActive: boolean;
   createdAt?: string;
   updatedAt?: string;
+}
+
+// ── Evaluation types ───────────────────────────────────────────────────
+export interface Evaluation {
+  id: string;
+  applicationId: string;
+  jobId: string;
+  fromUid: string;
+  fromRole: "student" | "recruiter";
+  toUid: string;
+  toRole: "student" | "recruiter";
+  rating: number;
+  comment: string;
+  createdAt?: string;
 }
 
 // ── Notification types ─────────────────────────────────────────────────

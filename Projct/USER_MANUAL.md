@@ -60,7 +60,7 @@ Chrome, Firefox, Safari, Edge (latest 2 versions)
 
 ---
 
-## For Enterprises (Employers)
+## For Recruiters (Employers)
 
 ### 1. Register Your Company
 1. Click **Register** → Select **Employer**
@@ -106,7 +106,7 @@ Chrome, Firefox, Safari, Edge (latest 2 versions)
 
 ### 1. Dashboard Overview
 The admin dashboard shows:
-- Total users, students, enterprises
+- Total users, students, recruiters
 - Pending jobs awaiting review
 - Quick action links
 
@@ -115,8 +115,8 @@ The admin dashboard shows:
 2. Review student details
 3. Click **Verify** to approve
 
-### 3. Approve Enterprises
-1. Go to **Approve Enterprises**
+### 3. Approve Recruiters
+1. Go to **Approve Recruiters**
 2. Review company details
 3. Click **Approve** to activate
 

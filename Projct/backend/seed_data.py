@@ -1,7 +1,7 @@
 """
 Data seeding script for testing and development.
 
-Populates Firestore with sample users, students, enterprises, jobs,
+Populates Firestore with sample users, students, recruiters, jobs,
 applications, banners, and announcements.
 
 Usage:
@@ -26,9 +26,9 @@ def seed_all(clear: bool = False) -> None:
     if clear:
         print("Clearing existing data...")
         for coll in [
-            "users", "students", "enterprises", "jobs",
+            "users", "students", "recruiters", "jobs",
             "applications", "resumes", "notifications",
-            "announcements", "banners",
+            "announcements", "banners", "evaluations",
         ]:
             docs = list(db.collection(coll).limit(500).stream())
             for doc in docs:
@@ -54,15 +54,24 @@ def seed_all(clear: bool = False) -> None:
             "isActive": True, "createdAt": now, "updatedAt": now,
         },
         {
-            "uid": "seed-enterprise-1", "email": "hr@techcorp.com",
-            "role": "enterprise", "displayName": "TechCorp HR",
+            "uid": "seed-recruiter-1", "email": "hr@techcorp.com",
+            "role": "recruiter", "displayName": "TechCorp HR",
             "phone": "+1122334455", "preferredLanguage": "en",
+            "recruiterType": "enterprise",
             "isActive": True, "createdAt": now, "updatedAt": now,
         },
         {
-            "uid": "seed-enterprise-2", "email": "jobs@cafeshop.com",
-            "role": "enterprise", "displayName": "Cafe Shop",
+            "uid": "seed-recruiter-2", "email": "jobs@cafeshop.com",
+            "role": "recruiter", "displayName": "Cafe Shop",
             "phone": "+1555666777", "preferredLanguage": "en",
+            "recruiterType": "enterprise",
+            "isActive": True, "createdAt": now, "updatedAt": now,
+        },
+        {
+            "uid": "seed-recruiter-3", "email": "family@tutor.example",
+            "role": "recruiter", "displayName": "Li Family",
+            "phone": "+1555444333", "preferredLanguage": "en",
+            "recruiterType": "individual",
             "isActive": True, "createdAt": now, "updatedAt": now,
         },
         {
@@ -102,11 +111,12 @@ def seed_all(clear: bool = False) -> None:
         db.collection("students").document(s["uid"]).set(s)
     print(f"  Created {len(students)} students.")
 
-    # ── Enterprises ──────────────────────────────────────────────────
-    print("Seeding enterprises...")
-    enterprises = [
+    # ── Recruiters ───────────────────────────────────────────────────
+    print("Seeding recruiters...")
+    recruiters = [
         {
-            "uid": "seed-enterprise-1", "companyName": "TechCorp Inc.",
+            "uid": "seed-recruiter-1", "recruiterType": "enterprise",
+            "companyName": "TechCorp Inc.",
             "businessLicense": None, "storePhotos": [],
             "description": "Leading technology solutions provider.",
             "contactPerson": "Sarah Manager", "contactPhone": "+1122334455",
@@ -117,7 +127,8 @@ def seed_all(clear: bool = False) -> None:
             "createdAt": now, "updatedAt": now,
         },
         {
-            "uid": "seed-enterprise-2", "companyName": "Campus Cafe",
+            "uid": "seed-recruiter-2", "recruiterType": "enterprise",
+            "companyName": "Campus Cafe",
             "businessLicense": None, "storePhotos": [],
             "description": "Cozy cafe near campus serving students.",
             "contactPerson": "Mike Owner", "contactPhone": "+1555666777",
@@ -127,16 +138,26 @@ def seed_all(clear: bool = False) -> None:
             "isBanned": False, "banReason": "",
             "createdAt": now, "updatedAt": now,
         },
+        {
+            "uid": "seed-recruiter-3", "recruiterType": "individual",
+            "companyName": "", "businessLicense": None, "storePhotos": [],
+            "description": "Family looking for a math tutor for a high-school student.",
+            "contactPerson": "Mr. Li", "contactPhone": "+1555444333",
+            "address": "", "website": "",
+            "isApproved": True, "approvedAt": now, "approvedBy": "seed-admin-1",
+            "isBanned": False, "banReason": "",
+            "createdAt": now, "updatedAt": now,
+        },
     ]
-    for e in enterprises:
-        db.collection("enterprises").document(e["uid"]).set(e)
-    print(f"  Created {len(enterprises)} enterprises.")
+    for r in recruiters:
+        db.collection("recruiters").document(r["uid"]).set(r)
+    print(f"  Created {len(recruiters)} recruiters.")
 
     # ── Jobs ─────────────────────────────────────────────────────────
     print("Seeding jobs...")
     jobs = [
         {
-            "enterpriseUid": "seed-enterprise-1", "title": "Junior Web Developer",
+            "recruiterUid": "seed-recruiter-1", "title": "Junior Web Developer",
             "responsibilities": "Build and maintain web applications using React and Node.js.",
             "salary": "$20/hour", "workingHours": "Flexible, 15-20 hours/week",
             "quota": 2, "location": "Remote",
@@ -147,7 +168,7 @@ def seed_all(clear: bool = False) -> None:
             "updatedAt": now,
         },
         {
-            "enterpriseUid": "seed-enterprise-1", "title": "Data Entry Assistant",
+            "recruiterUid": "seed-recruiter-1", "title": "Data Entry Assistant",
             "responsibilities": "Enter and organize data in spreadsheets and databases.",
             "salary": "$15/hour", "workingHours": "9 AM - 2 PM, Mon-Fri",
             "quota": 1, "location": "On-site",
@@ -159,7 +180,7 @@ def seed_all(clear: bool = False) -> None:
             "updatedAt": now,
         },
         {
-            "enterpriseUid": "seed-enterprise-2", "title": "Barista / Cafe Staff",
+            "recruiterUid": "seed-recruiter-2", "title": "Barista / Cafe Staff",
             "responsibilities": "Prepare beverages, serve customers, maintain cleanliness.",
             "salary": "$16/hour + tips", "workingHours": "Shifts between 7 AM - 8 PM",
             "quota": 3, "location": "On-site",
@@ -171,7 +192,7 @@ def seed_all(clear: bool = False) -> None:
             "updatedAt": now,
         },
         {
-            "enterpriseUid": "seed-enterprise-2", "title": "Social Media Intern",
+            "recruiterUid": "seed-recruiter-2", "title": "Social Media Intern",
             "responsibilities": "Manage social media accounts and create content.",
             "salary": "$18/hour", "workingHours": "10-15 hours/week, flexible",
             "quota": 1, "location": "Remote",
@@ -180,6 +201,18 @@ def seed_all(clear: bool = False) -> None:
             "views": 10, "applicationsCount": 0,
             "postedAt": now,
             "expiresAt": now + timedelta(days=30),
+            "updatedAt": now,
+        },
+        {
+            "recruiterUid": "seed-recruiter-3", "title": "Private Math Tutor",
+            "responsibilities": "Tutor a high-school student in mathematics twice a week.",
+            "salary": "$25/hour", "workingHours": "2 evenings per week",
+            "quota": 1, "location": "At family home",
+            "skillRequirements": ["Mathematics", "Tutoring"],
+            "duration": "School semester", "status": "active",
+            "views": 15, "applicationsCount": 1,
+            "postedAt": now - timedelta(days=1),
+            "expiresAt": now + timedelta(days=29),
             "updatedAt": now,
         },
     ]
@@ -246,10 +279,45 @@ def seed_all(clear: bool = False) -> None:
             "appliedAt": now - timedelta(days=7), "updatedAt": now,
             "notes": "", "hiredAt": None, "completedAt": None,
         },
+        {
+            "jobId": job_ids[0], "studentUid": "seed-student-2",
+            "resumeId": resume_ids[1], "status": "completed",
+            "interviewSchedule": None,
+            "appliedAt": now - timedelta(days=20), "updatedAt": now,
+            "notes": "", "hiredAt": now - timedelta(days=10),
+            "completedAt": now - timedelta(days=2),
+        },
     ]
+    app_ids = []
     for a in applications:
-        db.collection("applications").document().set(a)
+        ref = db.collection("applications").document()
+        ref.set(a)
+        app_ids.append(ref.id)
     print(f"  Created {len(applications)} applications.")
+
+    # ── Evaluations ───────────────────────────────────────────────────
+    print("Seeding evaluations...")
+    evaluations = [
+        {
+            "applicationId": app_ids[3], "jobId": job_ids[0],
+            "fromUid": "seed-student-2", "fromRole": "student",
+            "toUid": "seed-recruiter-1", "toRole": "recruiter",
+            "rating": 5,
+            "comment": "Clear job description and paid on time.",
+            "createdAt": now - timedelta(days=1),
+        },
+        {
+            "applicationId": app_ids[3], "jobId": job_ids[0],
+            "fromUid": "seed-recruiter-1", "fromRole": "recruiter",
+            "toUid": "seed-student-2", "toRole": "student",
+            "rating": 4,
+            "comment": "Hardworking and punctual.",
+            "createdAt": now - timedelta(days=1),
+        },
+    ]
+    for e in evaluations:
+        db.collection("evaluations").document().set(e)
+    print(f"  Created {len(evaluations)} evaluations.")
 
     # ── Announcements ────────────────────────────────────────────────
     print("Seeding announcements...")
@@ -282,7 +350,7 @@ def seed_all(clear: bool = False) -> None:
             "createdAt": now, "updatedAt": now,
         },
         {
-            "imageUrl": "", "link": "/register", "title": "Join as Employer",
+            "imageUrl": "", "link": "/register", "title": "Join as Recruiter",
             "order": 2, "isActive": True,
             "createdAt": now, "updatedAt": now,
         },
@@ -294,10 +362,11 @@ def seed_all(clear: bool = False) -> None:
     print("\nSeeding complete!")
     print(f"   Users:         {len(users)}")
     print(f"   Students:      {len(students)}")
-    print(f"   Enterprises:   {len(enterprises)}")
+    print(f"   Recruiters:    {len(recruiters)}")
     print(f"   Jobs:          {len(jobs)}")
     print(f"   Resumes:       {len(resumes)}")
     print(f"   Applications:  {len(applications)}")
+    print(f"   Evaluations:   {len(evaluations)}")
     print(f"   Announcements: {len(announcements)}")
     print(f"   Banners:       {len(banners)}")
 

@@ -12,7 +12,8 @@ export const registerSchema = z.object({
   password: z.string().min(8, "At least 8 characters"),
   confirmPassword: z.string(),
   displayName: z.string().min(1, "Name is required").max(100),
-  role: z.enum(["student", "enterprise"]),
+  role: z.enum(["student", "recruiter"]),
+  recruiterType: z.enum(["individual", "enterprise"]).optional(),
 }).refine(d => d.password === d.confirmPassword, { message: "Passwords don't match", path: ["confirmPassword"] });
 
 /** Job posting form validation schema. */

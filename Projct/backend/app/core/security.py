@@ -22,7 +22,7 @@ def create_access_token(
 
     Args:
         uid: Firebase Auth user ID.
-        role: User role (student / enterprise / admin).
+        role: User role (student / recruiter / admin).
         expires_delta: Optional custom expiry; defaults to config value.
 
     Returns:

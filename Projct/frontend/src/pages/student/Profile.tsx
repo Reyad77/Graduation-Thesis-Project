@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import studentService from "@/services/studentService";
 import type { Student } from "@/types";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import EvaluationsCard from "@/components/evaluation/EvaluationsCard";
 import { toast } from "react-hot-toast";
 
 export default function StudentProfile() {
@@ -12,6 +13,7 @@ export default function StudentProfile() {
   const [profile, setProfile] = useState<Student | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [idCardUrl, setIdCardUrl] = useState("");
   const [form, setForm] = useState({ major:"", grade:"", year:1, skills:"", availability:"" });
 
   useEffect(() => {
@@ -20,6 +22,16 @@ export default function StudentProfile() {
       .catch(() => toast.error("Failed to load profile"))
       .finally(() => setIsLoading(false));
   }, []);
+
+  const handleUploadId = async () => {
+    if (!idCardUrl.trim()) { toast.error(t("profile.idCardUrl")); return; }
+    try {
+      await studentService.uploadStudentId(idCardUrl.trim());
+      toast.success(t("profile.idSubmitted"));
+      setProfile(p => p ? { ...p, isVerified: false } : p); // now awaiting admin verification
+      setIdCardUrl("");
+    } catch { toast.error(t("profile.updateFailed")); }
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault(); setIsSaving(true);
@@ -37,7 +49,7 @@ export default function StudentProfile() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold">{t("navigation.profile")}</h1>
+      <h1 className="text-2xl font-bold">{t("nav.profile")}</h1>
       <div className="card mt-6">
         <h2 className="font-semibold text-gray-700 mb-3">Account</h2>
         <div className="grid grid-cols-2 gap-3 text-sm">
@@ -46,6 +58,14 @@ export default function StudentProfile() {
           <div><span className="text-gray-500">{t("profile.verification")}:</span>
             <span className={`ml-2 font-medium ${profile?.isVerified?"text-green-600":"text-yellow-600"}`}>
               {profile?.isVerified?t("profile.verified"):t("profile.notVerified")}</span></div>
+        </div>
+      </div>
+      <div className="card mt-4">
+        <h2 className="font-semibold text-gray-700 mb-1">{t("profile.idCardUpload")}</h2>
+        <p className="text-xs text-gray-500 mb-3">{t("profile.idCardUrl")}</p>
+        <div className="flex gap-2">
+          <input className="input-field flex-1" placeholder="https://..." value={idCardUrl} onChange={e=>setIdCardUrl(e.target.value)} />
+          <button type="button" onClick={handleUploadId} className="btn-primary text-sm whitespace-nowrap">{t("profile.submitId")}</button>
         </div>
       </div>
       <form onSubmit={handleSave} className="card mt-4 space-y-4">
@@ -65,6 +85,9 @@ export default function StudentProfile() {
           <input className="input-field" value={form.skills} onChange={e=>setForm({...form,skills:e.target.value})} placeholder="Python, JavaScript (comma-separated)" /></div>
         <button type="submit" disabled={isSaving} className="btn-primary">{isSaving?t("common.loading"):t("common.save")}</button>
       </form>
+      <div className="mt-4">
+        <EvaluationsCard />
+      </div>
     </div>
   );
 }

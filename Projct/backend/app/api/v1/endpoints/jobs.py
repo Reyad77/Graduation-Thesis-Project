@@ -45,15 +45,6 @@ def search_jobs(keyword: str = Query(...), limit: int = Query(50)):
     return [_serialize(j) for j in jobs]
 
 
-@router.get("/{job_id}")
-def get_job(job_id: str):
-    """Get detailed job information (increments view count)."""
-    job = _job_svc.get_job_detail(job_id)
-    if not job:
-        raise HTTPException(status_code=404, detail="Job not found.")
-    return _serialize(job)
-
-
 # ═════════════════════════════════════════════════════════════════════
 # Apply (student-only)
 # ═════════════════════════════════════════════════════════════════════
@@ -145,6 +136,19 @@ def unsave_job(job_id: str, user: dict = Depends(get_current_user)):
     uid = user.get("sub", "")
     _saved_svc.unsave(uid, job_id)
     return {"message": "Job removed from saved."}
+
+
+# NOTE: the single-segment GET /{job_id} route is registered LAST on purpose —
+# literal paths like /saved and /recommended must win route matching.
+
+
+@router.get("/{job_id}")
+def get_job(job_id: str):
+    """Get detailed job information (increments view count)."""
+    job = _job_svc.get_job_detail(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found.")
+    return _serialize(job)
 
 
 # ── Helpers ───────────────────────────────────────────────────────────

@@ -1,32 +1,60 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-import enterpriseService from "@/services/enterpriseService";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import recruiterService from "@/services/recruiterService";
 import { toast } from "react-hot-toast";
 
 export default function PostJob() {
   const { t } = useTranslation(); const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get("edit");
   const [isSaving, setIsSaving] = useState(false);
   const [form, setForm] = useState({
     title:"", responsibilities:"", salary:"", workingHours:"",
     quota:1, location:"", skillRequirements:"", duration:"",
   });
 
+  // Edit mode: load the existing job when ?edit=<id> is present.
+  useEffect(() => {
+    if (!editId) return;
+    recruiterService.getJobs().then(jobs => {
+      const job = (Array.isArray(jobs) ? jobs : []).find(j => j.id === editId);
+      if (job) {
+        setForm({
+          title: job.title || "",
+          responsibilities: job.responsibilities || "",
+          salary: job.salary || "",
+          workingHours: job.workingHours || "",
+          quota: job.quota || 1,
+          location: job.location || "",
+          skillRequirements: (job.skillRequirements || []).join(", "),
+          duration: job.duration || "",
+        });
+      }
+    }).catch(() => {});
+  }, [editId]);
+
   const handleSubmit = async (e:React.FormEvent) => { e.preventDefault(); setIsSaving(true);
+    const payload = {
+      ...form,
+      skillRequirements: form.skillRequirements.split(",").map(s=>s.trim()).filter(Boolean),
+    };
     try {
-      await enterpriseService.createJob({
-        ...form,
-        skillRequirements:form.skillRequirements.split(",").map(s=>s.trim()).filter(Boolean),
-      });
-      toast.success("Job posted! Awaiting admin approval.");
-      navigate("/enterprise/jobs");
-    } catch { toast.error("Failed to post job"); }
+      if (editId) {
+        await recruiterService.updateJob(editId, payload);
+        toast.success(t("recruiter.jobUpdated"));
+      } else {
+        await recruiterService.createJob(payload);
+        toast.success(t("recruiter.jobPosted"));
+      }
+      navigate("/recruiter/jobs");
+    } catch { toast.error(t("recruiter.jobPostFailed")); }
     finally { setIsSaving(false); }
   };
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold">{t("enterprise.postJob")}</h1>
+      <h1 className="text-2xl font-bold">{editId ? t("recruiter.editJob") : t("recruiter.postJob")}</h1>
       <form onSubmit={handleSubmit} className="card mt-6 space-y-4">
         <div><label className="block text-sm font-medium mb-1">{t("jobs.title")} *</label><input className="input-field" required value={form.title} onChange={e=>setForm({...form,title:e.target.value})} /></div>
         <div className="grid md:grid-cols-2 gap-4">

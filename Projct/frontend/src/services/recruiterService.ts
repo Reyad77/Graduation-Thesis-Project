@@ -1,55 +1,46 @@
 import api from "./api";
-import type { Enterprise, Job, Application } from "@/types";
+import type { Recruiter, Job, Application } from "@/types";
 
 /**
- * Enterprise service — profile, job posting CRUD, and applicant management.
+ * Recruiter service — profile, job posting CRUD, and applicant management.
  */
-const enterpriseService = {
+const recruiterService = {
   // ── Profile ──────────────────────────────────────────────────────
-  getProfile: async (): Promise<Enterprise> => {
-    const { data } = await api.get("/enterprise/profile");
+  getProfile: async (): Promise<Recruiter> => {
+    const { data } = await api.get("/recruiter/profile");
     return data;
   },
 
-  updateProfile: async (payload: Partial<Enterprise>): Promise<Enterprise> => {
-    const { data } = await api.put("/enterprise/profile", payload);
-    return data;
-  },
-
-  uploadBusinessLicense: async (file: File): Promise<{ businessLicense: string }> => {
-    const formData = new FormData();
-    formData.append("file", file);
-    const { data } = await api.post("/enterprise/upload-license", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+  updateProfile: async (payload: Partial<Recruiter>): Promise<Recruiter> => {
+    const { data } = await api.put("/recruiter/profile", payload);
     return data;
   },
 
   // ── Job management ───────────────────────────────────────────────
   getJobs: async (): Promise<Job[]> => {
-    const { data } = await api.get("/enterprise/jobs");
+    const { data } = await api.get("/recruiter/jobs");
     return data;
   },
 
   createJob: async (payload: Partial<Job>): Promise<Job> => {
-    const { data } = await api.post("/enterprise/jobs", payload);
+    const { data } = await api.post("/recruiter/jobs", payload);
     return data;
   },
 
   updateJob: async (id: string, payload: Partial<Job>): Promise<Job> => {
-    const { data } = await api.put(`/enterprise/jobs/${id}`, payload);
+    const { data } = await api.put(`/recruiter/jobs/${id}`, payload);
     return data;
   },
 
   deleteJob: async (id: string): Promise<void> => {
-    await api.delete(`/enterprise/jobs/${id}`);
+    await api.delete(`/recruiter/jobs/${id}`);
   },
 
   updateJobStatus: async (
     id: string,
     status: string,
   ): Promise<Job> => {
-    const { data } = await api.patch(`/enterprise/jobs/${id}/status`, null, {
+    const { data } = await api.patch(`/recruiter/jobs/${id}/status`, null, {
       params: { status },
     });
     return data;
@@ -57,12 +48,12 @@ const enterpriseService = {
 
   // ── Applicants ───────────────────────────────────────────────────
   getApplications: async (jobId: string): Promise<Application[]> => {
-    const { data } = await api.get(`/enterprise/jobs/${jobId}/applications`);
+    const { data } = await api.get(`/recruiter/jobs/${jobId}/applications`);
     return data;
   },
 
   getAllApplications: async (): Promise<Application[]> => {
-    const { data } = await api.get("/enterprise/applications");
+    const { data } = await api.get("/recruiter/applications");
     return data;
   },
 
@@ -71,7 +62,7 @@ const enterpriseService = {
     status: string,
     notes?: string,
   ): Promise<Application> => {
-    const { data } = await api.put(`/enterprise/applications/${id}/status`, {
+    const { data } = await api.put(`/recruiter/applications/${id}/status`, {
       status,
       notes,
     });
@@ -83,7 +74,7 @@ const enterpriseService = {
     payload: { date: string; location: string; notes: string },
   ): Promise<Application> => {
     const { data } = await api.post(
-      `/enterprise/applications/${id}/interview`,
+      `/recruiter/applications/${id}/interview`,
       payload,
     );
     return data;
@@ -91,10 +82,10 @@ const enterpriseService = {
 
   viewResume: async (applicationId: string): Promise<unknown> => {
     const { data } = await api.get(
-      `/enterprise/applications/${applicationId}/resume`,
+      `/recruiter/applications/${applicationId}/resume`,
     );
     return data;
   },
 };
 
-export default enterpriseService;
+export default recruiterService;

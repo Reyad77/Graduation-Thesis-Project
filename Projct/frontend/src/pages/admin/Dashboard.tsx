@@ -39,7 +39,7 @@ export default function AdminDashboard() {
   );
 
   const totalStudents = users.filter(u => u.role === "student").length;
-  const totalEnterprises = users.filter(u => u.role === "enterprise").length;
+  const totalRecruiters = users.filter(u => u.role === "recruiter").length;
 
   return (
     <div className="space-y-6">
@@ -62,8 +62,8 @@ export default function AdminDashboard() {
           bg="bg-blue-50" iconColor="text-blue-600" to="/admin/users" />
         <StatCard icon={<UserCheck size={18} />} label={t("admin.students")} value={totalStudents}
           bg="bg-emerald-50" iconColor="text-emerald-600" to="/admin/verify-students" />
-        <StatCard icon={<Building2 size={18} />} label={t("admin.enterprises")} value={totalEnterprises}
-          bg="bg-violet-50" iconColor="text-violet-600" to="/admin/approve-enterprises" />
+        <StatCard icon={<Building2 size={18} />} label={t("admin.recruiters")} value={totalRecruiters}
+          bg="bg-violet-50" iconColor="text-violet-600" to="/admin/approve-recruiters" />
         <StatCard icon={<Clock size={18} />} label={t("admin.pendingJobs")} value={pendingJobs.length}
           bg="bg-amber-50" iconColor="text-amber-600" to="/admin/jobs" pulse={pendingJobs.length > 0} />
       </div>
@@ -124,8 +124,8 @@ export default function AdminDashboard() {
           <div className="flex-1 grid grid-cols-2 gap-3 content-start">
             <ActionTile to="/admin/verify-students" icon={<UserCheck size={20} />}
               label={t("admin.verifyStudents")} sub={`${totalStudents} ${t("admin.total")}`} color="emerald" />
-            <ActionTile to="/admin/approve-enterprises" icon={<Building2 size={20} />}
-              label={t("admin.approveHR")} sub={`${totalEnterprises} ${t("admin.total")}`} color="violet" />
+            <ActionTile to="/admin/approve-recruiters" icon={<Building2 size={20} />}
+              label={t("admin.approveRecruiters")} sub={`${totalRecruiters} ${t("admin.total")}`} color="violet" />
             <ActionTile to="/admin/jobs" icon={<Briefcase size={20} />}
               label={t("admin.auditJobs")} sub={`${pendingJobs.length} ${t("admin.pending")}`} color="amber" />
             <ActionTile to="/admin/users" icon={<Users size={20} />}
@@ -162,7 +162,7 @@ export default function AdminDashboard() {
                   <td className="py-2.5 px-3">
                     <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
                       u.role === "admin" ? "bg-red-100 text-red-700" :
-                      u.role === "enterprise" ? "bg-violet-100 text-violet-700" :
+                      u.role === "recruiter" ? "bg-violet-100 text-violet-700" :
                       "bg-emerald-100 text-emerald-700"
                     }`}>{u.role}</span>
                   </td>

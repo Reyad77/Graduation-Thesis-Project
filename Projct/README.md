@@ -25,8 +25,8 @@ A full-stack web application connecting students with part-time job opportunitie
 | Role | Capabilities |
 |---|---|
 | **Student** | Register, profile management, resume CRUD, browse/search jobs, apply to jobs, track applications, save jobs |
-| **Enterprise** | Register with business details, post jobs, manage job listings, review applicants, schedule interviews, update application status |
-| **Admin** | Dashboard with stats, user management, student verification, enterprise approval, job audit (approve/reject), banner & announcement management |
+| **Recruiter** | Register with business details, post jobs, manage job listings, review applicants, schedule interviews, update application status |
+| **Admin** | Dashboard with stats, user management, student verification, recruiter approval, job audit (approve/reject), banner & announcement management |
 
 ### Key Features
 - 🌐 Multi-language (7 languages) with RTL support
@@ -61,7 +61,7 @@ Projct/
 ├── frontend/                 # React frontend
 │   ├── src/
 │   │   ├── components/       # Reusable UI components
-│   │   ├── pages/            # Page components (student, enterprise, admin)
+│   │   ├── pages/            # Page components (student, recruiter, admin)
 │   │   ├── services/         # API service layer
 │   │   ├── hooks/            # Custom React hooks
 │   │   ├── contexts/         # AuthContext, LanguageContext
@@ -124,7 +124,7 @@ Open http://localhost:5173
 | Role | Email | Password |
 |---|---|---|
 | Student | alice@university.edu | _(uses Firebase Auth)_ |
-| Enterprise | hr@techcorp.com | _(uses Firebase Auth)_ |
+| Recruiter | hr@techcorp.com | _(uses Firebase Auth)_ |
 | Admin | admin@platform.com | _(uses Firebase Auth)_ |
 
 _Note: Seed data users don't have Firebase Auth accounts. Register a new user to test the full flow._
@@ -144,7 +144,7 @@ Full Swagger UI: http://localhost:8000/docs
 | GET | `/api/v1/jobs/{id}` | No | Job details |
 | POST | `/api/v1/jobs/{id}/apply` | Student | Apply to job |
 | GET | `/api/v1/students/profile` | Student | Student profile |
-| GET | `/api/v1/enterprise/jobs` | Enterprise | Manage jobs |
+| GET | `/api/v1/recruiter/jobs` | Recruiter | Manage jobs |
 | GET | `/api/v1/admin/users` | Admin | User management |
 
 ## Deployment

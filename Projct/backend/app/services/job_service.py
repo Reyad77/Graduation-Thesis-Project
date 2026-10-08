@@ -20,17 +20,17 @@ class JobService(BaseService):
     def __init__(self) -> None:
         super().__init__("jobs", Job)
 
-    # ── Enterprise job management ─────────────────────────────────────
+    # ── Recruiter job management ──────────────────────────────────────
 
     def create_job(
-        self, enterprise_uid: str, payload: JobCreateRequest
+        self, recruiter_uid: str, payload: JobCreateRequest
     ) -> Job:
         """Create a new job posting (starts 'pending' for admin review)."""
         now = datetime.now(timezone.utc)
         expires_at = now + timedelta(days=30)
 
         data = {
-            "enterpriseUid": enterprise_uid,
+            "recruiterUid": recruiter_uid,
             "title": payload.title,
             "responsibilities": payload.responsibilities,
             "salary": payload.salary,
@@ -53,39 +53,39 @@ class JobService(BaseService):
         return self.get_by_id(doc_id)  # type: ignore[return-value]
 
     def update_job(
-        self, job_id: str, enterprise_uid: str, payload: JobUpdateRequest
+        self, job_id: str, recruiter_uid: str, payload: JobUpdateRequest
     ) -> Optional[Job]:
-        """Update a job that belongs to the given enterprise."""
+        """Update a job that belongs to the given recruiter."""
         job = self.get_by_id(job_id)
-        if not job or str(getattr(job, "enterpriseUid", "")) != enterprise_uid:
+        if not job or str(getattr(job, "recruiterUid", "")) != recruiter_uid:
             return None
         update_data = payload.model_dump(exclude_unset=True)
         self.update(job_id, update_data)
         return self.get_by_id(job_id)  # type: ignore[return-value]
 
-    def delete_job(self, job_id: str, enterprise_uid: str) -> bool:
-        """Delete a job belonging to the enterprise."""
+    def delete_job(self, job_id: str, recruiter_uid: str) -> bool:
+        """Delete a job belonging to the recruiter."""
         job = self.get_by_id(job_id)
-        if not job or str(getattr(job, "enterpriseUid", "")) != enterprise_uid:
+        if not job or str(getattr(job, "recruiterUid", "")) != recruiter_uid:
             return False
         return self.delete(job_id)
 
     def update_status(
-        self, job_id: str, enterprise_uid: str, new_status: JobStatus
+        self, job_id: str, recruiter_uid: str, new_status: JobStatus
     ) -> Optional[Job]:
-        """Change a job's status (enterprise can activate/pause)."""
+        """Change a job's status (recruiter can activate/pause)."""
         job = self.get_by_id(job_id)
-        if not job or str(getattr(job, "enterpriseUid", "")) != enterprise_uid:
+        if not job or str(getattr(job, "recruiterUid", "")) != recruiter_uid:
             return None
         self.update(job_id, {"status": new_status.value})
         return self.get_by_id(job_id)  # type: ignore[return-value]
 
-    def get_enterprise_jobs(
-        self, enterprise_uid: str
+    def get_recruiter_jobs(
+        self, recruiter_uid: str
     ) -> List[Job]:
-        """Get all jobs posted by an enterprise."""
+        """Get all jobs posted by a recruiter."""
         return self.where(  # type: ignore[return-value]
-            "enterpriseUid", "==", enterprise_uid,
+            "recruiterUid", "==", recruiter_uid,
             order_by="postedAt", descending=True, limit=200,
         )
 
@@ -236,8 +236,9 @@ class SavedJobService:
 
     def get_saved(self, student_uid: str) -> List[str]:
         """Return the list of saved job IDs."""
+        # Use limit().stream() so this works with the REST fallback client too
         docs = self.db.collection("students").document(student_uid) \
-            .collection("savedJobs").stream()
+            .collection("savedJobs").limit(500).stream()
         return [doc.id for doc in docs]
 
     def is_saved(self, student_uid: str, job_id: str) -> bool:

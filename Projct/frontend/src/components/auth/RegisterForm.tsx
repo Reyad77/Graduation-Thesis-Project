@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { getApiErrorMessage } from "@/utils/apiError";
-import type { UserRole } from "@/types";
+import type { RecruiterType, UserRole } from "@/types";
 import { Search, UserPlus } from "lucide-react";
 
 export default function RegisterForm() {
@@ -15,6 +15,7 @@ export default function RegisterForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [role, setRole] = useState<UserRole>("student");
+  const [recruiterType, setRecruiterType] = useState<RecruiterType>("individual");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -23,9 +24,9 @@ export default function RegisterForm() {
     if (password !== confirmPassword) { setError(t("auth.passwordsDontMatch")); return; }
     setIsSubmitting(true);
     try {
-      await register(email, password, displayName, role);
+      await register(email, password, displayName, role, recruiterType);
       if (role === "student") navigate("/student/profile");
-      else if (role === "enterprise") navigate("/enterprise/register");
+      else if (role === "recruiter") navigate("/recruiter/register");
     } catch (err) { setError(getApiErrorMessage(err, t("auth.registerFailed"), t("errors.serverUnreachable"))); }
     finally { setIsSubmitting(false); }
   };
@@ -44,19 +45,33 @@ export default function RegisterForm() {
             <span className={`text-sm font-semibold ${role === "student" ? "text-primary-700" : "text-gray-700"}`}>{t("auth.jobs")}</span>
             <span className="text-[10px] text-gray-400 text-center leading-tight">{t("auth.jobsDesc")}</span>
           </button>
-          <button type="button" onClick={() => setRole("enterprise")}
+          <button type="button" onClick={() => setRole("recruiter")}
             className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all
-              ${role === "enterprise" ? "border-primary-500 bg-primary-50 shadow-sm" : "border-gray-200 bg-white hover:border-gray-300"}`}>
-            <div className={`p-2.5 rounded-full ${role === "enterprise" ? "bg-primary-100 text-primary-600" : "bg-gray-100 text-gray-500"}`}><UserPlus size={22} /></div>
-            <span className={`text-sm font-semibold ${role === "enterprise" ? "text-primary-700" : "text-gray-700"}`}>{t("auth.employees")}</span>
-            <span className="text-[10px] text-gray-400 text-center leading-tight">{t("auth.employeesDesc")}</span>
+              ${role === "recruiter" ? "border-primary-500 bg-primary-50 shadow-sm" : "border-gray-200 bg-white hover:border-gray-300"}`}>
+            <div className={`p-2.5 rounded-full ${role === "recruiter" ? "bg-primary-100 text-primary-600" : "bg-gray-100 text-gray-500"}`}><UserPlus size={22} /></div>
+            <span className={`text-sm font-semibold ${role === "recruiter" ? "text-primary-700" : "text-gray-700"}`}>{t("auth.recruiters")}</span>
+            <span className="text-[10px] text-gray-400 text-center leading-tight">{t("auth.recruitersDesc")}</span>
           </button>
         </div>
+        {role === "recruiter" && (
+          <div className="grid grid-cols-2 gap-3">
+            <button type="button" onClick={() => setRecruiterType("individual")}
+              className={`p-3 rounded-lg border-2 text-sm font-medium transition-all
+                ${recruiterType === "individual" ? "border-primary-500 bg-primary-50 text-primary-700" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}>
+              {t("recruiter.individual")}
+            </button>
+            <button type="button" onClick={() => setRecruiterType("enterprise")}
+              className={`p-3 rounded-lg border-2 text-sm font-medium transition-all
+                ${recruiterType === "enterprise" ? "border-primary-500 bg-primary-50 text-primary-700" : "border-gray-200 text-gray-600 hover:border-gray-300"}`}>
+              {t("recruiter.enterprise")}
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="border-t pt-4">
         <p className="text-xs text-gray-400 text-center mb-3">
-          {role === "student" ? t("auth.jobSeekerAccount") : t("auth.employerAccount")}
+          {role === "student" ? t("auth.jobSeekerAccount") : t("auth.recruiterAccount")}
         </p>
         <div className="space-y-3">
           <div><label className="block text-sm font-medium text-gray-700 mb-1">{t("auth.fullName")}</label>

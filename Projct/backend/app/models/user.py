@@ -13,8 +13,15 @@ class UserRole(str, Enum):
     """Valid user roles in the system."""
 
     STUDENT = "student"
-    ENTERPRISE = "enterprise"
+    RECRUITER = "recruiter"
     ADMIN = "admin"
+
+
+class RecruiterType(str, Enum):
+    """Recruiter account kinds — individual users or enterprises."""
+
+    INDIVIDUAL = "individual"
+    ENTERPRISE = "enterprise"
 
 
 # ── Database model ─────────────────────────────────────────────────────
@@ -27,6 +34,7 @@ class User(BaseModel):
     displayName: str
     phone: str = ""
     preferredLanguage: str = "en"
+    recruiterType: Optional[str] = None  # individual | enterprise (recruiters)
     createdAt: Optional[datetime] = None
     updatedAt: Optional[datetime] = None
     isActive: bool = True
@@ -42,6 +50,7 @@ class UserRegisterRequest(BaseModel):
     role: UserRole
     phone: str = ""
     preferredLanguage: str = "en"
+    recruiterType: Optional[str] = None  # required only for recruiters
 
 
 class UserLoginRequest(BaseModel):
@@ -82,6 +91,7 @@ class UserResponse(BaseModel):
     displayName: str
     phone: str
     preferredLanguage: str
+    recruiterType: Optional[str] = None
     isActive: bool
     createdAt: Optional[datetime] = None
 

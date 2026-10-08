@@ -55,8 +55,8 @@
 | 27 | POST /jobs/{id}/save without auth → 401 | ✅ |
 | 28 | GET /admin/users without auth → 401 | ✅ |
 | 29 | POST /admin/jobs/{id}/approve without auth → 401 | ✅ |
-| 30 | GET /enterprise/jobs without auth → 401 | ✅ |
-| 31 | POST /enterprise/jobs without auth → 401 | ✅ |
+| 30 | GET /recruiter/jobs without auth → 401 | ✅ |
+| 31 | POST /recruiter/jobs without auth → 401 | ✅ |
 
 ---
 
@@ -126,4 +126,4 @@ cd Projct/backend
 python seed_data.py
 ```
 
-This creates: 5 users, 2 students, 2 enterprises, 4 jobs, 2 resumes, 3 applications, 2 announcements, 2 banners.
+This creates: 5 users, 2 students, 2 recruiters, 4 jobs, 2 resumes, 3 applications, 2 announcements, 2 banners.

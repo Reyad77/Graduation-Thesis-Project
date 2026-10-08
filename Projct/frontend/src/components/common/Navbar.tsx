@@ -31,12 +31,12 @@ export default function Navbar() {
             <NavLink to="/saved-jobs">{t("nav.saved")}</NavLink>
           </>
         );
-      case "enterprise":
+      case "recruiter":
         return (
           <>
-            <NavLink to="/enterprise/dashboard">{t("nav.dashboard")}</NavLink>
-            <NavLink to="/enterprise/jobs">{t("nav.myPosts")}</NavLink>
-            <NavLink to="/enterprise/applicants">{t("nav.candidates")}</NavLink>
+            <NavLink to="/recruiter/dashboard">{t("nav.dashboard")}</NavLink>
+            <NavLink to="/recruiter/jobs">{t("nav.myPosts")}</NavLink>
+            <NavLink to="/recruiter/applicants">{t("nav.candidates")}</NavLink>
           </>
         );
       case "admin":

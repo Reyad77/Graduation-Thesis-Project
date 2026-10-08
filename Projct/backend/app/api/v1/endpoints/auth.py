@@ -46,6 +46,7 @@ def _user_to_response(user) -> UserResponse:
         displayName=d.get("displayName", ""),
         phone=d.get("phone", ""),
         preferredLanguage=d.get("preferredLanguage", "en"),
+        recruiterType=d.get("recruiterType"),
         isActive=d.get("isActive", True),
         createdAt=d.get("createdAt"),
     )
@@ -59,7 +60,7 @@ def _user_to_response(user) -> UserResponse:
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 @limiter.limit("5/minute")
 def register(request: Request, payload: UserRegisterRequest):
-    """Register a new user (student or enterprise).
+    """Register a new user (student or recruiter).
 
     Creates a Firebase Auth account AND a Firestore user profile.
     Returns a JWT access token so the user is logged in immediately.
@@ -72,8 +73,8 @@ def register(request: Request, payload: UserRegisterRequest):
         from app.services.notification_service import NotificationService
         from app.models.notification import NotificationType
         ns = NotificationService()
-        role_label = "Job Seeker" if payload.role.value == "student" else "Employer"
-        link = "/admin/verify-students" if payload.role.value == "student" else "/admin/approve-enterprises"
+        role_label = "Job Seeker" if payload.role.value == "student" else "Recruiter"
+        link = "/admin/verify-students" if payload.role.value == "student" else "/admin/approve-recruiters"
         ns.notify_admins(
             title=f"New {role_label} Registered",
             message=f"{payload.displayName} ({payload.email}) signed up as a {role_label.lower()}.",

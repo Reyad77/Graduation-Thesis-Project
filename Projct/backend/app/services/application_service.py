@@ -88,29 +88,29 @@ class ApplicationService(BaseService):
             return None
         return app  # type: ignore[return-value]
 
-    # ── Enterprise: manage applications ───────────────────────────────
+    # ── Recruiter: manage applications ────────────────────────────────
 
     def get_job_applications(
-        self, job_id: str, enterprise_uid: str
+        self, job_id: str, recruiter_uid: str
     ) -> List[Application]:
-        """Get all applications for a job belonging to the enterprise."""
+        """Get all applications for a job belonging to the recruiter."""
         from app.services.job_service import JobService
         job_svc = JobService()
         job = job_svc.get_by_id(job_id)
-        if not job or str(getattr(job, "enterpriseUid", "")) != enterprise_uid:
+        if not job or str(getattr(job, "recruiterUid", "")) != recruiter_uid:
             return []
         return self.where(  # type: ignore[return-value]
             "jobId", "==", job_id,
             order_by="appliedAt", descending=True, limit=200,
         )
 
-    def get_all_enterprise_applications(
-        self, enterprise_uid: str
+    def get_all_recruiter_applications(
+        self, recruiter_uid: str
     ) -> List[Application]:
-        """Get all applications across all jobs of an enterprise."""
+        """Get all applications across all jobs of a recruiter."""
         from app.services.job_service import JobService
         job_svc = JobService()
-        jobs = job_svc.get_enterprise_jobs(enterprise_uid)
+        jobs = job_svc.get_recruiter_jobs(recruiter_uid)
         job_ids = [str(getattr(j, "id", "")) for j in jobs]
 
         all_apps: List[Application] = []
@@ -165,10 +165,10 @@ class ApplicationService(BaseService):
         })
         return self.get_by_id(application_id)  # type: ignore[return-value]
 
-    # ── Resume viewing (enterprise) ───────────────────────────────────
+    # ── Resume viewing (recruiter) ────────────────────────────────────
 
     def get_application_with_resume(
-        self, application_id: str, enterprise_uid: str
+        self, application_id: str, recruiter_uid: str
     ) -> Optional[Dict]:
         """Return the application along with the attached resume data."""
         app = self.get_by_id(application_id)
@@ -179,7 +179,7 @@ class ApplicationService(BaseService):
         job_id = str(getattr(app, "jobId", ""))
         from app.services.job_service import JobService
         job = JobService().get_by_id(job_id)
-        if not job or str(getattr(job, "enterpriseUid", "")) != enterprise_uid:
+        if not job or str(getattr(job, "recruiterUid", "")) != recruiter_uid:
             return None
 
         resume_id = str(getattr(app, "resumeId", ""))

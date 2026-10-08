@@ -10,38 +10,38 @@ export default function AdminVerifyUsers() {
   const { t } = useTranslation();
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [tab, setTab] = useState<"students" | "enterprises">("students");
+  const [tab, setTab] = useState<"students" | "recruiters">("students");
 
   const fetch = () => { adminService.getUsers().then(u => setUsers(Array.isArray(u) ? u : u)).finally(() => setIsLoading(false)); };
   useEffect(() => { fetch(); }, []);
 
   const students = users.filter(u => u.role === "student");
-  const enterprises = users.filter(u => u.role === "enterprise");
+  const recruiters = users.filter(u => u.role === "recruiter");
 
   const handleVerify = async (uid: string) => { try { await adminService.verifyStudent(uid); toast.success(t("admin.verifiedToast")); fetch(); } catch { toast.error(t("admin.failedToast")); } };
   const handleDeclineStudent = async (uid: string) => { const r = prompt(t("admin.reasonPrompt")); if (!r) return; try { await adminService.declineStudent(uid, r); toast.success(t("admin.rejectedToast")); fetch(); } catch { toast.error(t("admin.failedToast")); } };
-  const handleApprove = async (uid: string) => { try { await adminService.approveEnterprise(uid); toast.success(t("admin.approvedToast")); fetch(); } catch { toast.error(t("admin.failedToast")); } };
-  const handleDeclineEnterprise = async (uid: string) => { const r = prompt(t("admin.reasonPrompt")); if (!r) return; try { await adminService.declineEnterprise(uid, r); toast.success(t("admin.rejectedToast")); fetch(); } catch { toast.error(t("admin.failedToast")); } };
+  const handleApprove = async (uid: string) => { try { await adminService.approveRecruiter(uid); toast.success(t("admin.approvedToast")); fetch(); } catch { toast.error(t("admin.failedToast")); } };
+  const handleDeclineRecruiter = async (uid: string) => { const r = prompt(t("admin.reasonPrompt")); if (!r) return; try { await adminService.declineRecruiter(uid, r); toast.success(t("admin.rejectedToast")); fetch(); } catch { toast.error(t("admin.failedToast")); } };
 
   if (isLoading) return <LoadingSpinner fullPage />;
 
-  const list = tab === "students" ? students : enterprises;
+  const list = tab === "students" ? students : recruiters;
   const stuVerified = students.filter(u => (u as any).isVerified).length;
-  const entApproved = enterprises.filter(u => (u as any).isApproved).length;
+  const entApproved = recruiters.filter(u => (u as any).isApproved).length;
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold text-gray-900">{t("admin.verifyUsers")}</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{students.length + enterprises.length} users</p>
+          <p className="text-sm text-gray-500 mt-0.5">{students.length + recruiters.length} users</p>
         </div>
       </div>
 
       <div className="grid grid-cols-4 gap-4 mb-6">
         <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3">
           <div className="p-2 rounded-lg bg-blue-50 text-blue-600"><Shield size={18} /></div>
-          <div><p className="text-lg font-bold text-gray-900">{students.length + enterprises.length}</p><p className="text-[11px] text-gray-500">{t("admin.totalUsers")}</p></div>
+          <div><p className="text-lg font-bold text-gray-900">{students.length + recruiters.length}</p><p className="text-[11px] text-gray-500">{t("admin.totalUsers")}</p></div>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3">
           <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600"><UserCheck size={18} /></div>
@@ -49,7 +49,7 @@ export default function AdminVerifyUsers() {
         </div>
         <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3">
           <div className="p-2 rounded-lg bg-violet-50 text-violet-600"><Building2 size={18} /></div>
-          <div><p className="text-lg font-bold text-gray-900">{enterprises.length}</p><p className="text-[11px] text-gray-500">{t("admin.enterprises")}</p></div>
+          <div><p className="text-lg font-bold text-gray-900">{recruiters.length}</p><p className="text-[11px] text-gray-500">{t("admin.recruiters")}</p></div>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3">
           <div className="p-2 rounded-lg bg-amber-50 text-amber-600"><Clock size={18} /></div>
@@ -64,10 +64,10 @@ export default function AdminVerifyUsers() {
             ${tab === "students" ? "bg-primary-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
           {t("admin.students")} ({students.length})
         </button>
-        <button onClick={() => setTab("enterprises")}
+        <button onClick={() => setTab("recruiters")}
           className={`px-4 py-2 rounded-lg text-xs font-medium transition-colors
-            ${tab === "enterprises" ? "bg-primary-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
-          {t("admin.enterprises")} ({enterprises.length})
+            ${tab === "recruiters" ? "bg-primary-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+          {t("admin.recruiters")} ({recruiters.length})
         </button>
       </div>
 
@@ -111,7 +111,7 @@ export default function AdminVerifyUsers() {
                           className="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-600 text-[11px] font-medium hover:bg-emerald-100 flex items-center gap-1">
                           <CheckCircle size={12} /> {t("admin.approve")}
                         </button>
-                        <button onClick={() => tab === "students" ? handleDeclineStudent(u.uid) : handleDeclineEnterprise(u.uid)}
+                        <button onClick={() => tab === "students" ? handleDeclineStudent(u.uid) : handleDeclineRecruiter(u.uid)}
                           className="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 text-[11px] font-medium hover:bg-red-100 flex items-center gap-1">
                           <XCircle size={12} /> {t("admin.reject")}
                         </button>

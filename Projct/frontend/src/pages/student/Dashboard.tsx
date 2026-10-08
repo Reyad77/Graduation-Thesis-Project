@@ -40,7 +40,7 @@ export default function StudentDashboard() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900">{t("navigation.dashboard")}</h1>
+      <h1 className="text-2xl font-bold text-gray-900">{t("nav.dashboard")}</h1>
 
       {/* Verification / Profile completion banners */}
       {needsVerification && (
@@ -80,7 +80,7 @@ export default function StudentDashboard() {
         <StatCard icon={<FileText size={20} />} label="Resumes" value="--" color="bg-purple-100 text-purple-700" />
       </div>
       <div className="flex gap-3 mt-8">
-        <Link to="/jobs" className="btn-primary flex items-center gap-2"><Briefcase size={16} /> {t("navigation.jobs")}</Link>
+        <Link to="/jobs" className="btn-primary flex items-center gap-2"><Briefcase size={16} /> {t("nav.findJobs")}</Link>
         <Link to="/student/resume/new" className="btn-secondary flex items-center gap-2"><Plus size={16} /> {t("resume.create")}</Link>
       </div>
       <section className="mt-8">

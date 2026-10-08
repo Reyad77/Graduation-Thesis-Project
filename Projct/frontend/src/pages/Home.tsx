@@ -14,7 +14,7 @@ export default function Home() {
   // If logged in, redirect to role dashboard
   if (isAuthenticated) {
     if (role === "admin") return <Navigate to="/admin" replace />;
-    if (role === "enterprise") return <Navigate to="/enterprise" replace />;
+    if (role === "recruiter") return <Navigate to="/recruiter" replace />;
     return <Navigate to="/student" replace />;
   }
 

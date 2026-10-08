@@ -16,11 +16,9 @@ const studentService = {
     return data;
   },
 
-  uploadStudentId: async (file: File): Promise<{ idCardPhoto: string }> => {
-    const formData = new FormData();
-    formData.append("file", file);
-    const { data } = await api.post("/students/verify-id", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+  uploadStudentId: async (idCardPhotoUrl: string): Promise<{ idCardPhoto: string }> => {
+    const { data } = await api.post("/students/verify-id", null, {
+      params: { id_card_photo: idCardPhotoUrl },
     });
     return data;
   },
@@ -48,6 +46,16 @@ const studentService = {
 
   deleteResume: async (id: string): Promise<void> => {
     await api.delete(`/resumes/${id}`);
+  },
+
+  addCertificate: async (resumeId: string, certUrl: string): Promise<void> => {
+    await api.post(`/resumes/${resumeId}/certificate`, null, {
+      params: { cert_url: certUrl },
+    });
+  },
+
+  removeCertificate: async (resumeId: string, certUrl: string): Promise<void> => {
+    await api.delete(`/resumes/${resumeId}/certificate/${encodeURIComponent(certUrl)}`);
   },
 
   // ── Jobs & Applications ──────────────────────────────────────────

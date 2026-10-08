@@ -37,11 +37,32 @@ class TestAdminEndpoints:
         assert resp.status_code == 401
 
 
-class TestEnterpriseEndpoints:
+class TestRecruiterEndpoints:
     def test_get_jobs_unauthorized(self, client):
-        resp = client.get("/api/v1/enterprise/jobs")
+        resp = client.get("/api/v1/recruiter/jobs")
         assert resp.status_code == 401
 
     def test_create_job_unauthorized(self, client):
-        resp = client.post("/api/v1/enterprise/jobs", json={"title": "Test"})
+        resp = client.post("/api/v1/recruiter/jobs", json={"title": "Test"})
+        assert resp.status_code == 401
+
+
+class TestEvaluationEndpoints:
+    def test_create_unauthorized(self, client):
+        resp = client.post(
+            "/api/v1/evaluations",
+            json={"applicationId": "app-1", "rating": 5, "comment": ""},
+        )
+        assert resp.status_code == 401
+
+    def test_get_received_unauthorized(self, client):
+        resp = client.get("/api/v1/evaluations/received")
+        assert resp.status_code == 401
+
+    def test_admin_list_unauthorized(self, client):
+        resp = client.get("/api/v1/admin/evaluations")
+        assert resp.status_code == 401
+
+    def test_admin_delete_unauthorized(self, client):
+        resp = client.delete("/api/v1/admin/evaluations/some-id")
         assert resp.status_code == 401

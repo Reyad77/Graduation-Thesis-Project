@@ -6,7 +6,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
-import type { User, UserRole } from "@/types";
+import type { User, UserRole, RecruiterType } from "@/types";
 import authService from "@/services/authService";
 
 interface AuthState {
@@ -23,6 +23,7 @@ interface AuthContextType extends AuthState {
     password: string,
     displayName: string,
     role: UserRole,
+    recruiterType?: RecruiterType,
   ) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (user: User) => void;
@@ -79,12 +80,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       password: string,
       displayName: string,
       role: UserRole,
+      recruiterType?: RecruiterType,
     ) => {
       const result = await authService.register({
         email,
         password,
         displayName,
         role,
+        recruiterType,
       });
       localStorage.setItem("access_token", result.access_token);
       setState({

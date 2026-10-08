@@ -6,7 +6,7 @@ Notifications are triggered by key events:
 - Interview scheduling
 - Job approval/rejection
 - Student verification
-- Enterprise approval
+- Recruiter approval
 """
 
 from datetime import datetime, timezone
@@ -146,11 +146,11 @@ class NotificationService(BaseService):
         )
 
     def on_job_approved(
-        self, enterprise_uid: str, job_title: str,
+        self, recruiter_uid: str, job_title: str,
     ) -> None:
-        """Notify an enterprise that their job was approved."""
+        """Notify a recruiter that their job was approved."""
         self.notify(
-            enterprise_uid,
+            recruiter_uid,
             NotificationType.JOB_APPROVED,
             "Job Posting Approved",
             f"Your job '{job_title}' has been approved and is now active.",
@@ -158,11 +158,11 @@ class NotificationService(BaseService):
         )
 
     def on_job_rejected(
-        self, enterprise_uid: str, job_title: str, reason: str,
+        self, recruiter_uid: str, job_title: str, reason: str,
     ) -> None:
-        """Notify an enterprise that their job was rejected."""
+        """Notify a recruiter that their job was rejected."""
         self.notify(
-            enterprise_uid,
+            recruiter_uid,
             NotificationType.SYSTEM,
             "Job Posting Rejected",
             f"Your job '{job_title}' was rejected. Reason: {reason}",
@@ -178,11 +178,21 @@ class NotificationService(BaseService):
             "Your student ID has been verified. You can now apply for jobs!",
         )
 
-    def on_enterprise_approved(self, enterprise_uid: str) -> None:
-        """Notify an enterprise that their registration was approved."""
+    def on_recruiter_approved(self, recruiter_uid: str) -> None:
+        """Notify a recruiter that their registration was approved."""
         self.notify(
-            enterprise_uid,
+            recruiter_uid,
             NotificationType.SYSTEM,
             "Registration Approved",
-            "Your enterprise registration has been approved. You can now post jobs!",
+            "Your recruiter registration has been approved. You can now post jobs!",
+        )
+
+    def on_evaluation_received(self, to_uid: str, rating: int) -> None:
+        """Notify a user that they received a new evaluation."""
+        self.notify(
+            to_uid,
+            NotificationType.SYSTEM,
+            "New Evaluation Received",
+            f"You received a {rating}-star evaluation.",
+            {"rating": str(rating)},
         )

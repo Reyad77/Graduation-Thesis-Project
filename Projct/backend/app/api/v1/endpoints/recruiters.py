@@ -1,19 +1,20 @@
 """
-Enterprise endpoints: job posting CRUD, status management, and applicants.
+Recruiter endpoints: profile management, job posting CRUD, status
+management, and applicants.
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.core.dependencies import get_current_enterprise
+from app.core.dependencies import get_current_recruiter
 from app.models.job import JobCreateRequest, JobUpdateRequest, JobStatus
 from app.services.auth_service import AuthService
 from app.services.job_service import JobService
-from app.services.enterprise_service import EnterpriseService
+from app.services.recruiter_service import RecruiterService
 
 router = APIRouter()
 _auth_svc = AuthService()
 _job_svc = JobService()
-_ent_svc = EnterpriseService()
+_recruiter_svc = RecruiterService()
 
 
 def _uid(user: dict) -> str:
@@ -26,22 +27,22 @@ def _serialize(obj):
     return obj
 
 
-# ── Enterprise profile ────────────────────────────────────────────────
+# ── Recruiter profile ──────────────────────────────────────────────────
 
 @router.get("/profile")
-def get_profile(user: dict = Depends(get_current_enterprise)):
-    profile = _ent_svc.get_profile(_uid(user))
+def get_profile(user: dict = Depends(get_current_recruiter)):
+    profile = _recruiter_svc.get_profile(_uid(user))
     if not profile:
         raise HTTPException(404, "Profile not found.")
     return _serialize(profile)
 
 
 @router.put("/profile")
-def update_profile(payload: dict, user: dict = Depends(get_current_enterprise)):
+def update_profile(payload: dict, user: dict = Depends(get_current_recruiter)):
     uid = _uid(user)
-    from app.models.enterprise import EnterpriseUpdateRequest, EnterpriseRegistrationRequest
+    from app.models.recruiter import RecruiterUpdateRequest, RecruiterRegistrationRequest
     # Auto-create profile if it doesn't exist yet (first-time save)
-    if not _ent_svc.exists(uid):
+    if not _recruiter_svc.exists(uid):
         # Fetch email from the users collection
         user_email = ""
         try:
@@ -50,7 +51,8 @@ def update_profile(payload: dict, user: dict = Depends(get_current_enterprise)):
                 user_email = user_doc.get("email", "")
         except Exception:
             pass
-        reg = EnterpriseRegistrationRequest(
+        reg = RecruiterRegistrationRequest(
+            recruiterType=payload.get("recruiterType", "individual"),
             companyName=payload.get("companyName", ""),
             contactPerson=payload.get("contactPerson", ""),
             contactPhone=payload.get("contactPhone", ""),
@@ -58,9 +60,9 @@ def update_profile(payload: dict, user: dict = Depends(get_current_enterprise)):
             description=payload.get("description", ""),
             website=payload.get("website", ""),
         )
-        created = _ent_svc.create_profile(uid, user_email, reg)
+        created = _recruiter_svc.create_profile(uid, user_email, reg)
         return _serialize(created)
-    updated = _ent_svc.update_profile(uid, EnterpriseUpdateRequest(**payload))
+    updated = _recruiter_svc.update_profile(uid, RecruiterUpdateRequest(**payload))
     if not updated: raise HTTPException(404, "Profile not found.")
     return _serialize(updated)
 
@@ -68,13 +70,13 @@ def update_profile(payload: dict, user: dict = Depends(get_current_enterprise)):
 # ── Job posting CRUD ──────────────────────────────────────────────────
 
 @router.get("/jobs")
-def list_enterprise_jobs(user: dict = Depends(get_current_enterprise)):
-    jobs = _job_svc.get_enterprise_jobs(_uid(user))
+def list_recruiter_jobs(user: dict = Depends(get_current_recruiter)):
+    jobs = _job_svc.get_recruiter_jobs(_uid(user))
     return [_serialize(j) for j in jobs]
 
 
 @router.post("/jobs", status_code=status.HTTP_201_CREATED)
-def create_job(payload: JobCreateRequest, user: dict = Depends(get_current_enterprise)):
+def create_job(payload: JobCreateRequest, user: dict = Depends(get_current_recruiter)):
     job = _job_svc.create_job(_uid(user), payload)
     # Notify admins
     from app.services.notification_service import NotificationService
@@ -89,21 +91,21 @@ def create_job(payload: JobCreateRequest, user: dict = Depends(get_current_enter
 
 
 @router.put("/jobs/{job_id}")
-def update_job(job_id: str, payload: JobUpdateRequest, user: dict = Depends(get_current_enterprise)):
+def update_job(job_id: str, payload: JobUpdateRequest, user: dict = Depends(get_current_recruiter)):
     updated = _job_svc.update_job(job_id, _uid(user), payload)
     if not updated: raise HTTPException(404, "Job not found or not yours.")
     return _serialize(updated)
 
 
 @router.delete("/jobs/{job_id}")
-def delete_job(job_id: str, user: dict = Depends(get_current_enterprise)):
+def delete_job(job_id: str, user: dict = Depends(get_current_recruiter)):
     ok = _job_svc.delete_job(job_id, _uid(user))
     if not ok: raise HTTPException(404, "Job not found or not yours.")
     return {"message": "Job deleted."}
 
 
 @router.patch("/jobs/{job_id}/status")
-def update_job_status(job_id: str, status: str, user: dict = Depends(get_current_enterprise)):
+def update_job_status(job_id: str, status: str, user: dict = Depends(get_current_recruiter)):
     try: new_status = JobStatus(status)
     except ValueError: raise HTTPException(400, f"Invalid status: {status}")
     updated = _job_svc.update_status(job_id, _uid(user), new_status)
@@ -114,7 +116,7 @@ def update_job_status(job_id: str, status: str, user: dict = Depends(get_current
 # ── Applicants ────────────────────────────────────────────────────────
 
 @router.get("/jobs/{job_id}/applications")
-def get_job_applications(job_id: str, user: dict = Depends(get_current_enterprise)):
+def get_job_applications(job_id: str, user: dict = Depends(get_current_recruiter)):
     from app.services.application_service import ApplicationService
     apps = ApplicationService().get_job_applications(job_id, _uid(user))
     return [_serialize(a) for a in apps]

@@ -10,9 +10,10 @@ from app.api.v1.endpoints import (
     admin,
     applications,
     auth,
-    enterprises,
+    evaluations,
     jobs,
     notifications,
+    recruiters,
     resumes,
     students,
 )
@@ -31,12 +32,12 @@ api_router.include_router(resumes.router, prefix="/resumes", tags=["Resumes"])
 # ── Job endpoints (student view) ───────────────────────────────────────
 api_router.include_router(jobs.router, prefix="/jobs", tags=["Jobs"])
 
-# ── Enterprise endpoints ───────────────────────────────────────────────
-api_router.include_router(enterprises.router, prefix="/enterprise", tags=["Enterprise"])
+# ── Recruiter endpoints ────────────────────────────────────────────────
+api_router.include_router(recruiters.router, prefix="/recruiter", tags=["Recruiter"])
 
-# ── Application endpoints (enterprise view) ────────────────────────────
+# ── Application endpoints (recruiter view) ─────────────────────────────
 api_router.include_router(
-    applications.router, prefix="/enterprise", tags=["Applications"]
+    applications.router, prefix="/recruiter", tags=["Applications"]
 )
 
 # ── Admin endpoints ────────────────────────────────────────────────────
@@ -45,4 +46,9 @@ api_router.include_router(admin.router, prefix="/admin", tags=["Admin"])
 # ── Notification endpoints ─────────────────────────────────────────────
 api_router.include_router(
     notifications.router, prefix="/notifications", tags=["Notifications"]
+)
+
+# ── Evaluation endpoints ────────────────────────────────────────────────
+api_router.include_router(
+    evaluations.router, prefix="/evaluations", tags=["Evaluations"]
 )

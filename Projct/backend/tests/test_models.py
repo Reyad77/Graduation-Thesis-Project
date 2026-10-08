@@ -7,6 +7,7 @@ from app.models.user import UserRegisterRequest, UserLoginRequest, UserRole
 from app.models.job import JobCreateRequest, JobStatus
 from app.models.application import ApplicationCreateRequest, ApplicationStatusUpdateRequest, ApplicationStatus
 from app.models.resume import ResumeCreateRequest
+from app.models.evaluation import EvaluationCreateRequest
 
 
 class TestUserModels:
@@ -99,3 +100,25 @@ class TestResumeModels:
             experience="Internship",
         )
         assert len(req.skills) == 2
+
+
+class TestEvaluationModels:
+    def test_valid_evaluation(self):
+        req = EvaluationCreateRequest(
+            applicationId="app-123",
+            rating=5,
+            comment="Great experience!",
+        )
+        assert req.rating == 5
+
+    def test_rating_too_low(self):
+        with pytest.raises(ValidationError):
+            EvaluationCreateRequest(applicationId="app-123", rating=0)
+
+    def test_rating_too_high(self):
+        with pytest.raises(ValidationError):
+            EvaluationCreateRequest(applicationId="app-123", rating=6)
+
+    def test_missing_application_id(self):
+        with pytest.raises(ValidationError):
+            EvaluationCreateRequest(rating=4)

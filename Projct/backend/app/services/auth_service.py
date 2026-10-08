@@ -19,7 +19,7 @@ from firebase_admin.exceptions import FirebaseError
 
 from app.core.config import settings
 from app.core.security import create_access_token
-from app.models.user import User, UserRegisterRequest
+from app.models.user import User, UserRegisterRequest, UserRole
 from app.services.base_service import BaseService
 
 
@@ -80,6 +80,8 @@ class AuthService(BaseService):
             "displayName": payload.displayName,
             "phone": payload.phone or "",
             "preferredLanguage": payload.preferredLanguage or "en",
+            "recruiterType": payload.recruiterType
+            or ("individual" if payload.role == UserRole.RECRUITER else None),
             "isActive": True,
             "createdAt": now,
             "updatedAt": now,
@@ -225,6 +227,12 @@ class AuthService(BaseService):
         else:
             role_val = "student"
 
+        # 4b. Legacy self-heal: pre-rename accounts may still carry the old
+        # "enterprise" role value — migrate them to "recruiter" in place.
+        if role_val == "enterprise":
+            self.update(uid, {"role": "recruiter", "recruiterType": "enterprise"})
+            role_val = "recruiter"
+
         # 5. Issue platform JWT
         access_token = create_access_token(uid, role_val)
 
@@ -258,6 +266,11 @@ class AuthService(BaseService):
                 if hasattr(user, "role") and hasattr(user.role, "value")
                 else (user.get("role") if isinstance(user, dict) else "student")
             )
+
+            # Legacy self-heal (see login_with_email_password above)
+            if role_val == "enterprise":
+                self.update(uid, {"role": "recruiter", "recruiterType": "enterprise"})
+                role_val = "recruiter"
 
             access_token = create_access_token(uid, role_val)
 

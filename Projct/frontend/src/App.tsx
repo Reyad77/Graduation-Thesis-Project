@@ -17,14 +17,15 @@ import StudentResumeView from "./pages/student/ResumeView";
 import JobList from "./pages/student/JobList";
 import JobDetail from "./pages/student/JobDetail";
 import StudentApplications from "./pages/student/Applications";
+import SavedJobs from "./pages/student/SavedJobs";
 
-// Enterprise pages
-import EnterpriseDashboard from "./pages/enterprise/Dashboard";
-import EnterpriseRegistration from "./pages/enterprise/Registration";
-import EnterpriseProfile from "./pages/enterprise/Profile";
-import PostJob from "./pages/enterprise/PostJob";
-import ManageJobs from "./pages/enterprise/ManageJobs";
-import EnterpriseApplicants from "./pages/enterprise/Applicants";
+// Recruiter pages
+import RecruiterDashboard from "./pages/recruiter/Dashboard";
+import RecruiterRegistration from "./pages/recruiter/Registration";
+import RecruiterProfile from "./pages/recruiter/Profile";
+import PostJob from "./pages/recruiter/PostJob";
+import ManageJobs from "./pages/recruiter/ManageJobs";
+import RecruiterApplicants from "./pages/recruiter/Applicants";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -33,12 +34,13 @@ import AdminVerifyUsers from "./pages/admin/VerifyUsers";
 import AdminJobAudit from "./pages/admin/JobAudit";
 import AdminBannerManagement from "./pages/admin/BannerManagement";
 import AdminAnnouncements from "./pages/admin/Announcements";
+import AdminEvaluations from "./pages/admin/Evaluations";
 
 /**
  * Root application component.
  *
  * Public routes: Home, Login, Register, ForgotPassword, Job list/detail
- * Protected routes: Student, Enterprise, and Admin dashboards
+ * Protected routes: Student, Recruiter, and Admin dashboards
  */
 export default function App() {
   return (
@@ -64,17 +66,18 @@ export default function App() {
           <Route path="student/resume/:id/edit" element={<StudentResumeForm />} />
           <Route path="student/resume/:id" element={<StudentResumeView />} />
           <Route path="applications" element={<StudentApplications />} />
+          <Route path="saved-jobs" element={<SavedJobs />} />
         </Route>
 
-        {/* ── Enterprise-only routes ─────────────────────── */}
-        <Route element={<ProtectedRoute allowedRole="enterprise" />}>
-          <Route path="enterprise" element={<EnterpriseDashboard />} />
-          <Route path="enterprise/dashboard" element={<EnterpriseDashboard />} />
-          <Route path="enterprise/register" element={<EnterpriseRegistration />} />
-          <Route path="enterprise/profile" element={<EnterpriseProfile />} />
-          <Route path="enterprise/post-job" element={<PostJob />} />
-          <Route path="enterprise/jobs" element={<ManageJobs />} />
-          <Route path="enterprise/applicants" element={<EnterpriseApplicants />} />
+        {/* ── Recruiter-only routes ──────────────────────── */}
+        <Route element={<ProtectedRoute allowedRole="recruiter" />}>
+          <Route path="recruiter" element={<RecruiterDashboard />} />
+          <Route path="recruiter/dashboard" element={<RecruiterDashboard />} />
+          <Route path="recruiter/register" element={<RecruiterRegistration />} />
+          <Route path="recruiter/profile" element={<RecruiterProfile />} />
+          <Route path="recruiter/post-job" element={<PostJob />} />
+          <Route path="recruiter/jobs" element={<ManageJobs />} />
+          <Route path="recruiter/applicants" element={<RecruiterApplicants />} />
         </Route>
 
         {/* ── 404 catch-all ──────────────────────────── */}
@@ -88,9 +91,10 @@ export default function App() {
           <Route path="admin/dashboard" element={<AdminDashboard />} />
           <Route path="admin/users" element={<AdminUserManagement />} />
           <Route path="admin/verify-students" element={<AdminVerifyUsers />} />
-          <Route path="admin/approve-enterprises" element={<AdminVerifyUsers />} />
+          <Route path="admin/approve-recruiters" element={<AdminVerifyUsers />} />
           <Route path="admin/verify-users" element={<AdminVerifyUsers />} />
           <Route path="admin/jobs" element={<AdminJobAudit />} />
+          <Route path="admin/evaluations" element={<AdminEvaluations />} />
           <Route path="admin/banners" element={<AdminBannerManagement />} />
           <Route path="admin/announcements" element={<AdminAnnouncements />} />
         </Route>

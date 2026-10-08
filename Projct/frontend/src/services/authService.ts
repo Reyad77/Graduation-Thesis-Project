@@ -18,6 +18,7 @@ const authService = {
     password: string;
     displayName: string;
     role: string;
+    recruiterType?: string;
     phone?: string;
     preferredLanguage?: string;
   }): Promise<AuthResult> => {

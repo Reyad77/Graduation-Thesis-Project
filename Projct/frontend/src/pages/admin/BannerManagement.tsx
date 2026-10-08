@@ -24,7 +24,7 @@ export default function AdminBannerManagement() {
     e.preventDefault();
     try {
       if (editId) { await adminService.updateBanner(editId, form); toast.success(t("admin.updatedToast")); }
-      else { await adminService.createBanner(new FormData()); toast.success(t("admin.createdToast")); }
+      else { await adminService.createBanner({ ...form, imageUrl: "" }); toast.success(t("admin.createdToast")); }
       resetForm(); fetch();
     } catch { toast.error(t("admin.failedToast")); }
   };

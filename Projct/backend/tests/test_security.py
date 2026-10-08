@@ -30,7 +30,7 @@ class TestJWT:
         assert payload is None
 
     def test_different_roles(self):
-        for role in ("student", "enterprise", "admin"):
+        for role in ("student", "recruiter", "admin"):
             token = create_access_token("uid", role)
             payload = verify_access_token(token)
             assert payload["role"] == role

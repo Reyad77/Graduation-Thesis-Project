@@ -8,7 +8,7 @@ function getLink(n: { title: string; data: unknown }): string | null {
   if (d?.link) return d.link;
   const t = n.title.toLowerCase();
   if (t.includes("job seeker") || t.includes("student")) return "/admin/verify-students";
-  if (t.includes("employer") || t.includes("enterprise") || t.includes("hirer")) return "/admin/approve-enterprises";
+  if (t.includes("employer") || t.includes("enterprise") || t.includes("hirer") || t.includes("recruiter")) return "/admin/approve-recruiters";
   if (t.includes("job posted")) return "/admin/jobs";
   return null;
 }

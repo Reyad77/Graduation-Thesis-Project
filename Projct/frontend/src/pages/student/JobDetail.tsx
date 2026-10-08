@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, Link } from "react-router-dom";
-import { DollarSign, MapPin, Clock, Calendar, ArrowLeft } from "lucide-react";
+import { DollarSign, MapPin, Clock, Calendar, ArrowLeft, Bookmark } from "lucide-react";
 import studentService from "@/services/studentService";
 import { useAuth } from "@/hooks/useAuth";
 import type { Job } from "@/types";
@@ -17,6 +17,7 @@ export default function JobDetail() {
   const [selectedResume, setSelectedResume] = useState("");
   const [resumes, setResumes] = useState<{id:string}[]>([]);
   const [hasApplied, setHasApplied] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     if(!id) return;
@@ -25,6 +26,10 @@ export default function JobDetail() {
       if(isAuthenticated && role==="student") {
         try { const r = await studentService.getResumes(); setResumes(Array.isArray(r)?r:[]); } catch {}
         try { const c = await api_check(id!); setHasApplied(c.applied); } catch {}
+        try {
+          const saved = await studentService.getSavedJobs();
+          setIsSaved((Array.isArray(saved)?saved:[]).some(s => s.id === id));
+        } catch {}
       }
     }).finally(()=>setIsLoading(false));
   }, [id, isAuthenticated, role]);
@@ -37,6 +42,13 @@ export default function JobDetail() {
     finally { setIsApplying(false); }
   };
 
+  const handleSave = async () => {
+    try {
+      if (isSaved) { await studentService.unsaveJob(id!); setIsSaved(false); toast.success(t("jobs.unsave")); }
+      else { await studentService.saveJob(id!); setIsSaved(true); toast.success(t("jobs.save")); }
+    } catch { toast.error("Failed"); }
+  };
+
   if(isLoading) return <LoadingSpinner fullPage />;
   if(!job) return <div className="text-center py-16">Job not found</div>;
 
@@ -44,7 +56,16 @@ export default function JobDetail() {
     <div className="max-w-4xl mx-auto px-4 py-8">
       <Link to="/jobs" className="flex items-center gap-1 text-sm text-primary-600 hover:underline mb-4"><ArrowLeft size={14}/> {t("common.back")}</Link>
       <div className="card">
-        <h1 className="text-2xl font-bold">{job.title}</h1>
+        <div className="flex items-start justify-between gap-3">
+          <h1 className="text-2xl font-bold">{job.title}</h1>
+          {isAuthenticated && (
+            <button onClick={handleSave}
+              className={`p-2 rounded-lg border ${isSaved ? "bg-primary-50 border-primary-200 text-primary-700" : "border-gray-200 text-gray-500 hover:border-gray-300"}`}
+              title={isSaved ? t("jobs.unsave") : t("jobs.save")}>
+              <Bookmark size={18} className={isSaved ? "fill-primary-600 text-primary-600" : ""} />
+            </button>
+          )}
+        </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-4 text-sm">
           <div className="flex items-center gap-1 text-gray-600"><DollarSign size={16} className="text-green-600"/> {job.salary}</div>
           <div className="flex items-center gap-1 text-gray-600"><MapPin size={16} className="text-red-500"/> {job.location}</div>

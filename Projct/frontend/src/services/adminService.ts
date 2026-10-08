@@ -16,6 +16,10 @@ const adminService = {
     return data;
   },
 
+  setUserRole: async (uid: string, role: string): Promise<void> => {
+    await api.put(`/admin/users/${uid}/role`, null, { params: { role } });
+  },
+
   verifyStudent: async (uid: string): Promise<void> => {
     await api.post(`/admin/users/${uid}/verify-student`);
   },
@@ -24,12 +28,12 @@ const adminService = {
     await api.post(`/admin/users/${uid}/decline-student`, null, { params: { reason } });
   },
 
-  approveEnterprise: async (uid: string): Promise<void> => {
-    await api.post(`/admin/users/${uid}/approve-enterprise`);
+  approveRecruiter: async (uid: string): Promise<void> => {
+    await api.post(`/admin/users/${uid}/approve-recruiter`);
   },
 
-  declineEnterprise: async (uid: string, reason?: string): Promise<void> => {
-    await api.post(`/admin/users/${uid}/decline-enterprise`, null, { params: { reason } });
+  declineRecruiter: async (uid: string, reason?: string): Promise<void> => {
+    await api.post(`/admin/users/${uid}/decline-recruiter`, null, { params: { reason } });
   },
 
   banUser: async (uid: string, reason?: string): Promise<void> => {
@@ -77,10 +81,8 @@ const adminService = {
     return data;
   },
 
-  createBanner: async (formData: FormData): Promise<Banner> => {
-    const { data } = await api.post("/admin/banners", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+  createBanner: async (payload: Partial<Banner>): Promise<Banner> => {
+    const { data } = await api.post("/admin/banners", payload);
     return data;
   },
 

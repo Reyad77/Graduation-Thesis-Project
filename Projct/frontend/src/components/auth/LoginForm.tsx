@@ -18,7 +18,7 @@ export default function LoginForm() {
     try {
       const user = await login(email, password);
       if (user.role === "admin") navigate("/admin");
-      else if (user.role === "enterprise") navigate("/enterprise");
+      else if (user.role === "recruiter") navigate("/recruiter");
       else navigate("/student");
     } catch (err) {
       setError(getApiErrorMessage(err, t("auth.loginFailed"), t("errors.serverUnreachable")));

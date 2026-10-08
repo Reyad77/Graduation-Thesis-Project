@@ -12,7 +12,7 @@
       "collectionGroup": "jobs",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "enterpriseUid", "order": "ASCENDING" },
+        { "fieldPath": "recruiterUid", "order": "ASCENDING" },
         { "fieldPath": "postedAt", "order": "DESCENDING" }
       ]
     },
@@ -75,7 +75,7 @@
       ]
     },
     {
-      "collectionGroup": "enterprises",
+      "collectionGroup": "recruiters",
       "queryScope": "COLLECTION",
       "fields": [
         { "fieldPath": "isApproved", "order": "ASCENDING" },

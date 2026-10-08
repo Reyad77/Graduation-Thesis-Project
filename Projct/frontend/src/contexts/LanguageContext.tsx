@@ -2,6 +2,7 @@ import {
   createContext,
   useContext,
   useState,
+  useEffect,
   useCallback,
   type ReactNode,
 } from "react";
@@ -32,6 +33,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     },
     [i18n],
   );
+
+  // Apply the RTL/LTR direction on initial load too (e.g. Arabic saved in
+  // localStorage — otherwise a page reload starts left-to-right).
+  useEffect(() => {
+    const rtl = SUPPORTED_LANGUAGES.find((l) => l.code === currentLang)?.rtl ?? false;
+    document.documentElement.dir = rtl ? "rtl" : "ltr";
+  }, [currentLang]);
 
   return (
     <LanguageContext.Provider value={{ currentLang, setLanguage, isRtl }}>

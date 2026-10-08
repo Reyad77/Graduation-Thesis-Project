@@ -9,17 +9,19 @@ from app.models.announcement import AnnouncementCreateRequest, AnnouncementUpdat
 from app.models.banner import BannerCreateRequest, BannerUpdateRequest
 from app.services.auth_service import AuthService
 from app.services.student_service import StudentService
-from app.services.enterprise_service import EnterpriseService
+from app.services.recruiter_service import RecruiterService
 from app.services.job_service import JobService
 from app.services.notification_service import NotificationService
+from app.services.evaluation_service import EvaluationService
 from app.services.base_service import BaseService
 
 router = APIRouter()
 _auth_svc = AuthService()
 _student_svc = StudentService()
-_ent_svc = EnterpriseService()
+_recruiter_svc = RecruiterService()
 _job_svc = JobService()
 _notif_svc = NotificationService()
+_eval_svc = EvaluationService()
 _banner_svc = BaseService("banners")
 _announce_svc = BaseService("announcements")
 
@@ -50,8 +52,8 @@ def list_users(user: dict = Depends(get_current_admin)):
             sp = _student_svc.get_profile(uid)
             if sp: data["isVerified"] = getattr(sp, "isVerified", False)
             else: data["isVerified"] = False
-        elif data.get("role") == "enterprise":
-            ep = _ent_svc.get_profile(uid)
+        elif data.get("role") == "recruiter":
+            ep = _recruiter_svc.get_profile(uid)
             if ep: data["isApproved"] = getattr(ep, "isApproved", False)
             else: data["isApproved"] = False
         users.append(data)
@@ -63,6 +65,18 @@ def get_user(uid: str, user: dict = Depends(get_current_admin)):
     u = _auth_svc.get_by_id(uid)
     if not u: raise HTTPException(404, "User not found.")
     return _serialize(u)
+
+
+@router.put("/users/{uid}/role")
+def update_user_role(uid: str, role: str, user: dict = Depends(get_current_admin)):
+    """Change a user's role (student / recruiter / admin)."""
+    if role not in ("student", "recruiter", "admin"):
+        raise HTTPException(
+            400, "Invalid role. Use 'student', 'recruiter', or 'admin'."
+        )
+    ok = _auth_svc.update(uid, {"role": role})
+    if not ok: raise HTTPException(404, "User not found.")
+    return {"message": f"Role updated to {role}."}
 
 
 @router.post("/users/{uid}/verify-student")
@@ -87,40 +101,42 @@ def decline_student(uid: str, reason: str = "", user: dict = Depends(get_current
     return {"message": "Student verification declined."}
 
 
-@router.post("/users/{uid}/approve-enterprise")
-def approve_enterprise(uid: str, user: dict = Depends(get_current_admin)):
+@router.post("/users/{uid}/approve-recruiter")
+def approve_recruiter(uid: str, user: dict = Depends(get_current_admin)):
     # Auto-create profile if it doesn't exist
-    if not _ent_svc.exists(uid):
+    if not _recruiter_svc.exists(uid):
         user_data = _auth_svc.get_dict_by_id(uid) or {}
-        from app.models.enterprise import EnterpriseRegistrationRequest
-        _ent_svc.create_profile(uid, user_data.get("email", ""),
-            EnterpriseRegistrationRequest(
+        from app.models.recruiter import RecruiterRegistrationRequest
+        _recruiter_svc.create_profile(uid, user_data.get("email", ""),
+            RecruiterRegistrationRequest(
+                recruiterType=user_data.get("recruiterType", "enterprise"),
                 companyName=user_data.get("displayName", "Company"),
                 contactPerson=user_data.get("displayName", ""),
                 contactPhone=user_data.get("phone", ""),
                 address="",
             ))
-    ok = _ent_svc.approve(uid, _uid(user))
-    if not ok: raise HTTPException(404, "Enterprise not found.")
-    _notif_svc.on_enterprise_approved(uid)
-    return {"message": "Enterprise approved."}
+    ok = _recruiter_svc.approve(uid, _uid(user))
+    if not ok: raise HTTPException(404, "Recruiter not found.")
+    _notif_svc.on_recruiter_approved(uid)
+    return {"message": "Recruiter approved."}
 
 
-@router.post("/users/{uid}/decline-enterprise")
-def decline_enterprise(uid: str, reason: str = "", user: dict = Depends(get_current_admin)):
-    if not _ent_svc.exists(uid):
+@router.post("/users/{uid}/decline-recruiter")
+def decline_recruiter(uid: str, reason: str = "", user: dict = Depends(get_current_admin)):
+    if not _recruiter_svc.exists(uid):
         user_data = _auth_svc.get_dict_by_id(uid) or {}
-        from app.models.enterprise import EnterpriseRegistrationRequest
-        _ent_svc.create_profile(uid, user_data.get("email", ""),
-            EnterpriseRegistrationRequest(
+        from app.models.recruiter import RecruiterRegistrationRequest
+        _recruiter_svc.create_profile(uid, user_data.get("email", ""),
+            RecruiterRegistrationRequest(
+                recruiterType=user_data.get("recruiterType", "enterprise"),
                 companyName=user_data.get("displayName", "Company"),
                 contactPerson=user_data.get("displayName", ""),
                 contactPhone=user_data.get("phone", ""),
                 address="",
             ))
-    ok = _ent_svc.update(uid, {"isApproved": False, "declineReason": reason})
-    if not ok: raise HTTPException(404, "Enterprise not found.")
-    return {"message": "Enterprise declined."}
+    ok = _recruiter_svc.update(uid, {"isApproved": False, "declineReason": reason})
+    if not ok: raise HTTPException(404, "Recruiter not found.")
+    return {"message": "Recruiter declined."}
 
 
 @router.post("/users/{uid}/ban")
@@ -128,8 +144,8 @@ def ban_user(uid: str, reason: str = "", user: dict = Depends(get_current_admin)
     # Ban the user account
     ok = _auth_svc.update(uid, {"isActive": False, "banReason": reason})
     if not ok: raise HTTPException(404, "User not found.")
-    # Also ban enterprise profile if exists
-    try: _ent_svc.ban(uid, reason)
+    # Also ban recruiter profile if exists
+    try: _recruiter_svc.ban(uid, reason)
     except: pass
     return {"message": "User banned."}
 
@@ -139,8 +155,8 @@ def unban_user(uid: str, user: dict = Depends(get_current_admin)):
     # Unban the user account
     ok = _auth_svc.update(uid, {"timeoutUntil": None, "isActive": True, "banReason": ""})
     if not ok: raise HTTPException(404, "User not found.")
-    # Also unban enterprise profile if exists
-    try: _ent_svc.unban(uid)
+    # Also unban recruiter profile if exists
+    try: _recruiter_svc.unban(uid)
     except: pass
     return {"message": "User unbanned."}
 
@@ -163,7 +179,7 @@ def delete_user(uid: str, user: dict = Depends(get_current_admin)):
     if not ok: raise HTTPException(404, "User not found.")
     # Also try to clean up linked profiles
     _student_svc.delete(uid)
-    _ent_svc.delete(uid)
+    _recruiter_svc.delete(uid)
     return {"message": "User deleted permanently."}
 
 
@@ -188,7 +204,7 @@ def approve_job(job_id: str, user: dict = Depends(get_current_admin)):
     ok = _job_svc.approve_job(job_id, _uid(user))
     if not ok: raise HTTPException(404, "Job not found.")
     _notif_svc.on_job_approved(
-        str(getattr(_job_svc.get_by_id(job_id), "enterpriseUid", "")), ""
+        str(getattr(_job_svc.get_by_id(job_id), "recruiterUid", "")), ""
     )
     return {"message": "Job approved."}
 
@@ -270,3 +286,20 @@ def delete_announcement(announcement_id: str, user: dict = Depends(get_current_a
     ok = _announce_svc.delete(announcement_id)
     if not ok: raise HTTPException(404, "Announcement not found.")
     return {"message": "Announcement deleted."}
+
+
+# ═════════════════════════════════════════════════════════════════════
+# Evaluation management
+# ═════════════════════════════════════════════════════════════════════
+
+@router.get("/evaluations")
+def get_all_evaluations(user: dict = Depends(get_current_admin)):
+    result = _eval_svc.get_all_evaluations()
+    return [_serialize(e) for e in result.get("items", [])]
+
+
+@router.delete("/evaluations/{evaluation_id}")
+def delete_evaluation(evaluation_id: str, user: dict = Depends(get_current_admin)):
+    ok = _eval_svc.delete_evaluation(evaluation_id)
+    if not ok: raise HTTPException(404, "Evaluation not found.")
+    return {"message": "Evaluation deleted."}
