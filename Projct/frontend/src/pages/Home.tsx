@@ -96,7 +96,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4">
           <p className="font-bold text-white text-lg mb-2">{t("app.name")}</p>
           <p>{t("home.footerTagline")}</p>
-          <p className="mt-4 text-gray-600">© {new Date().getFullYear()} All rights reserved.</p>
+          <p className="mt-4 text-gray-600">&copy; {new Date().getFullYear()} {t("footer.rights")}</p>
         </div>
       </footer>
     </div>
@@ -106,12 +106,13 @@ export default function Home() {
 function StepCard({ number, icon, title, description }: {
   number: string; icon: React.ReactNode; title: string; description: string;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="text-center">
       <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary-100 text-primary-600 mb-4">
         {icon}
       </div>
-      <div className="text-xs font-bold text-primary-500 mb-2">STEP {number}</div>
+      <div className="text-xs font-bold text-primary-500 mb-2">{t("home.stepLabel", { number })}</div>
       <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
       <p className="text-sm text-gray-500 leading-relaxed">{description}</p>
     </div>

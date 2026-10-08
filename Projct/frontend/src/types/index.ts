@@ -52,15 +52,41 @@ export interface Recruiter {
 }
 
 // ── Resume types ───────────────────────────────────────────────────────
+export interface ExperienceEntry {
+  title: string;
+  company: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+}
+
+export interface ProjectEntry {
+  name: string;
+  description: string;
+  link: string;
+}
+
+export interface LanguageEntry {
+  language: string;
+  level: string;
+}
+
 export interface Resume {
   id: string;
   studentUid: string;
+  summary: string;
+  university: string;
   major: string;
   grade: string;
   skills: string[];
   availableHours: string;
   experience: string;
+  experiences: ExperienceEntry[];
+  projects: ProjectEntry[];
+  languages: LanguageEntry[];
   certificates: string[];
+  resumeFile: string;
+  resumeFileName: string;
   isDefault: boolean;
   createdAt?: string;
   updatedAt?: string;

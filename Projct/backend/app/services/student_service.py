@@ -92,11 +92,16 @@ class ResumeService(BaseService):
 
         data = {
             "studentUid": student_uid,
+            "summary": payload.summary,
+            "university": payload.university,
             "major": payload.major,
             "grade": payload.grade,
             "skills": payload.skills,
             "availableHours": payload.availableHours,
             "experience": payload.experience,
+            "experiences": [e.model_dump() for e in payload.experiences],
+            "projects": [p.model_dump() for p in payload.projects],
+            "languages": [l.model_dump() for l in payload.languages],
             "certificates": [],
             "isDefault": is_default,
             "createdAt": now,

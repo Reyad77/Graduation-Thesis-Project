@@ -48,6 +48,19 @@ const studentService = {
     await api.delete(`/resumes/${id}`);
   },
 
+  uploadResumeFile: async (resumeId: string, file: File): Promise<{ resumeFile: string }> => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const { data } = await api.post(`/resumes/${resumeId}/file`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return data;
+  },
+
+  deleteResumeFile: async (resumeId: string): Promise<void> => {
+    await api.delete(`/resumes/${resumeId}/file`);
+  },
+
   addCertificate: async (resumeId: string, certUrl: string): Promise<void> => {
     await api.post(`/resumes/${resumeId}/certificate`, null, {
       params: { cert_url: certUrl },
