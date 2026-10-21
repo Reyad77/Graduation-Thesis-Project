@@ -182,6 +182,8 @@ def forgot_password(payload: PasswordResetRequest):
     action URL in the Firebase Console.
     """
     try:
+        from app.core.firebase import get_firebase_app
+        get_firebase_app()  # ensure the Admin SDK is initialized
         firebase_auth.generate_password_reset_link(payload.email)
         return {
             "message": "If the email is registered, a password-reset link has been sent."

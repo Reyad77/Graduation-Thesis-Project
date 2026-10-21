@@ -18,10 +18,40 @@ export default function AdminVerifyUsers() {
   const students = users.filter(u => u.role === "student");
   const recruiters = users.filter(u => u.role === "recruiter");
 
-  const handleVerify = async (uid: string) => { try { await adminService.verifyStudent(uid); toast.success(t("admin.verifiedToast")); fetch(); } catch { toast.error(t("admin.failedToast")); } };
-  const handleDeclineStudent = async (uid: string) => { const r = prompt(t("admin.reasonPrompt")); if (!r) return; try { await adminService.declineStudent(uid, r); toast.success(t("admin.rejectedToast")); fetch(); } catch { toast.error(t("admin.failedToast")); } };
-  const handleApprove = async (uid: string) => { try { await adminService.approveRecruiter(uid); toast.success(t("admin.approvedToast")); fetch(); } catch { toast.error(t("admin.failedToast")); } };
-  const handleDeclineRecruiter = async (uid: string) => { const r = prompt(t("admin.reasonPrompt")); if (!r) return; try { await adminService.declineRecruiter(uid, r); toast.success(t("admin.rejectedToast")); fetch(); } catch { toast.error(t("admin.failedToast")); } };
+  const handleVerify = async (uid: string) => {
+    try {
+      await adminService.verifyStudent(uid);
+      setUsers(prev => prev.map(u => u.uid === uid ? ({ ...u, isVerified: true, verificationNotes: "" } as any) : u));
+      toast.success(t("admin.verifiedToast"));
+      fetch();
+    } catch { toast.error(t("admin.failedToast")); }
+  };
+  const handleDeclineStudent = async (uid: string) => {
+    const r = prompt(t("admin.reasonPrompt")); if (!r) return;
+    try {
+      await adminService.declineStudent(uid, r);
+      setUsers(prev => prev.map(u => u.uid === uid ? ({ ...u, isVerified: false, verificationNotes: r } as any) : u));
+      toast.success(t("admin.rejectedToast"));
+      fetch();
+    } catch { toast.error(t("admin.failedToast")); }
+  };
+  const handleApprove = async (uid: string) => {
+    try {
+      await adminService.approveRecruiter(uid);
+      setUsers(prev => prev.map(u => u.uid === uid ? ({ ...u, isApproved: true, declineReason: "" } as any) : u));
+      toast.success(t("admin.approvedToast"));
+      fetch();
+    } catch { toast.error(t("admin.failedToast")); }
+  };
+  const handleDeclineRecruiter = async (uid: string) => {
+    const r = prompt(t("admin.reasonPrompt")); if (!r) return;
+    try {
+      await adminService.declineRecruiter(uid, r);
+      setUsers(prev => prev.map(u => u.uid === uid ? ({ ...u, isApproved: false, declineReason: r } as any) : u));
+      toast.success(t("admin.rejectedToast"));
+      fetch();
+    } catch { toast.error(t("admin.failedToast")); }
+  };
 
   if (isLoading) return <LoadingSpinner fullPage />;
 
@@ -85,6 +115,10 @@ export default function AdminVerifyUsers() {
           <tbody>
             {list.map(u => {
               const isDone = tab === "students" ? (u as any).isVerified : (u as any).isApproved;
+              const isDeclined = tab === "students"
+                ? !!(u as any).verificationNotes
+                : !!(u as any).declineReason;
+              const doneLabel = tab === "students" ? t("profile.verified") : t("status.approved");
               return (
                 <tr key={u.uid} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                   <td className="px-4 py-3">
@@ -98,13 +132,18 @@ export default function AdminVerifyUsers() {
                   </td>
                   <td className="px-4 py-3 text-gray-500 text-xs">{u.email}</td>
                   <td className="px-4 py-3">
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${isDone ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
-                      {isDone ? t("profile.verified") : t("status.pending")}
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+                      isDone ? "bg-emerald-100 text-emerald-700" :
+                      isDeclined ? "bg-red-100 text-red-700" :
+                      "bg-amber-100 text-amber-700"}`}>
+                      {isDone ? doneLabel : isDeclined ? t("status.rejected") : t("status.pending")}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
                     {isDone ? (
-                      <span className="text-emerald-600 flex items-center justify-end gap-1 text-[11px]"><CheckCircle size={13} /> {t("profile.verified")}</span>
+                      <span className="text-emerald-600 flex items-center justify-end gap-1 text-[11px]"><CheckCircle size={13} /> {doneLabel}</span>
+                    ) : isDeclined ? (
+                      <span className="text-red-500 flex items-center justify-end gap-1 text-[11px]"><XCircle size={13} /> {t("status.rejected")}</span>
                     ) : (
                       <div className="flex gap-1.5 justify-end">
                         <button onClick={() => tab === "students" ? handleVerify(u.uid) : handleApprove(u.uid)}

@@ -219,6 +219,9 @@ class AuthService(BaseService):
                 role="student",
             )
 
+        # 3b. Enforce account status — banned or timed-out users cannot log in
+        self._check_account_status(uid)
+
         # 4. Extract role from the Firestore profile
         if hasattr(user, "role"):
             role_val = user.role.value if hasattr(user.role, "value") else str(user.role)
@@ -248,6 +251,8 @@ class AuthService(BaseService):
     def login_with_firebase_token(self, id_token: str) -> Dict[str, Any]:
         """Verify a Firebase ID token from the client and return JWT + user."""
         try:
+            from app.core.firebase import get_firebase_app
+            get_firebase_app()  # ensure the Admin SDK is initialized
             decoded = firebase_auth.verify_id_token(id_token)
             uid = decoded["uid"]
 
@@ -260,6 +265,8 @@ class AuthService(BaseService):
                     display_name=decoded.get("name") or "User",
                     role="student",
                 )
+
+            self._check_account_status(uid)
 
             role_val = (
                 user.role.value
@@ -282,6 +289,45 @@ class AuthService(BaseService):
             }
         except FirebaseError as exc:
             raise ValueError(str(exc))
+
+    # ── Account status enforcement ────────────────────────────────────
+
+    def _check_account_status(self, uid: str) -> None:
+        """Raise ValueError if the account is banned or temporarily suspended.
+
+        Banned accounts have ``isActive=False``; timed-out accounts carry a
+        ``timeoutUntil`` timestamp. Both are set by the admin endpoints and
+        enforced here so a suspended user cannot obtain a fresh JWT.
+        """
+        raw = self.get_dict_by_id(uid)
+        if not raw:
+            return
+
+        # Check the temporary timeout first, so timed-out users get the
+        # "suspended" message (a timeout also sets isActive=False).
+        until = raw.get("timeoutUntil")
+        if until:
+            # Firestore returns datetimes, but be tolerant of ISO strings too.
+            if isinstance(until, str):
+                try:
+                    until = datetime.fromisoformat(until.replace("Z", "+00:00"))
+                except ValueError:
+                    until = None
+            if isinstance(until, datetime):
+                if until.tzinfo is None:
+                    until = until.replace(tzinfo=timezone.utc)
+                if until > datetime.now(timezone.utc):
+                    raise ValueError(
+                        "This account is temporarily suspended. Please try again later."
+                    )
+                # Timeout expired — lift it and re-read the fresh state
+                self.update(uid, {"timeoutUntil": None, "isActive": True})
+                raw = self.get_dict_by_id(uid) or {}
+
+        if raw.get("isActive") is False:
+            raise ValueError(
+                "This account has been disabled. Please contact support."
+            )
 
     # ── Profile recovery ──────────────────────────────────────────────
 

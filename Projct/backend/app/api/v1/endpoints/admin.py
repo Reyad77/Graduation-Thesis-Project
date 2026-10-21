@@ -48,14 +48,21 @@ def list_users(user: dict = Depends(get_current_admin)):
         data = _serialize(u)
         uid = data.get("uid", "")
         # Include verification/approval status from linked profiles
+        # (raw dicts so fields like declineReason / verificationNotes survive)
         if data.get("role") == "student":
-            sp = _student_svc.get_profile(uid)
-            if sp: data["isVerified"] = getattr(sp, "isVerified", False)
-            else: data["isVerified"] = False
+            sp = _student_svc.get_dict_by_id(uid)
+            if sp:
+                data["isVerified"] = sp.get("isVerified", False)
+                data["verificationNotes"] = sp.get("verificationNotes", "")
+            else:
+                data["isVerified"] = False
         elif data.get("role") == "recruiter":
-            ep = _recruiter_svc.get_profile(uid)
-            if ep: data["isApproved"] = getattr(ep, "isApproved", False)
-            else: data["isApproved"] = False
+            ep = _recruiter_svc.get_dict_by_id(uid)
+            if ep:
+                data["isApproved"] = ep.get("isApproved", False)
+                data["declineReason"] = ep.get("declineReason", "")
+            else:
+                data["isApproved"] = False
         users.append(data)
     return users
 
@@ -177,6 +184,15 @@ def delete_user(uid: str, user: dict = Depends(get_current_admin)):
     """Permanently delete a user and their data."""
     ok = _auth_svc.delete(uid)
     if not ok: raise HTTPException(404, "User not found.")
+    # Delete the Firebase Auth account too — otherwise the user could keep
+    # logging in (and the login auto-heal would recreate the Firestore doc).
+    from app.core.firebase import get_firebase_app
+    get_firebase_app()  # ensure the Admin SDK is initialized before Auth calls
+    from firebase_admin import auth as firebase_auth
+    try:
+        firebase_auth.delete_user(uid)
+    except Exception:
+        pass  # Auth account may not exist (e.g. seeded users)
     # Also try to clean up linked profiles
     _student_svc.delete(uid)
     _recruiter_svc.delete(uid)
