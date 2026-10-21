@@ -37,7 +37,11 @@ class EvaluationService(BaseService):
         if not app:
             raise ValueError("Application not found.")
 
-        if str(getattr(app, "status", "")) != ApplicationStatus.COMPLETED.value:
+        # Normalize: the Pydantic model coerces status to the enum, whose
+        # str() is "ApplicationStatus.COMPLETED" — compare the .value.
+        status = getattr(app, "status", None)
+        status_val = status.value if hasattr(status, "value") else str(status or "")
+        if status_val != ApplicationStatus.COMPLETED.value:
             raise ValueError("Only completed applications can be evaluated.")
 
         job = JobService().get_by_id(str(getattr(app, "jobId", "")))

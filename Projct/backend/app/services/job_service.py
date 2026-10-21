@@ -83,11 +83,16 @@ class JobService(BaseService):
     def get_recruiter_jobs(
         self, recruiter_uid: str
     ) -> List[Job]:
-        """Get all jobs posted by a recruiter."""
-        return self.where(  # type: ignore[return-value]
-            "recruiterUid", "==", recruiter_uid,
-            order_by="postedAt", descending=True, limit=200,
+        """Get all jobs posted by a recruiter (newest first).
+
+        Sorts in Python so the query does not require the
+        recruiterUid+postedAt composite index on the REST fallback client.
+        """
+        jobs = self.where(  # type: ignore[assignment]
+            "recruiterUid", "==", recruiter_uid, limit=200,
         )
+        jobs.sort(key=lambda j: str(getattr(j, "postedAt", "")), reverse=True)
+        return jobs
 
     # ── Student job browsing ──────────────────────────────────────────
 
@@ -111,12 +116,17 @@ class JobService(BaseService):
                 ("skillRequirements", "array_contains", skills[0])
             )
 
-        return self.where_many(
-            filters,
-            order_by="postedAt",
-            descending=True,
-            limit=page_size * page + 1,
-        )  # type: ignore[return-value]
+        # Fetch without order_by and sort/slice in Python: avoids needing
+        # composite indexes on the REST fallback client.
+        items = self.where_many(
+            filters, limit=page_size * page + 1,
+        )
+        items.sort(
+            key=lambda j: str(getattr(j, "postedAt", "")),
+            reverse=True,
+        )
+        offset = (page - 1) * page_size
+        return items[offset:offset + page_size]  # type: ignore[return-value]
 
     def get_job_detail(self, job_id: str) -> Optional[Job]:
         """Get a job and increment its view count."""
@@ -164,11 +174,16 @@ class JobService(BaseService):
     # ── Admin auditing ────────────────────────────────────────────────
 
     def get_pending_jobs(self) -> List[Job]:
-        """Get all jobs awaiting admin approval."""
-        return self.where(  # type: ignore[return-value]
-            "status", "==", JobStatus.PENDING.value,
-            order_by="postedAt", descending=False, limit=200,
+        """Get all jobs awaiting admin approval (oldest first).
+
+        Sorts in Python so the query does not require the
+        status+postedAt composite index on the REST fallback client.
+        """
+        jobs = self.where(  # type: ignore[assignment]
+            "status", "==", JobStatus.PENDING.value, limit=200,
         )
+        jobs.sort(key=lambda j: str(getattr(j, "postedAt", "")))
+        return jobs
 
     def approve_job(self, job_id: str, admin_uid: str) -> bool:
         """Approve a pending job (admin action)."""

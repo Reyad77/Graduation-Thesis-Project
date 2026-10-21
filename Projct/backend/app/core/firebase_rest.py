@@ -99,6 +99,10 @@ class _RestDocRef:
         url = f"{REST_BASE}/{self._path}"
         self._client._request("DELETE", url)
 
+    def collection(self, name: str) -> "_RestCollectionRef":
+        """Return a subcollection reference under this document."""
+        return _RestCollectionRef(self._client, name, self._path)
+
 
 class _RestQuery:
     """Mimics ``google.cloud.firestore_v1.Query`` for filtering + ordering + limiting."""
@@ -244,10 +248,18 @@ class _RestQuery:
 class _RestCollectionRef:
     """Mimics ``google.cloud.firestore_v1.CollectionReference``."""
 
-    def __init__(self, client: "_RestFirestoreClient", name: str) -> None:
+    def __init__(
+        self,
+        client: "_RestFirestoreClient",
+        name: str,
+        parent_path: Optional[str] = None,
+    ) -> None:
         self._client = client
         self._name = name  # e.g. "jobs"
-        self._path = f"{client._db_path}/{name}"
+        # Root collections live directly under the database path; sub-
+        # collections live under their parent document's path.
+        base = parent_path if parent_path else client._db_path
+        self._path = f"{base}/{name}"
 
     def document(self, doc_id: Optional[str] = None) -> _RestDocRef:
         did = doc_id or _auto_id()

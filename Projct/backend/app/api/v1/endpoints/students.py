@@ -34,8 +34,11 @@ def update_student_profile(
     payload: StudentUpdateRequest,
     user: dict = Depends(get_current_student),
 ):
-    """Update the student's profile."""
+    """Update the student's profile (auto-creates it if missing)."""
     uid = user.get("sub", "")
+    if not _student_svc.exists(uid):
+        email = user.get("email", "")
+        _student_svc.create_profile(uid, email)
     updated = _student_svc.update_profile(uid, payload)
     if not updated:
         raise HTTPException(status_code=404, detail="Profile not found.")

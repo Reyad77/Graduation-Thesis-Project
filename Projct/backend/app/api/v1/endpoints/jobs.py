@@ -81,7 +81,11 @@ def apply_to_job(
     job = _job_svc.get_by_id(job_id)
     if not job:
         raise HTTPException(status_code=404, detail="Job not found.")
-    if getattr(job, "status", None) and str(getattr(job, "status", "")) != "active":
+    # Normalize: Pydantic coerces the status to the JobStatus enum, whose
+    # str() is "JobStatus.ACTIVE" — compare the .value instead.
+    status = getattr(job, "status", None)
+    status_val = status.value if hasattr(status, "value") else str(status or "")
+    if status_val and status_val != "active":
         raise HTTPException(status_code=400, detail="This job is not accepting applications.")
 
     app = _app_svc.apply(job_id, uid, payload)

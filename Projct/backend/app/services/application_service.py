@@ -73,11 +73,19 @@ class ApplicationService(BaseService):
     def get_student_applications(
         self, student_uid: str
     ) -> List[Application]:
-        """Get all applications submitted by a student."""
-        return self.where(  # type: ignore[return-value]
-            "studentUid", "==", student_uid,
-            order_by="appliedAt", descending=True, limit=100,
+        """Get all applications submitted by a student (newest first).
+
+        Sorts in Python so the query does not require the
+        studentUid+appliedAt composite index on the REST fallback client.
+        """
+        apps = self.where(  # type: ignore[assignment]
+            "studentUid", "==", student_uid, limit=100,
         )
+        apps.sort(
+            key=lambda a: str(getattr(a, "appliedAt", "")),
+            reverse=True,
+        )
+        return apps
 
     def get_student_application(
         self, application_id: str, student_uid: str
@@ -99,10 +107,14 @@ class ApplicationService(BaseService):
         job = job_svc.get_by_id(job_id)
         if not job or str(getattr(job, "recruiterUid", "")) != recruiter_uid:
             return []
-        return self.where(  # type: ignore[return-value]
-            "jobId", "==", job_id,
-            order_by="appliedAt", descending=True, limit=200,
+        # Sort in Python: avoids needing the jobId+appliedAt composite
+        # index on the REST fallback client.
+        apps = self.where("jobId", "==", job_id, limit=200)
+        apps.sort(
+            key=lambda a: str(getattr(a, "appliedAt", "")),
+            reverse=True,
         )
+        return apps  # type: ignore[return-value]
 
     def get_all_recruiter_applications(
         self, recruiter_uid: str
