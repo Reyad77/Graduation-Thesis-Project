@@ -35,7 +35,7 @@ export default function SavedJobs() {
               <div className="flex flex-wrap gap-3 mt-2 text-xs text-gray-600">
                 <span className="flex items-center gap-1"><DollarSign size={12} className="text-green-600" />{j.salary}</span>
                 <span className="flex items-center gap-1"><MapPin size={12} className="text-red-500" />{j.location}</span>
-                <span className="flex items-center gap-1"><Clock size={12} className="text-blue-500" />{j.workingHours}</span>
+                <span className="flex items-center gap-1"><Clock size={12} className="text-green-500" />{j.workingHours}</span>
               </div>
             </Link>
           ))}

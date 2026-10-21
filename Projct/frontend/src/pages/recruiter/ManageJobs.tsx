@@ -48,7 +48,7 @@ export default function ManageJobs() {
               <div className="flex gap-1">
                 {j.status==="active" && <button onClick={()=>handleStatus(j.id,"paused")} className="p-2 rounded hover:bg-gray-100 text-gray-600" title="Pause"><Pause size={14}/></button>}
                 {j.status==="paused" && <button onClick={()=>handleStatus(j.id,"active")} className="p-2 rounded hover:bg-gray-100 text-green-600" title="Activate"><Play size={14}/></button>}
-                <Link to={`/recruiter/post-job?edit=${j.id}`} className="p-2 rounded hover:bg-gray-100 text-blue-600"><Edit size={14}/></Link>
+                <Link to={`/recruiter/post-job?edit=${j.id}`} className="p-2 rounded hover:bg-gray-100 text-green-600"><Edit size={14}/></Link>
                 <button onClick={()=>handleDelete(j.id)} className="p-2 rounded hover:bg-red-50 text-red-600"><Trash2 size={14}/></button>
               </div>
             </div>

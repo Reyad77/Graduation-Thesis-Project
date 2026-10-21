@@ -56,8 +56,8 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-2 text-primary-700">
-            <Briefcase size={24} />
+          <Link to="/" className="flex items-center gap-2 text-gray-900">
+            <Briefcase size={24} className="text-primary-600" />
             <span className="font-bold text-lg hidden sm:inline">{t("app.name")}</span>
           </Link>
 
@@ -86,7 +86,7 @@ export default function Navbar() {
               )
             )}
 
-            <button className="md:hidden p-2 rounded-lg hover:bg-gray-100" onClick={() => setMobileOpen(v => !v)}>
+            <button className="md:hidden p-2 rounded-lg hover:bg-gray-100 text-gray-600" onClick={() => setMobileOpen(v => !v)}>
               {mobileOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>

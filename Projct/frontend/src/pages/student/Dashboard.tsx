@@ -59,11 +59,11 @@ export default function StudentDashboard() {
       )}
 
       {needsProfileCompletion && !needsVerification && (
-        <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-start gap-3">
-          <FileText size={20} className="text-blue-600 shrink-0 mt-0.5" />
+        <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg flex items-start gap-3">
+          <FileText size={20} className="text-green-600 shrink-0 mt-0.5" />
           <div>
-            <p className="font-medium text-blue-800">Complete Your Profile</p>
-            <p className="text-sm text-blue-700 mt-0.5">
+            <p className="font-medium text-green-800">Complete Your Profile</p>
+            <p className="text-sm text-green-700 mt-0.5">
               Add your major, skills, and availability to get better job recommendations.
             </p>
             <Link to="/student/profile" className="text-sm text-primary-600 hover:underline mt-1 inline-block">
@@ -74,7 +74,7 @@ export default function StudentDashboard() {
       )}
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-        <StatCard icon={<Briefcase size={20} />} label="Applications" value={applications.length} color="bg-blue-100 text-blue-700" />
+        <StatCard icon={<Briefcase size={20} />} label="Applications" value={applications.length} color="bg-green-100 text-green-700" />
         <StatCard icon={<CheckCircle size={20} />} label="Hired" value={statusCounts.hired || 0} color="bg-green-100 text-green-700" />
         <StatCard icon={<Clock size={20} />} label="Pending" value={(statusCounts.pending||0)+(statusCounts.reviewing||0)} color="bg-yellow-100 text-yellow-700" />
         <StatCard icon={<FileText size={20} />} label="Resumes" value="--" color="bg-purple-100 text-purple-700" />
@@ -91,7 +91,7 @@ export default function StudentDashboard() {
               <div key={app.id} className="flex items-center justify-between p-3 bg-white rounded-lg border">
                 <div><p className="text-sm font-medium">Job #{app.jobId.slice(0,8)}</p><p className="text-xs text-gray-500">{app.appliedAt?.slice(0,10)}</p></div>
                 <span className={`text-xs px-2 py-0.5 rounded-full ${
-                  app.status==="hired"?"bg-green-100 text-green-700":app.status==="rejected"?"bg-red-100 text-red-700":"bg-blue-100 text-blue-700"}`}>{app.status}</span>
+                  app.status==="hired"?"bg-green-100 text-green-700":app.status==="rejected"?"bg-red-100 text-red-700":"bg-green-100 text-green-700"}`}>{app.status}</span>
               </div>
             ))}
             <Link to="/applications" className="flex items-center gap-1 text-sm text-primary-600 hover:underline">{t("common.viewAll")} <ChevronRight size={14} /></Link>

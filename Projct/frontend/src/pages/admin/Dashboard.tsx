@@ -59,7 +59,7 @@ export default function AdminDashboard() {
       {/* ── 4 Stat Cards — equal size, equal gap ──────────── */}
       <div className="grid grid-cols-4 gap-4">
         <StatCard icon={<Users size={18} />} label={t("admin.totalUsers")} value={users.length}
-          bg="bg-blue-50" iconColor="text-blue-600" to="/admin/users" />
+          bg="bg-green-50" iconColor="text-green-600" to="/admin/users" />
         <StatCard icon={<UserCheck size={18} />} label={t("admin.students")} value={totalStudents}
           bg="bg-emerald-50" iconColor="text-emerald-600" to="/admin/verify-students" />
         <StatCard icon={<Building2 size={18} />} label={t("admin.recruiters")} value={totalRecruiters}
@@ -205,9 +205,9 @@ function ActionTile({ to, icon, label, sub, color }: {
     emerald: "border-emerald-200 bg-emerald-50 text-emerald-600 hover:border-emerald-300",
     violet: "border-violet-200 bg-violet-50 text-violet-600 hover:border-violet-300",
     amber: "border-amber-200 bg-amber-50 text-amber-600 hover:border-amber-300",
-    blue: "border-blue-200 bg-blue-50 text-blue-600 hover:border-blue-300",
+    blue: "border-green-200 bg-green-50 text-green-600 hover:border-green-300",
     pink: "border-pink-200 bg-pink-50 text-pink-600 hover:border-pink-300",
-    indigo: "border-indigo-200 bg-indigo-50 text-indigo-600 hover:border-indigo-300",
+    indigo: "border-green-200 bg-green-50 text-green-600 hover:border-green-300",
   };
   return (
     <Link to={to}

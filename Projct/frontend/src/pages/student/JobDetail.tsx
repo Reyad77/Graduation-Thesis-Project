@@ -69,7 +69,7 @@ export default function JobDetail() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-4 text-sm">
           <div className="flex items-center gap-1 text-gray-600"><DollarSign size={16} className="text-green-600"/> {job.salary}</div>
           <div className="flex items-center gap-1 text-gray-600"><MapPin size={16} className="text-red-500"/> {job.location}</div>
-          <div className="flex items-center gap-1 text-gray-600"><Clock size={16} className="text-blue-500"/> {job.workingHours}</div>
+          <div className="flex items-center gap-1 text-gray-600"><Clock size={16} className="text-green-500"/> {job.workingHours}</div>
           <div className="flex items-center gap-1 text-gray-600"><Calendar size={16} className="text-purple-500"/> {job.duration}</div>
         </div>
         <div className="mt-6">

@@ -8,7 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
  * Language switcher dropdown — shows a globe icon and a list of
  * supported languages. Clicking a language switches the UI immediately.
  */
-export default function LanguageSwitcher() {
+export default function LanguageSwitcher({ dark = false }: { dark?: boolean }) {
   const { t } = useTranslation();
   const { setLanguage, currentLang } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
@@ -31,8 +31,8 @@ export default function LanguageSwitcher() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setIsOpen((v) => !v)}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-gray-600
-          hover:bg-gray-100 transition-colors"
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors
+          ${dark ? "text-gray-300 hover:bg-white/10" : "text-gray-600 hover:bg-gray-100"}`}
         aria-label={t("common.language")}
       >
         <Globe size={16} />

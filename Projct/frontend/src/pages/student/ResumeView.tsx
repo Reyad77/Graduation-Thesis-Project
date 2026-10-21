@@ -36,7 +36,7 @@ export default function StudentResumeView() {
       <div className="card space-y-6">
         {resume.resumeFile && (
           <a href={resume.resumeFile} target="_blank" rel="noreferrer"
-            className="inline-flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700">
+            className="inline-flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary-700">
             <Download size={14}/> {t("resume.download")} ({resume.resumeFileName || "PDF"})
           </a>
         )}

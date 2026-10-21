@@ -54,7 +54,7 @@ export default function RecruiterApplicants() {
                 <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${APPLICATION_STATUS_COLORS[app.status]||""}`}>{APPLICATION_STATUS_LABELS[app.status]||app.status}</span>
               </div>
               <div className="flex gap-1 flex-wrap">
-                {app.status==="pending" && <><button onClick={()=>updateStatus(app.id,"reviewing")} className="text-xs px-2 py-1 rounded bg-blue-100 text-blue-700 hover:bg-blue-200"><Eye size={12} className="inline"/> Reviewing</button></>}
+                {app.status==="pending" && <><button onClick={()=>updateStatus(app.id,"reviewing")} className="text-xs px-2 py-1 rounded bg-green-100 text-green-700 hover:bg-green-200"><Eye size={12} className="inline"/> Reviewing</button></>}
                 {app.status==="reviewing" && <><button onClick={()=>setShowInterview(app.id)} className="text-xs px-2 py-1 rounded bg-purple-100 text-purple-700 hover:bg-purple-200"><Calendar size={12} className="inline"/> Interview</button></>}
                 {app.status==="interview" && <><button onClick={()=>updateStatus(app.id,"hired")} className="text-xs px-2 py-1 rounded bg-green-100 text-green-700 hover:bg-green-200"><CheckCircle size={12} className="inline"/> Hire</button><button onClick={()=>updateStatus(app.id,"rejected")} className="text-xs px-2 py-1 rounded bg-red-100 text-red-700 hover:bg-red-200"><XCircle size={12} className="inline"/> Reject</button></>}
                 {app.status==="hired" && <><button onClick={()=>updateStatus(app.id,"completed")} className="text-xs px-2 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200"><CheckCircle size={12} className="inline"/> Complete</button></>}

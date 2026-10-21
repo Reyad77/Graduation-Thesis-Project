@@ -40,20 +40,20 @@ export default function AdminLayout() {
 
   const sidebar = (
     <>
-      <div className="flex items-center justify-between h-16 px-4 shrink-0 border-b border-primary-700">
+      <div className="flex items-center justify-between h-16 px-4 shrink-0 border-b border-gray-100">
         {!collapsed && (
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center">
-              <Zap size={14} className="text-primary-600" />
+            <div className="w-7 h-7 rounded-lg bg-primary-600 flex items-center justify-center">
+              <Zap size={14} className="text-white" />
             </div>
-            <span className="font-bold text-xs text-white tracking-wider uppercase">{t("admin.adminPanel")}</span>
+            <span className="font-bold text-xs text-gray-900 tracking-wider uppercase">{t("admin.adminPanel")}</span>
           </div>
         )}
         <button onClick={() => setCollapsed(v => !v)}
-          className="hidden md:flex p-1 rounded-lg hover:bg-primary-700 text-primary-300 hover:text-white shrink-0 transition-colors">
+          className="hidden md:flex p-1 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-900 shrink-0 transition-colors">
           {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>
-        <button onClick={() => setMobileOpen(false)} className="md:hidden p-1 text-primary-200">
+        <button onClick={() => setMobileOpen(false)} className="md:hidden p-1 text-gray-500">
           <X size={16} />
         </button>
       </div>
@@ -68,34 +68,34 @@ export default function AdminLayout() {
               onClick={() => setMobileOpen(false)}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-200
                 ${active
-                  ? "bg-primary-500 text-white shadow-md"
-                  : "text-primary-100 hover:text-white hover:bg-primary-600/50"
+                  ? "bg-primary-100 text-primary-800"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                 } ${collapsed ? "justify-center" : ""}`}
             >
               <item.icon size={16} className="shrink-0" />
               {!collapsed && <span>{item.label}</span>}
               {active && !collapsed && (
-                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white" />
+                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-primary-600" />
               )}
             </Link>
           );
         })}
       </nav>
 
-      <div className="border-t border-primary-700 p-3 shrink-0">
+      <div className="border-t border-gray-100 p-3 shrink-0">
         <div className={`flex items-center gap-2 mb-2 ${collapsed ? "justify-center" : ""}`}>
-          <div className="w-8 h-8 rounded-lg bg-primary-500 flex items-center justify-center text-[10px] font-bold text-white shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center text-[10px] font-bold text-white shrink-0">
             {user?.displayName?.charAt(0)?.toUpperCase() || "A"}
           </div>
           {!collapsed && (
             <div className="min-w-0">
-              <p className="text-[11px] text-white truncate font-medium">{user?.displayName}</p>
-              <p className="text-[9px] text-primary-300">{t("admin.administrator")}</p>
+              <p className="text-[11px] text-gray-900 truncate font-medium">{user?.displayName}</p>
+              <p className="text-[9px] text-gray-500">{t("admin.administrator")}</p>
             </div>
           )}
         </div>
         <button onClick={handleLogout}
-          className={`flex items-center gap-2 text-[10px] text-primary-300 hover:text-red-300 transition-colors w-full
+          className={`flex items-center gap-2 text-[10px] text-gray-500 hover:text-red-500 transition-colors w-full
             ${collapsed ? "justify-center" : ""}`}>
           <LogOut size={12} className="shrink-0" /> {!collapsed && t("admin.signOut")}
         </button>
@@ -104,9 +104,9 @@ export default function AdminLayout() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-[#FAFAF7] flex">
       {/* Desktop Sidebar — fixed, never scrolls */}
-      <aside className={`bg-primary-700 flex-col transition-all duration-300 shrink-0 hidden md:flex h-screen sticky top-0
+      <aside className={`bg-white border-r border-gray-100 flex-col transition-all duration-300 shrink-0 hidden md:flex h-screen sticky top-0
         ${collapsed ? "w-[60px]" : "w-[220px]"}`}>
         {sidebar}
       </aside>
@@ -135,7 +135,7 @@ export default function AdminLayout() {
       {mobileOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
-          <aside className="absolute left-0 top-0 h-full w-[240px] bg-primary-700 flex flex-col">
+          <aside className="absolute left-0 top-0 h-full w-[240px] bg-white flex flex-col">
             {sidebar}
           </aside>
         </div>

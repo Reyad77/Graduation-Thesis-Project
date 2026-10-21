@@ -49,7 +49,7 @@ export default function AdminBannerManagement() {
 
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-blue-50 text-blue-600"><Image size={18} /></div>
+          <div className="p-2 rounded-lg bg-green-50 text-green-600"><Image size={18} /></div>
           <div><p className="text-lg font-bold text-gray-900">{banners.length}</p><p className="text-[11px] text-gray-500">{t("admin.totalUsers")}</p></div>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3">
@@ -97,7 +97,7 @@ export default function AdminBannerManagement() {
                 </td>
                 <td className="px-4 py-3 text-right">
                   <div className="flex gap-1 justify-end">
-                    <button onClick={() => handleEdit(b)} className="px-2 py-1 rounded bg-blue-50 text-blue-600 text-[10px] hover:bg-blue-100"><Edit size={11} className="inline mr-0.5" />{t("common.edit")}</button>
+                    <button onClick={() => handleEdit(b)} className="px-2 py-1 rounded bg-green-50 text-green-600 text-[10px] hover:bg-green-100"><Edit size={11} className="inline mr-0.5" />{t("common.edit")}</button>
                     <button onClick={() => handleDelete(b.id)} className="px-2 py-1 rounded bg-red-50 text-red-600 text-[10px] hover:bg-red-100"><Trash2 size={11} className="inline mr-0.5" />{t("common.delete")}</button>
                   </div>
                 </td>

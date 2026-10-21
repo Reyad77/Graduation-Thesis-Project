@@ -13,7 +13,7 @@ function getLink(n: { title: string; data: unknown }): string | null {
   return null;
 }
 
-export default function NotificationBell() {
+export default function NotificationBell({ dark = false }: { dark?: boolean }) {
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -27,7 +27,8 @@ export default function NotificationBell() {
 
   return (
     <div className="relative" ref={ref}>
-      <button onClick={() => setIsOpen(v => !v)} className="relative p-2 rounded-lg hover:bg-gray-100 text-gray-600">
+      <button onClick={() => setIsOpen(v => !v)}
+        className={`relative p-2 rounded-lg transition-colors ${dark ? "text-gray-300 hover:bg-white/10" : "text-gray-600 hover:bg-gray-100"}`}>
         <Bell size={18} />
         {unreadCount > 0 && (
           <span className="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded-full">
@@ -56,7 +57,7 @@ export default function NotificationBell() {
                   const link = getLink(n);
                   if (link) navigate(link);
                 }}
-                className={`w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${!n.isRead ? "bg-blue-50/50" : ""}`}
+                className={`w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${!n.isRead ? "bg-green-50/50" : ""}`}
               >
                 <p className="text-sm font-medium text-gray-800">{n.title}</p>
                 <p className="text-xs text-gray-500 mt-0.5">{n.message}</p>

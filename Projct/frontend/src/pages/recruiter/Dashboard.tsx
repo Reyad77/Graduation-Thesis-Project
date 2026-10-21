@@ -71,7 +71,7 @@ export default function RecruiterDashboard() {
       )}
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-        <StatCard icon={<Briefcase size={20} />} label="Total Jobs" value={jobs.length} color="bg-blue-100 text-blue-700" />
+        <StatCard icon={<Briefcase size={20} />} label="Total Jobs" value={jobs.length} color="bg-green-100 text-green-700" />
         <StatCard icon={<Briefcase size={20} />} label="Active" value={active} color="bg-green-100 text-green-700" />
         <StatCard icon={<Eye size={20} />} label="Total Views" value={totalViews} color="bg-purple-100 text-purple-700" />
         <StatCard icon={<Users size={20} />} label="Applications" value={totalApps} color="bg-yellow-100 text-yellow-700" />
