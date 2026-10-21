@@ -23,6 +23,7 @@ export default function AdminUserManagement() {
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [menuDir, setMenuDir] = useState<"up" | "down">("down");
   const [timeoutUser, setTimeoutUser] = useState<User | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -39,7 +40,7 @@ export default function AdminUserManagement() {
   const handleBan = async (uid: string) => { try { await adminService.banUser(uid); toast.success(t("admin.bannedToast")); fetch(); setOpenMenu(null); } catch { toast.error(t("admin.failedToast")); } };
   const handleUnban = async (uid: string) => { try { await adminService.unbanUser(uid); toast.success(t("admin.unbannedToast")); fetch(); setOpenMenu(null); } catch { toast.error(t("admin.failedToast")); } };
   const handleTimeout = async (uid: string, minutes: number) => { try { await adminService.timeoutUser(uid, minutes); toast.success(`Timed out for ${minutes}min`); fetch(); setTimeoutUser(null); setOpenMenu(null); } catch { toast.error(t("admin.failedToast")); } };
-  const handleDelete = async (uid: string) => { if (!confirm("Permanently delete this user?")) return; try { await adminService.deleteUser(uid); toast.success(t("admin.deletedToast")); fetch(); setOpenMenu(null); } catch { toast.error(t("admin.failedToast")); } };
+  const handleDelete = async (uid: string) => { if (!confirm("Permanently delete this user?")) return; try { await adminService.deleteUser(uid); setUsers(prev => prev.filter(u => u.uid !== uid)); toast.success(t("admin.deletedToast")); fetch(); setOpenMenu(null); } catch { toast.error(t("admin.failedToast")); } };
   const handleRoleChange = async (uid: string, role: string) => { try { await adminService.setUserRole(uid, role); toast.success(t("admin.roleChanged")); fetch(); setOpenMenu(null); } catch { toast.error(t("admin.failedToast")); } };
 
   if (isLoading) return <LoadingSpinner fullPage />;
@@ -129,12 +130,19 @@ export default function AdminUserManagement() {
                     {isTimedOut ? new Date((u as any).timeoutUntil).toLocaleString() : "—"}
                   </td>
                   <td className="px-4 py-3 text-right relative">
-                    <button onClick={() => setOpenMenu(openMenu === u.uid ? null : u.uid)}
+                    <button onClick={(e) => {
+                        // Open upward when there is not enough room below the
+                        // button (rows near the bottom of the screen)
+                        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                        setMenuDir(window.innerHeight - rect.bottom < 280 ? "up" : "down");
+                        setOpenMenu(openMenu === u.uid ? null : u.uid);
+                      }}
                       className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400">
                       <MoreVertical size={14} />
                     </button>
                     {openMenu === u.uid && (
-                      <div ref={menuRef} className="absolute right-2 top-full mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-20">
+                      <div ref={menuRef} className={`absolute right-2 w-44 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-20 max-h-72 overflow-y-auto
+                        ${menuDir === "up" ? "bottom-full mb-1" : "top-full mt-1"}`}>
                         <p className="px-3 pt-1.5 pb-0.5 text-[10px] uppercase tracking-wide text-gray-400">{t("admin.changeRole")}</p>
                         {["student", "recruiter", "admin"].filter(r => r !== u.role).map(r => (
                           <button key={r} onClick={() => handleRoleChange(u.uid, r)}

@@ -17,7 +17,7 @@ export default function AdminJobAudit() {
 
   const approve = async (id: string) => { try { await adminService.approveJob(id); toast.success(t("admin.approvedToast")); fetch(); } catch { toast.error(t("admin.failedToast")); } };
   const reject = async (id: string) => { const n = prompt(t("admin.reasonPrompt")); if (!n) return; try { await adminService.rejectJob(id, n); toast.success(t("admin.rejectedToast")); fetch(); } catch { toast.error(t("admin.failedToast")); } };
-  const remove = async (id: string) => { if (!confirm(t("admin.deleteConfirm") || "Delete?")) return; await adminService.removeJob(id); toast.success(t("admin.deletedToast")); fetch(); };
+  const remove = async (id: string) => { if (!confirm(t("admin.deleteConfirm") || "Delete?")) return; try { await adminService.removeJob(id); setJobs(prev => prev.filter(j => j.id !== id)); toast.success(t("admin.deletedToast")); fetch(); } catch { toast.error(t("admin.failedToast")); } };
 
   if (isLoading) return <LoadingSpinner fullPage />;
 

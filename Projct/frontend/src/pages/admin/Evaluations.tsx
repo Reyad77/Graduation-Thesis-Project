@@ -24,6 +24,7 @@ export default function AdminEvaluations() {
     if (!confirm(t("evaluation.deleteConfirm"))) return;
     try {
       await evaluationService.deleteEvaluation(id);
+      setEvaluations(prev => prev.filter(e => e.id !== id));
       toast.success(t("evaluation.deleted"));
       fetch();
     } catch {

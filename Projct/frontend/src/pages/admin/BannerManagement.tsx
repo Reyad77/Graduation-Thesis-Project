@@ -28,7 +28,7 @@ export default function AdminBannerManagement() {
       resetForm(); fetch();
     } catch { toast.error(t("admin.failedToast")); }
   };
-  const handleDelete = async (id: string) => { await adminService.deleteBanner(id); toast.success(t("admin.deletedToast")); fetch(); };
+  const handleDelete = async (id: string) => { try { await adminService.deleteBanner(id); setBanners(prev => prev.filter(b => b.id !== id)); toast.success(t("admin.deletedToast")); fetch(); } catch { toast.error(t("admin.failedToast")); } };
 
   if (isLoading) return <LoadingSpinner fullPage />;
 
