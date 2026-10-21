@@ -323,7 +323,9 @@
     "declineRecruiter": "Decline",
     "evaluations": "Evaluations",
     "changeRole": "Change role",
-    "roleChanged": "Role updated"
+    "roleChanged": "Role updated",
+    "banners": "Banners",
+    "inactive": "Inactive"
   },
   "notification": {
     "title": "Notifications",

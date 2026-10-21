@@ -203,8 +203,10 @@ def get_all_jobs(user: dict = Depends(get_current_admin)):
 def approve_job(job_id: str, user: dict = Depends(get_current_admin)):
     ok = _job_svc.approve_job(job_id, _uid(user))
     if not ok: raise HTTPException(404, "Job not found.")
+    job = _job_svc.get_by_id(job_id)
     _notif_svc.on_job_approved(
-        str(getattr(_job_svc.get_by_id(job_id), "recruiterUid", "")), ""
+        str(getattr(job, "recruiterUid", "")),
+        str(getattr(job, "title", "")),
     )
     return {"message": "Job approved."}
 

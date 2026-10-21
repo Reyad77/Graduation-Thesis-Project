@@ -37,7 +37,7 @@ export default function AdminJobAudit() {
       <div className="grid grid-cols-4 gap-4 mb-6">
         <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3">
           <div className="p-2 rounded-lg bg-green-50 text-green-600"><Briefcase size={18} /></div>
-          <div><p className="text-lg font-bold text-gray-900">{jobs.length}</p><p className="text-[11px] text-gray-500">{t("admin.totalUsers")}</p></div>
+          <div><p className="text-lg font-bold text-gray-900">{jobs.length}</p><p className="text-[11px] text-gray-500">{t("admin.jobs")}</p></div>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3">
           <div className="p-2 rounded-lg bg-amber-50 text-amber-600"><Clock size={18} /></div>
@@ -58,7 +58,7 @@ export default function AdminJobAudit() {
           <button key={f} onClick={() => setFilter(f)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors
               ${filter === f ? "bg-primary-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
-            {f === "all" ? t("admin.totalUsers") : f === "pending" ? t("status.pending") : f === "active" ? t("status.active") : t("status.rejected")}
+            {f === "all" ? t("admin.allJobs") : f === "pending" ? t("status.pending") : f === "active" ? t("status.active") : t("status.rejected")}
           </button>
         ))}
       </div>

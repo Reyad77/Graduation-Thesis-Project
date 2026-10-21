@@ -50,7 +50,7 @@ export default function AdminBannerManagement() {
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3">
           <div className="p-2 rounded-lg bg-green-50 text-green-600"><Image size={18} /></div>
-          <div><p className="text-lg font-bold text-gray-900">{banners.length}</p><p className="text-[11px] text-gray-500">{t("admin.totalUsers")}</p></div>
+          <div><p className="text-lg font-bold text-gray-900">{banners.length}</p><p className="text-[11px] text-gray-500">{t("admin.banners")}</p></div>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3">
           <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600"><Eye size={18} /></div>
@@ -58,7 +58,7 @@ export default function AdminBannerManagement() {
         </div>
         <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3">
           <div className="p-2 rounded-lg bg-gray-100 text-gray-500"><EyeOff size={18} /></div>
-          <div><p className="text-lg font-bold text-gray-900">{inactive}</p><p className="text-[11px] text-gray-500">{t("admin.banned")}</p></div>
+          <div><p className="text-lg font-bold text-gray-900">{inactive}</p><p className="text-[11px] text-gray-500">{t("admin.inactive")}</p></div>
         </div>
       </div>
 
@@ -92,7 +92,7 @@ export default function AdminBannerManagement() {
                 <td className="px-4 py-3 text-gray-500 text-xs">{b.order}</td>
                 <td className="px-4 py-3">
                   <span className={`text-[10px] font-medium ${b.isActive ? "text-emerald-600" : "text-gray-400"}`}>
-                    {b.isActive ? t("admin.active") : t("admin.banned")}
+                    {b.isActive ? t("admin.active") : t("admin.inactive")}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-right">
