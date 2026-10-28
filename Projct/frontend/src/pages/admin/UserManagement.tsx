@@ -23,7 +23,7 @@ export default function AdminUserManagement() {
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const [openMenu, setOpenMenu] = useState<string | null>(null);
-  const [menuDir, setMenuDir] = useState<"up" | "down">("down");
+  const [menuPos, setMenuPos] = useState<{ top?: number; bottom?: number; right: number } | null>(null);
   const [timeoutUser, setTimeoutUser] = useState<User | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -59,22 +59,22 @@ export default function AdminUserManagement() {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-4 mb-6">
-        <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-green-50 text-green-600"><Users size={18} /></div>
-          <div><p className="text-lg font-bold text-gray-900">{users.length}</p><p className="text-[11px] text-gray-500">{t("admin.totalUsers")}</p></div>
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+        <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3 min-w-0">
+          <div className="p-2 rounded-lg bg-green-50 text-green-600 shrink-0"><Users size={18} /></div>
+          <div className="min-w-0"><p className="text-lg font-bold text-gray-900">{users.length}</p><p className="text-[11px] text-gray-500 truncate">{t("admin.totalUsers")}</p></div>
         </div>
-        <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600"><Shield size={18} /></div>
-          <div><p className="text-lg font-bold text-gray-900">{students}</p><p className="text-[11px] text-gray-500">{t("admin.students")}</p></div>
+        <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3 min-w-0">
+          <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600 shrink-0"><Shield size={18} /></div>
+          <div className="min-w-0"><p className="text-lg font-bold text-gray-900">{students}</p><p className="text-[11px] text-gray-500 truncate">{t("admin.students")}</p></div>
         </div>
-        <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-violet-50 text-violet-600"><Building2 size={18} /></div>
-          <div><p className="text-lg font-bold text-gray-900">{recruiters}</p><p className="text-[11px] text-gray-500">{t("admin.recruiters")}</p></div>
+        <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3 min-w-0">
+          <div className="p-2 rounded-lg bg-violet-50 text-violet-600 shrink-0"><Building2 size={18} /></div>
+          <div className="min-w-0"><p className="text-lg font-bold text-gray-900">{recruiters}</p><p className="text-[11px] text-gray-500 truncate">{t("admin.recruiters")}</p></div>
         </div>
-        <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-red-50 text-red-600"><Shield size={18} /></div>
-          <div><p className="text-lg font-bold text-gray-900">{admins}</p><p className="text-[11px] text-gray-500">{t("admin.adminPanel")}</p></div>
+        <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3 min-w-0">
+          <div className="p-2 rounded-lg bg-red-50 text-red-600 shrink-0"><Shield size={18} /></div>
+          <div className="min-w-0"><p className="text-lg font-bold text-gray-900">{admins}</p><p className="text-[11px] text-gray-500 truncate">{t("admin.adminPanel")}</p></div>
         </div>
       </div>
 
@@ -131,18 +131,26 @@ export default function AdminUserManagement() {
                   </td>
                   <td className="px-4 py-3 text-right relative">
                     <button onClick={(e) => {
-                        // Open upward when there is not enough room below the
-                        // button (rows near the bottom of the screen)
+                        if (openMenu === u.uid) {
+                          setOpenMenu(null); setMenuPos(null);
+                          return;
+                        }
+                        // Position the menu next to the button using fixed
+                        // coordinates (escapes the table's overflow clipping).
+                        // Flips upward near the bottom of the screen.
                         const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-                        setMenuDir(window.innerHeight - rect.bottom < 280 ? "up" : "down");
-                        setOpenMenu(openMenu === u.uid ? null : u.uid);
+                        const up = window.innerHeight - rect.bottom < 280;
+                        setMenuPos(up
+                          ? { bottom: window.innerHeight - rect.top + 4, right: window.innerWidth - rect.right }
+                          : { top: rect.bottom + 4, right: window.innerWidth - rect.right });
+                        setOpenMenu(u.uid);
                       }}
                       className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400">
                       <MoreVertical size={14} />
                     </button>
-                    {openMenu === u.uid && (
-                      <div ref={menuRef} className={`absolute right-2 w-44 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-20 max-h-72 overflow-y-auto
-                        ${menuDir === "up" ? "bottom-full mb-1" : "top-full mt-1"}`}>
+                    {openMenu === u.uid && menuPos && (
+                      <div ref={menuRef} style={menuPos}
+                        className="fixed w-44 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50 max-h-72 overflow-y-auto">
                         <p className="px-3 pt-1.5 pb-0.5 text-[10px] uppercase tracking-wide text-gray-400">{t("admin.changeRole")}</p>
                         {["student", "recruiter", "admin"].filter(r => r !== u.role).map(r => (
                           <button key={r} onClick={() => handleRoleChange(u.uid, r)}

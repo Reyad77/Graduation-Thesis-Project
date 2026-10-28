@@ -193,6 +193,9 @@ class AuthService(BaseService):
                 "INVALID_PASSWORD": "Incorrect password.",
                 "INVALID_EMAIL": "Invalid email address.",
                 "USER_DISABLED": "This account has been disabled.",
+                "TOO_MANY_ATTEMPTS_TRY_LATER": "Too many failed attempts. Please wait a few minutes and try again.",
+                "OPERATION_NOT_ALLOWED": "Email/password sign-in is disabled for this project.",
+                "INVALID_API_KEY": "Server configuration error: the Firebase API key is invalid.",
             }
             for code, msg in friendly.items():
                 if code in error_msg:
@@ -205,9 +208,10 @@ class AuthService(BaseService):
         if not uid:
             raise ValueError("Login failed — no user ID received.")
 
-        # 3. Fetch the Firestore user profile
-        user = self.get_by_id(uid)
-        if not user:
+        # 3. Fetch the Firestore user profile — a single read that serves
+        #    the profile, the account-status check, and the role extraction.
+        raw = self.get_dict_by_id(uid)
+        if not raw:
             # Auto-heal: the Auth account exists but the Firestore mirror is
             # missing (e.g. a registration that partially failed in the past).
             # Rebuild the profile with least-privilege defaults so the user
@@ -218,9 +222,12 @@ class AuthService(BaseService):
                 display_name=data.get("displayName") or email.split("@")[0],
                 role="student",
             )
+            raw = self.get_dict_by_id(uid) or {}
+        else:
+            user = User(**raw)
 
         # 3b. Enforce account status — banned or timed-out users cannot log in
-        self._check_account_status(uid)
+        self._check_account_status(uid, raw=raw)
 
         # 4. Extract role from the Firestore profile
         if hasattr(user, "role"):
@@ -256,8 +263,8 @@ class AuthService(BaseService):
             decoded = firebase_auth.verify_id_token(id_token)
             uid = decoded["uid"]
 
-            user = self.get_by_id(uid)
-            if not user:
+            raw = self.get_dict_by_id(uid)
+            if not raw:
                 # Auto-heal a missing Firestore mirror (see login_with_email_password).
                 user = self._rebuild_profile(
                     uid=uid,
@@ -265,8 +272,11 @@ class AuthService(BaseService):
                     display_name=decoded.get("name") or "User",
                     role="student",
                 )
+                raw = self.get_dict_by_id(uid) or {}
+            else:
+                user = User(**raw)
 
-            self._check_account_status(uid)
+            self._check_account_status(uid, raw=raw)
 
             role_val = (
                 user.role.value
@@ -292,14 +302,17 @@ class AuthService(BaseService):
 
     # ── Account status enforcement ────────────────────────────────────
 
-    def _check_account_status(self, uid: str) -> None:
+    def _check_account_status(self, uid: str, raw: Optional[Dict] = None) -> None:
         """Raise ValueError if the account is banned or temporarily suspended.
 
         Banned accounts have ``isActive=False``; timed-out accounts carry a
         ``timeoutUntil`` timestamp. Both are set by the admin endpoints and
         enforced here so a suspended user cannot obtain a fresh JWT.
+
+        Pass the already-fetched profile via ``raw`` to avoid a second read.
         """
-        raw = self.get_dict_by_id(uid)
+        if raw is None:
+            raw = self.get_dict_by_id(uid)
         if not raw:
             return
 

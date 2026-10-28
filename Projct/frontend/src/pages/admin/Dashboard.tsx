@@ -57,7 +57,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* ── 4 Stat Cards — equal size, equal gap ──────────── */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
         <StatCard icon={<Users size={18} />} label={t("admin.totalUsers")} value={users.length}
           bg="bg-green-50" iconColor="text-green-600" to="/admin/users" />
         <StatCard icon={<UserCheck size={18} />} label={t("admin.students")} value={totalStudents}

@@ -34,7 +34,7 @@ api.interceptors.response.use(
     // A failed login/register attempt returns 401/400 too — hijacking it
     // would reload the page and wipe the error message the form shows.
     const url: string = error.config?.url ?? "";
-    const isAuthAttempt = /\/auth\/(login|register|forgot-password)/.test(url);
+    const isAuthAttempt = /\/auth\/(login|register|forgot-password|me)/.test(url);
     const hadToken = Boolean(error.config?.headers?.Authorization);
     if (error.response?.status === 401 && !isAuthAttempt && hadToken) {
       localStorage.removeItem("access_token");

@@ -9,6 +9,7 @@ interface that ``BaseService`` and all domain services rely on:
 """
 
 import json
+import time
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Iterator
 
@@ -316,7 +317,12 @@ class _RestFirestoreClient:
         self, method: str, url: str, body: Optional[Dict] = None,
         params: Optional[Dict] = None,
     ) -> Optional[Any]:
-        """Send an authenticated request to the Firestore REST API."""
+        """Send an authenticated request to the Firestore REST API.
+
+        Retries transient failures (429 rate-limit, 5xx) with a short
+        backoff — the REST API's free-tier quota is tight, and the app
+        used to hit 429s under normal use.
+        """
         headers = {
             "Authorization": f"Bearer {self._get_token()}",
             "Content-Type": "application/json",
@@ -327,18 +333,25 @@ class _RestFirestoreClient:
         if params:
             kwargs["params"] = params
 
-        resp = self._session.request(method, url, **kwargs)
+        last_status = 0
+        for attempt in range(3):
+            resp = self._session.request(method, url, **kwargs)
+            last_status = resp.status_code
 
-        if resp.status_code in (200, 201):
-            return resp.json() if resp.text else None
-        elif resp.status_code == 204:  # No Content (DELETE success)
-            return None
-        elif resp.status_code == 404:
-            return None
-        else:
-            detail = resp.text[:300] if resp.text else "no body"
-            resp.raise_for_status()
-            return None
+            if resp.status_code in (200, 201):
+                return resp.json() if resp.text else None
+            if resp.status_code == 204:  # No Content (DELETE success)
+                return None
+            if resp.status_code == 404:
+                return None
+            if resp.status_code in (429, 500, 502, 503, 504) and attempt < 2:
+                time.sleep(0.5 * (attempt + 1))  # 0.5s, 1s backoff
+                continue
+            break
+
+        detail = resp.text[:300] if resp.text else "no body"
+        resp.raise_for_status()
+        return None
 
     def collection(self, name: str) -> _RestCollectionRef:
         return _RestCollectionRef(self, name)

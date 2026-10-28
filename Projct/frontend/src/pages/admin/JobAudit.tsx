@@ -34,7 +34,7 @@ export default function AdminJobAudit() {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
         <div className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3">
           <div className="p-2 rounded-lg bg-green-50 text-green-600"><Briefcase size={18} /></div>
           <div><p className="text-lg font-bold text-gray-900">{jobs.length}</p><p className="text-[11px] text-gray-500">{t("admin.jobs")}</p></div>

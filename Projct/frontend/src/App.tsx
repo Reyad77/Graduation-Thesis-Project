@@ -1,40 +1,45 @@
+import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import Layout from "./components/common/Layout";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import AdminLayout from "./components/admin/AdminLayout";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import ForgotPassword from "./pages/ForgotPassword";
-import NotificationsPage from "./pages/Notifications";
-import NotFound from "./pages/NotFound";
+import LoadingSpinner from "./components/common/LoadingSpinner";
+
+// Lazy-loaded pages: each route chunk is fetched only when visited,
+// keeping the initial bundle small.
+const Home = lazy(() => import("./pages/Home"));
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const NotificationsPage = lazy(() => import("./pages/Notifications"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Student pages
-import StudentDashboard from "./pages/student/Dashboard";
-import StudentProfile from "./pages/student/Profile";
-import StudentResumeForm from "./pages/student/ResumeForm";
-import StudentResumeView from "./pages/student/ResumeView";
-import JobList from "./pages/student/JobList";
-import JobDetail from "./pages/student/JobDetail";
-import StudentApplications from "./pages/student/Applications";
-import SavedJobs from "./pages/student/SavedJobs";
+const StudentDashboard = lazy(() => import("./pages/student/Dashboard"));
+const StudentProfile = lazy(() => import("./pages/student/Profile"));
+const StudentResumeForm = lazy(() => import("./pages/student/ResumeForm"));
+const StudentResumeView = lazy(() => import("./pages/student/ResumeView"));
+const JobList = lazy(() => import("./pages/student/JobList"));
+const JobDetail = lazy(() => import("./pages/student/JobDetail"));
+const StudentApplications = lazy(() => import("./pages/student/Applications"));
+const SavedJobs = lazy(() => import("./pages/student/SavedJobs"));
 
 // Recruiter pages
-import RecruiterDashboard from "./pages/recruiter/Dashboard";
-import RecruiterRegistration from "./pages/recruiter/Registration";
-import RecruiterProfile from "./pages/recruiter/Profile";
-import PostJob from "./pages/recruiter/PostJob";
-import ManageJobs from "./pages/recruiter/ManageJobs";
-import RecruiterApplicants from "./pages/recruiter/Applicants";
+const RecruiterDashboard = lazy(() => import("./pages/recruiter/Dashboard"));
+const RecruiterRegistration = lazy(() => import("./pages/recruiter/Registration"));
+const RecruiterProfile = lazy(() => import("./pages/recruiter/Profile"));
+const PostJob = lazy(() => import("./pages/recruiter/PostJob"));
+const ManageJobs = lazy(() => import("./pages/recruiter/ManageJobs"));
+const RecruiterApplicants = lazy(() => import("./pages/recruiter/Applicants"));
 
 // Admin pages
-import AdminDashboard from "./pages/admin/Dashboard";
-import AdminUserManagement from "./pages/admin/UserManagement";
-import AdminVerifyUsers from "./pages/admin/VerifyUsers";
-import AdminJobAudit from "./pages/admin/JobAudit";
-import AdminBannerManagement from "./pages/admin/BannerManagement";
-import AdminAnnouncements from "./pages/admin/Announcements";
-import AdminEvaluations from "./pages/admin/Evaluations";
+const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
+const AdminUserManagement = lazy(() => import("./pages/admin/UserManagement"));
+const AdminVerifyUsers = lazy(() => import("./pages/admin/VerifyUsers"));
+const AdminJobAudit = lazy(() => import("./pages/admin/JobAudit"));
+const AdminBannerManagement = lazy(() => import("./pages/admin/BannerManagement"));
+const AdminAnnouncements = lazy(() => import("./pages/admin/Announcements"));
+const AdminEvaluations = lazy(() => import("./pages/admin/Evaluations"));
 
 /**
  * Root application component.
@@ -44,6 +49,7 @@ import AdminEvaluations from "./pages/admin/Evaluations";
  */
 export default function App() {
   return (
+    <Suspense fallback={<LoadingSpinner fullPage />}>
     <Routes>
       <Route element={<Layout />}>
         {/* ── Public routes ──────────────────────────────── */}
@@ -100,5 +106,6 @@ export default function App() {
         </Route>
       </Route>
     </Routes>
+    </Suspense>
   );
 }

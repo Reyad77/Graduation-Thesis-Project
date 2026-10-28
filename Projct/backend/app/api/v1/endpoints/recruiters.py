@@ -78,10 +78,10 @@ def list_recruiter_jobs(user: dict = Depends(get_current_recruiter)):
 @router.post("/jobs", status_code=status.HTTP_201_CREATED)
 def create_job(payload: JobCreateRequest, user: dict = Depends(get_current_recruiter)):
     job = _job_svc.create_job(_uid(user), payload)
-    # Notify admins
+    # Notify admins (backgrounded so posting stays fast)
     from app.services.notification_service import NotificationService
     from app.models.notification import NotificationType
-    NotificationService().notify_admins(
+    NotificationService().notify_admins_async(
         title="New Job Posted",
         message=f"'{payload.title}' was posted and needs approval.",
         type_=NotificationType.SYSTEM,

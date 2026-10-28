@@ -9,6 +9,8 @@ Notifications are triggered by key events:
 - Recruiter approval
 """
 
+import threading
+
 from datetime import datetime, timezone
 from typing import List, Optional
 
@@ -46,6 +48,26 @@ class NotificationService(BaseService):
                 uid = getattr(user, "uid", "") or getattr(user, "id", "")
                 if uid:
                     self.notify(uid, type_, title, message, data)
+
+    def notify_admins_async(
+        self,
+        title: str,
+        message: str,
+        type_: NotificationType,
+        data: Optional[dict] = None,
+    ) -> None:
+        """Fire ``notify_admins`` in a background thread.
+
+        Admin notification fan-out performs one Firestore write per admin,
+        and on the REST fallback client each write is a full round-trip —
+        running it inline would slow down registration and job posting.
+        """
+        thread = threading.Thread(
+            target=self.notify_admins,
+            args=(title, message, type_, data),
+            daemon=True,
+        )
+        thread.start()
 
     def notify(
         self,

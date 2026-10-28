@@ -43,27 +43,29 @@ def _serialize(obj):
 @router.get("/users")
 def list_users(user: dict = Depends(get_current_admin)):
     result = _auth_svc.get_all(page=1, page_size=100, order_by="createdAt")
-    users = []
-    for u in result.get("items", []):
-        data = _serialize(u)
+    users = [_serialize(u) for u in result.get("items", [])]
+
+    # Bulk-enrich verification/approval status with TWO collection reads
+    # instead of one read per user (the REST fallback client pays a full
+    # round-trip per call, so N+1 here was very slow).
+    student_profiles = {
+        d.id: d.to_dict() or {}
+        for d in _student_svc.collection.limit(500).stream()
+    }
+    recruiter_profiles = {
+        d.id: d.to_dict() or {}
+        for d in _recruiter_svc.collection.limit(500).stream()
+    }
+    for data in users:
         uid = data.get("uid", "")
-        # Include verification/approval status from linked profiles
-        # (raw dicts so fields like declineReason / verificationNotes survive)
         if data.get("role") == "student":
-            sp = _student_svc.get_dict_by_id(uid)
-            if sp:
-                data["isVerified"] = sp.get("isVerified", False)
-                data["verificationNotes"] = sp.get("verificationNotes", "")
-            else:
-                data["isVerified"] = False
+            sp = student_profiles.get(uid)
+            data["isVerified"] = sp.get("isVerified", False) if sp else False
+            data["verificationNotes"] = sp.get("verificationNotes", "") if sp else ""
         elif data.get("role") == "recruiter":
-            ep = _recruiter_svc.get_dict_by_id(uid)
-            if ep:
-                data["isApproved"] = ep.get("isApproved", False)
-                data["declineReason"] = ep.get("declineReason", "")
-            else:
-                data["isApproved"] = False
-        users.append(data)
+            ep = recruiter_profiles.get(uid)
+            data["isApproved"] = ep.get("isApproved", False) if ep else False
+            data["declineReason"] = ep.get("declineReason", "") if ep else ""
     return users
 
 
@@ -196,6 +198,73 @@ def delete_user(uid: str, user: dict = Depends(get_current_admin)):
     # Also try to clean up linked profiles
     _student_svc.delete(uid)
     _recruiter_svc.delete(uid)
+
+    # ── Cascade cleanup: remove every document tied to this user ─────
+    from app.core.firebase import get_db
+    db = get_db()
+
+    # Capture resume file URLs first (best-effort Storage blob removal)
+    resume_urls = []
+    for doc in db.collection("resumes").limit(500).stream():
+        try:
+            data = doc.to_dict() or {}
+            if data.get("studentUid") == uid:
+                resume_urls.append(data.get("resumeFile", ""))
+                db.collection("resumes").document(doc.id).delete()
+        except Exception:
+            pass
+    for url in resume_urls:
+        if not url:
+            continue
+        try:
+            from app.core.firebase import get_bucket
+            blob_path = url.split("/", 4)[4]
+            get_bucket().blob(blob_path).delete()
+        except Exception:
+            pass  # storage bucket may not exist / blob already gone
+
+    # Jobs posted by this recruiter (track ids for application cleanup)
+    job_ids = []
+    for doc in db.collection("jobs").limit(500).stream():
+        try:
+            if (doc.to_dict() or {}).get("recruiterUid") == uid:
+                job_ids.append(doc.id)
+                db.collection("jobs").document(doc.id).delete()
+        except Exception:
+            pass
+
+    # Applications: the user's own + any targeting the deleted jobs
+    for doc in db.collection("applications").limit(500).stream():
+        try:
+            data = doc.to_dict() or {}
+            if data.get("studentUid") == uid or data.get("jobId") in job_ids:
+                db.collection("applications").document(doc.id).delete()
+        except Exception:
+            pass
+
+    # Saved jobs subcollection under the student profile
+    try:
+        saved = db.collection("students").document(uid).collection("savedJobs")
+        for doc in saved.limit(500).stream():
+            saved.document(doc.id).delete()
+    except Exception:
+        pass
+
+    # Notifications and evaluations involving this user
+    for doc in db.collection("notifications").limit(500).stream():
+        try:
+            if (doc.to_dict() or {}).get("userId") == uid:
+                db.collection("notifications").document(doc.id).delete()
+        except Exception:
+            pass
+    for doc in db.collection("evaluations").limit(500).stream():
+        try:
+            data = doc.to_dict() or {}
+            if data.get("fromUid") == uid or data.get("toUid") == uid:
+                db.collection("evaluations").document(doc.id).delete()
+        except Exception:
+            pass
+
     return {"message": "User deleted permanently."}
 
 
